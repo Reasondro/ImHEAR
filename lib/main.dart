@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:komunika/style.dart';
+import 'package:komunika/app/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
