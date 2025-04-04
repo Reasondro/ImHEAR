@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:komunika/app/theme.dart';
-import 'package:komunika/features/deaf_user_dashboard/presentation/deaf_user_dashboard_view.dart';
+import 'package:komunika/app/themes/light_mode.dart';
+import 'package:komunika/features/auth/data/supabase_auth_repo.dart';
+import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
+import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:komunika/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:komunika/features/deaf_user_dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:komunika/features/user_location/cubit/user_location_cubit.dart';
+import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -43,19 +47,24 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserLocationCubit>(
           create:
               (context) => UserLocationCubit(
-                // Optional: Customize accuracy, distanceFilter, debounceDuration here
-                // accuracy: LocationAccuracy.best,
-                // debounceDuration: const Duration(seconds: 2),
+                //? Optional: Customize accuracy, distanceFilter, debounceDuration here
+                //? accuracy: LocationAccuracy.best,
+                //? debounceDuration: const Duration(seconds: 2),
               ),
-          // lazy: false, // Set to false if you want it created immediately
+
+          //? lazy: false, // Set to false if  want to create immediately
         ),
-        // ... other providers (AuthBloc, etc.)
+        BlocProvider<AuthCubit>(
+          create: (context) => AuthCubit(authRepository: SupabaseAuthRepo()),
+        ),
+        //? ... other providers (AuthBloc, etc.)
       ],
       child: MaterialApp(
         title: 'Kotaba',
         debugShowCheckedModeBanner: false,
-        theme: kotabaTheme,
-        home: DeafUserDashboardView(), // Or your initial screen/router
+        theme: kotabaLightTheme,
+        // home: DeafUserDashboardView(),
+        home: SignInScreen(),
       ),
     );
   }

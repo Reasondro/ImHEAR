@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:komunika/features/user_location/cubit/user_location_cubit.dart';
-import 'package:komunika/features/user_location/cubit/user_location_state.dart'; // For openAppSettings/openLocationSettings
+import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
+import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; // For openAppSettings/openLocationSettings
 
 class DeafUserDashboardView extends StatelessWidget {
   const DeafUserDashboardView({super.key});
