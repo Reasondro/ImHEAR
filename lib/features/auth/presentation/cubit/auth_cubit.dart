@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/auth/domain/entities/app_user.dart';
 import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'auth_state.dart';
 
@@ -41,6 +42,9 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         emit(AuthUnauthenticated());
       }
+    } on AuthException catch (e) {
+      emit(AuthError(message: "Authentication error: ${e.message}"));
+      emit(AuthUnauthenticated());
     } catch (e) {
       emit(AuthError(message: e.toString()));
       emit(AuthUnauthenticated());
@@ -63,6 +67,9 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         emit(AuthUnauthenticated());
       }
+    } on AuthException catch (e) {
+      emit(AuthError(message: "Authentication error: ${e.message}"));
+      emit(AuthUnauthenticated());
     } catch (e) {
       emit(AuthError(message: e.toString()));
       emit(AuthUnauthenticated());

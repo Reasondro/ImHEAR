@@ -2,7 +2,7 @@ import 'package:komunika/features/auth/domain/entities/app_user.dart';
 import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SupabaseAuthRepo implements AuthRepository {
+class SupabaseAuthRepository implements AuthRepository {
   final SupabaseClient supabase = Supabase.instance.client;
 
   @override
@@ -14,6 +14,8 @@ class SupabaseAuthRepo implements AuthRepository {
       );
       AppUser user = AppUser(id: authResponse.user!.id, email: email, name: "");
       return user;
+    } on AuthException catch (_) {
+      rethrow;
     } catch (e) {
       throw Exception("Sign in failed: $e");
     }
@@ -36,6 +38,8 @@ class SupabaseAuthRepo implements AuthRepository {
         name: name,
       );
       return user;
+    } on AuthException catch (_) {
+      rethrow;
     } catch (e) {
       throw Exception("Sign in failed: $e");
     }

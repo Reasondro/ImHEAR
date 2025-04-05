@@ -1,30 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:komunika/core/extensions/snackbar_extension.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _SignInScreenState();
+    return _AuthScreenState();
   }
 }
 
-class _SignInScreenState extends State<SignInScreen> {
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(body: Column(
-  //     children: [
-  //       Center(child: Text("Hai")),
-  //     ],
-  //   ));
-  // }
-
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isSigningUp = false; // To toggle between Sign In / Sign Up
+class _AuthScreenState extends State<AuthScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isSigningUp = false;
 
   @override
   void dispose() {
@@ -35,9 +27,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
-      final authCubit = context.read<AuthCubit>();
+      final String email = _emailController.text.trim();
+      final String password = _passwordController.text.trim();
+      final AuthCubit authCubit = context.read<AuthCubit>();
 
       if (_isSigningUp) {
         // TODO: Add any extra data if needed for signup
@@ -51,22 +43,23 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
+    final ThemeData theme = Theme.of(context);
+    final bool isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: BlocListener<AuthCubit, AuthState>(
         // Listen for errors or other non-UI-blocking states
         listener: (context, state) {
           if (state is AuthError) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
+            // ScaffoldMessenger.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     SnackBar(
+            //       content: Text(state.message),
+            //       backgroundColor: Colors.redAccent,
+            //     ),
+            //   );
+            context.customShowErrorSnackBar(state.message);
           }
           // Optional: Show message on successful signup needing confirmation
           if (state is AuthUnauthenticated && _isSigningUp) {
@@ -78,16 +71,20 @@ class _SignInScreenState extends State<SignInScreen> {
             // A better approach: Emit a specific state like AuthNeedsConfirmation from Cubit
             // For now, a simple check:
             // if (previousState is AuthLoading) { // Requires tracking previous state or specific signal
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Signup successful! Please check your email to confirm.',
-                  ),
-                  backgroundColor: Colors.green,
-                ),
-              );
+
+            // ScaffoldMessenger.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     const SnackBar(
+            //       content: Text(
+            //         'Signup successful! Please check your email to confirm.',
+            //       ),
+            //       backgroundColor: Colors.green,
+            //     ),
+            //   );
+            context.customShowSnackBar(
+              "Signup successful! Please check your email to confirm.",
+            );
             //}
           }
         },

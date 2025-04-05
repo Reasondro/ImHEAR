@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:komunika/app/themes/light_mode.dart';
-import 'package:komunika/features/auth/data/supabase_auth_repo.dart';
+import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
 import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:komunika/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:komunika/features/auth/presentation/screens/auth_screen.dart';
 import 'package:komunika/features/deaf_user_dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
@@ -55,16 +55,16 @@ class MyApp extends StatelessWidget {
           //? lazy: false, // Set to false if  want to create immediately
         ),
         BlocProvider<AuthCubit>(
-          create: (context) => AuthCubit(authRepository: SupabaseAuthRepo()),
+          create:
+              (context) => AuthCubit(authRepository: SupabaseAuthRepository()),
         ),
-        //? ... other providers (AuthBloc, etc.)
       ],
       child: MaterialApp(
         title: 'Kotaba',
         debugShowCheckedModeBanner: false,
         theme: kotabaLightTheme,
         // home: DeafUserDashboardView(),
-        home: SignInScreen(),
+        home: AuthScreen(),
       ),
     );
   }
