@@ -4,8 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; // For openAppSettings/openLocationSettings
 
-class DeafUserDashboardView extends StatelessWidget {
-  const DeafUserDashboardView({super.key});
+class DeafUserDashboardScreen extends StatelessWidget {
+  const DeafUserDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class DeafUserDashboardView extends StatelessWidget {
         //! Use BlocBuilder to automatically rebuild the UI based on the Cubit's state
         child: BlocBuilder<UserLocationCubit, UserLocationState>(
           builder: (context, state) {
-            // --- Handle Different States ---
+            //? --- handle different states ---
 
             if (state is UserLocationInitial) {
               return const Text('Location tracking stopped or not started.');
@@ -61,9 +61,9 @@ class DeafUserDashboardView extends StatelessWidget {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () async {
-                      // Attempt to open settings
+                      //? attempting to open settings
                       await Geolocator.openLocationSettings();
-                      // Optionally re-check after returning from settings
+                      //? optionally recheck after returning from settings
                       if (!context.mounted) {
                         return;
                       }
@@ -81,7 +81,7 @@ class DeafUserDashboardView extends StatelessWidget {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
-                      // Retry starting, which includes the permission request
+                      //? retr starting => include the permission request
                       context.read<UserLocationCubit>().startTracking();
                     },
                     child: const Text('Request Permission Again'),
@@ -106,7 +106,7 @@ class DeafUserDashboardView extends StatelessWidget {
                 ],
               );
             } else if (state is UserLocationTracking) {
-              // Display the current location
+              //? display curr location
               return Text(
                 'Current Location:\n'
                 'Latitude: ${state.position.latitude.toStringAsFixed(6)}\n'
@@ -116,14 +116,14 @@ class DeafUserDashboardView extends StatelessWidget {
                 textAlign: TextAlign.center,
               );
             } else if (state is UserLocationError) {
-              // Display error message
+              //? display error message
               return Text(
                 'Error fetching location:\n${state.message}',
                 style: const TextStyle(color: Colors.red),
                 textAlign: TextAlign.center,
               );
             } else {
-              // Fallback for any unhandled state (shouldn't happen with sealed classes/exhaustive checks)
+              //? fallback for any unhandled state
               return const Text('Unknown location state.');
             }
           },

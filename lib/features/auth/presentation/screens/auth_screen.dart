@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:komunika/core/extensions/snackbar_extension.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -18,6 +17,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isSigningUp = false;
 
+  bool _obscurePassword = true;
   @override
   void dispose() {
     _emailController.dispose();
@@ -38,187 +38,173 @@ class _AuthScreenState extends State<AuthScreen> {
       } else {
         authCubit.signIn(email, password);
       }
-    }
+    } else {}
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      body: BlocListener<AuthCubit, AuthState>(
-        // Listen for errors or other non-UI-blocking states
-        listener: (context, state) {
-          if (state is AuthError) {
-            // ScaffoldMessenger.of(context)
-            //   ..hideCurrentSnackBar()
-            //   ..showSnackBar(
-            //     SnackBar(
-            //       content: Text(state.message),
-            //       backgroundColor: Colors.redAccent,
-            //     ),
-            //   );
-            context.customShowErrorSnackBar(state.message);
-          }
-          // Optional: Show message on successful signup needing confirmation
-          if (state is AuthUnauthenticated && _isSigningUp) {
-            // Check if the previous state was loading to infer signup attempt
-            final previousState =
-                context
-                    .read<AuthCubit>()
-                    .state; // Not ideal, better way needed if complex
-            // A better approach: Emit a specific state like AuthNeedsConfirmation from Cubit
-            // For now, a simple check:
-            // if (previousState is AuthLoading) { // Requires tracking previous state or specific signal
+      resizeToAvoidBottomInset: false,
+      body:
+      // SafeArea(
+      // child:
+      Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(30.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                //? --- app Logo/Title nanti ---
+                Icon(
+                  Icons.lock_outline,
+                  size: 60,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  _isSigningUp ? 'Create Account' : 'Welcome Back',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  _isSigningUp
+                      ? 'Enter your details to sign up'
+                      : 'Sign in to continue',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
 
-            // ScaffoldMessenger.of(context)
-            //   ..hideCurrentSnackBar()
-            //   ..showSnackBar(
-            //     const SnackBar(
-            //       content: Text(
-            //         'Signup successful! Please check your email to confirm.',
-            //       ),
-            //       backgroundColor: Colors.green,
-            //     ),
-            //   );
-            context.customShowSnackBar(
-              "Signup successful! Please check your email to confirm.",
-            );
-            //}
-          }
-        },
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(30.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // --- App Logo/Title (Optional) ---
-                  Icon(
-                    Icons.lock_outline,
-                    size: 60,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    _isSigningUp ? 'Create Account' : 'Welcome Back',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                //?--- email field ---
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(Icons.email_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    _isSigningUp
-                        ? 'Enter your details to sign up'
-                        : 'Sign in to continue',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        !value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
 
-                  // --- Email Field ---
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                //? --- password  field ---
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          !value.contains('@')) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-
-                  // --- Password Field ---
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      // TODO: Add suffix icon to toggle password visibility
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty || value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
                   ),
-                  const SizedBox(height: 30),
+                  obscureText: _obscurePassword,
 
-                  // --- Submit Button ---
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return ElevatedButton(
-                        onPressed: _submitForm,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
-                        ),
-                        child: Text(
-                          _isSigningUp ? 'Sign Up' : 'Sign In',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 30),
 
-                  // --- Toggle Button ---
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _isSigningUp = !_isSigningUp;
-                        // Optionally clear fields or errors when toggling
-                        _formKey.currentState
-                            ?.reset(); // Reset validation state
-                        // context.read<AuthCubit>().emit(AuthInitial()); // Reset error state if desired
-                      });
-                    },
-                    child: Text(
+                // ?--- submit Button ---
+                BlocBuilder<AuthCubit, AuthStates>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                      ),
+                      child: Text(
+                        _isSigningUp ? 'Sign Up' : 'Sign In',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 5,
+                  children: [
+                    Text(
                       _isSigningUp
-                          ? 'Already have an account? Sign In'
-                          : 'Don\'t have an account? Sign Up',
-                      style: TextStyle(color: theme.colorScheme.primary),
+                          ? 'Already have an account?'
+                          : 'Don\'t have an account?',
+                      style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
-                  ),
-                  // Optional: Add "Forgot Password?" button later
-                ],
-              ),
+                    //? --- change auth type button ---
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isSigningUp = !_isSigningUp;
+                          _formKey.currentState
+                              ?.reset(); // Reset validation state
+                        });
+                      },
+                      child: Text(
+                        _isSigningUp ? 'Sign In' : 'Sign up',
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    //? todo  "Forgot Password?" button later
+                  ],
+                ),
+              ],
             ),
           ),
         ),
       ),
+      // ),
     );
   }
 }

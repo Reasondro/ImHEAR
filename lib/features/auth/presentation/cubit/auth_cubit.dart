@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
+class AuthCubit extends Cubit<AuthStates> {
   final AuthRepository authRepository;
   AppUser? _currentUser;
 

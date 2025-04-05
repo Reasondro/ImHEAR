@@ -13,7 +13,14 @@ extension ContextExtension on BuildContext {
           ),
           textAlign: TextAlign.left,
         ),
-        padding: const EdgeInsets.only(bottom: 4, top: 14, right: 14, left: 14),
+        padding: const EdgeInsets.only(
+          bottom: 14,
+          top: 14,
+          right: 14,
+          left: 14,
+        ),
+        margin: const EdgeInsets.only(bottom: 10, left: 14, right: 14),
+        behavior: SnackBarBehavior.floating,
         backgroundColor: Theme.of(this).colorScheme.primary,
         dismissDirection: DismissDirection.horizontal,
         shape: const RoundedRectangleBorder(
@@ -35,7 +42,14 @@ extension ContextExtension on BuildContext {
           ),
           textAlign: TextAlign.left,
         ),
-        padding: const EdgeInsets.only(bottom: 4, top: 14, right: 14, left: 14),
+        padding: const EdgeInsets.only(
+          bottom: 14,
+          top: 14,
+          right: 14,
+          left: 14,
+        ),
+        margin: const EdgeInsets.only(bottom: 10, left: 14, right: 14),
+        behavior: SnackBarBehavior.floating,
         backgroundColor: Theme.of(this).colorScheme.error,
         dismissDirection: DismissDirection.horizontal,
         shape: const RoundedRectangleBorder(

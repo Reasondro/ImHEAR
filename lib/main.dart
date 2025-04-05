@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:komunika/app/themes/light_mode.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
-import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/auth/presentation/screens/auth_screen.dart';
 import 'package:komunika/features/deaf_user_dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-// import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:komunika/core/extensions/snackbar_extension.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -22,49 +21,55 @@ void main() async {
   runApp(MyApp());
 }
 
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Kotaba',
-//       debugShowCheckedModeBanner: false,
-//       theme: kotabaTheme,
-//       // home: const DeafUserDashboardScreen(title: 'Kotaba Home Page'),
-//       home: const Placeholder(),
-//     );
-//   }
-// }
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final SupabaseAuthRepository authRepository = SupabaseAuthRepository();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      // Use MultiBlocProvider if you have more Blocs/Cubits
       providers: [
         BlocProvider<UserLocationCubit>(
           create:
-              (context) => UserLocationCubit(
-                //? Optional: Customize accuracy, distanceFilter, debounceDuration here
-                //? accuracy: LocationAccuracy.best,
-                //? debounceDuration: const Duration(seconds: 2),
+              (_) => UserLocationCubit(
+                //* optional: customize accuracy, distanceFilter, debounceDuration
+                //* accuracy: LocationAccuracy.best,
+                //* debounceDuration: const Duration(seconds: 2),
               ),
-
-          //? lazy: false, // Set to false if  want to create immediately
         ),
         BlocProvider<AuthCubit>(
-          create:
-              (context) => AuthCubit(authRepository: SupabaseAuthRepository()),
+          create: (_) => AuthCubit(authRepository: authRepository)..checkAuth(),
         ),
       ],
       child: MaterialApp(
         title: 'Kotaba',
         debugShowCheckedModeBanner: false,
         theme: kotabaLightTheme,
-        // home: DeafUserDashboardView(),
-        home: AuthScreen(),
+        home: BlocConsumer<AuthCubit, AuthStates>(
+          builder: (_, authState) {
+            print(authState);
+            //? unauthenticated
+            if (authState is AuthUnauthenticated || authState is AuthLoading) {
+              return const AuthScreen();
+            }
+            //? authenticated
+            else if (authState is AuthAuthenticated) {
+              return DeafUserDashboardScreen();
+            } else
+            // ? unknown stuffs/errors
+            {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            }
+          },
+          listener: (ctx, state) {
+            if (state is AuthError) {
+              ctx.customShowErrorSnackBar(state.message);
+            }
+          },
+        ),
       ),
     );
   }

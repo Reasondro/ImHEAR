@@ -21,7 +21,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
     Duration debounceDuration = const Duration(
       milliseconds: 500,
       // milliseconds: 10000, //? fuck around and find out
-    ), // Optional debouncing
+    ),
   }) : _locationSettings = LocationSettings(
          accuracy: accuracy,
          distanceFilter: distanceFilter,
@@ -29,7 +29,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
        ),
        _debounceDuration = debounceDuration,
        //  debounceDuration ??
-       //  const Duration(milliseconds: 500), // Default 500ms debounce
+       //  const Duration(milliseconds: 500),
        super(UserLocationInitial());
 
   Future<void> startTracking() async {
@@ -63,10 +63,11 @@ class UserLocationCubit extends Cubit<UserLocationState> {
         return;
       }
 
-      //! 3. Permission Granted - Start Listening
-      await _positionStreamSubscription?.cancel(); // Cancel any previous stream
+      //! 3. permission granted - start listening
+      await _positionStreamSubscription
+          ?.cancel(); //? cancel any previous stream
 
-      //? Get last known position first for faster initial feedback (optional)
+      //? get last known position first for faster initial feedback (need to make sure HOMEWORK!)
       Position? lastKnown = await Geolocator.getLastKnownPosition();
       if (lastKnown != null && !isClosed) {
         emit(UserLocationTracking(position: lastKnown));
@@ -76,7 +77,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
         locationSettings: _locationSettings,
       );
 
-      //? Apply debounce if duration is greater than zero
+      //?aApply debounce if duration is greater than zero
       final Stream<Position> streamToListen =
           (_debounceDuration > Duration.zero)
               ? positionStream.debounceTime(_debounceDuration)
@@ -85,13 +86,13 @@ class UserLocationCubit extends Cubit<UserLocationState> {
       _positionStreamSubscription = streamToListen.listen(
         (Position pos) {
           if (!isClosed) {
-            //? Check if cubit is still active
+            //? check if cubit is still active
             print("Location Emitted: ${pos.latitude}, ${pos.longitude}");
             emit(UserLocationTracking(position: pos));
           }
         },
         onError: (error) {
-          //? Handle potential errors from the stream (e.g., GPS signal loss)
+          //? handle potential errors from the stream (e.g., GPS signal loss)
           print("Location Stream Error: $error");
           if (!isClosed) {
             emit(UserLocationError(message: "Error getting location: $error"));
@@ -100,21 +101,21 @@ class UserLocationCubit extends Cubit<UserLocationState> {
           }
         },
         onDone: () {
-          //? Stream closed unexpectedly?
+          //? stream closed unexpectedly?
           if (!isClosed && state is UserLocationTracking) {
             // If we were tracking and the stream just stops, maybe emit initial?
             print("Location stream done.");
             emit(UserLocationInitial()); // Or another appropriate state
           }
         },
-        cancelOnError: false, //? Keep listening even after an error if desired
+        cancelOnError: false, //? keep listening even after an error if desired
       );
 
       print("User location tracking started.");
     } catch (e) {
       print("Error starting location tracking: $e");
       if (!isClosed) {
-        // Handle errors during setup (e.g., platform exceptions)
+        //? handle errors during setup (e.g., platform exceptions)
         if (e is PermissionRequestInProgressException) {
           emit(
             UserLocationError(
@@ -134,7 +135,6 @@ class UserLocationCubit extends Cubit<UserLocationState> {
     }
   }
 
-  // You might want a method to check permission without starting tracking
   Future<LocationPermission> checkPermissionStatus() async {
     return await Geolocator.checkPermission();
   }
@@ -147,7 +147,6 @@ class UserLocationCubit extends Cubit<UserLocationState> {
     _positionStreamSubscription?.cancel();
     _positionStreamSubscription = null;
     if (state is! UserLocationInitial) {
-      // Avoid emitting initial if already initial
       emit(UserLocationInitial());
     }
     print("User location tracking stopped.");
@@ -155,7 +154,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
 
   @override
   Future<void> close() {
-    stopTracking(); // Ensure stream is cancelled when Cubit is closed
+    stopTracking(); //? ENSURE stream is cancelled when cubit is closed
     return super.close();
   }
 }

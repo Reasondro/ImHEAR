@@ -17,7 +17,7 @@ class SupabaseAuthRepository implements AuthRepository {
     } on AuthException catch (_) {
       rethrow;
     } catch (e) {
-      throw Exception("Sign in failed: $e");
+      throw Exception("Unknown error: $e");
     }
   }
 
@@ -41,7 +41,7 @@ class SupabaseAuthRepository implements AuthRepository {
     } on AuthException catch (_) {
       rethrow;
     } catch (e) {
-      throw Exception("Sign in failed: $e");
+      throw Exception("Unknown error: $e");
     }
   }
 
