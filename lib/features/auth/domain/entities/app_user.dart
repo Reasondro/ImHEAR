@@ -1,10 +1,12 @@
+import 'package:komunika/features/auth/domain/entities/user_role.dart';
+
 class AppUser {
   final String id;
   final String email;
   final String username;
   final String fullName;
   final String? avatarUrl;
-  final String role;
+  final UserRole role;
 
   AppUser({
     required this.id,
@@ -22,7 +24,7 @@ class AppUser {
       "username": username,
       "full_name": fullName,
       "avatar_url": avatarUrl,
-      "role": role,
+      "role": role.name,
     };
   }
 
@@ -30,10 +32,10 @@ class AppUser {
     return AppUser(
       id: jsonUser["id"],
       email: jsonUser["email"],
-      username: jsonUser["username"],
-      fullName: jsonUser["full_name"],
-      avatarUrl: jsonUser["avatar_url"],
-      role: jsonUser["role"],
+      username: jsonUser["user_metadata"]["username"],
+      fullName: jsonUser["user_metadata"]["full_name"],
+      avatarUrl: jsonUser["user_metadata"]["avatar_url"],
+      role: UserRole.fromString(jsonUser["user_metadata"]["role"]),
     );
   }
 }

@@ -50,21 +50,29 @@ class MyApp extends StatelessWidget {
           builder: (_, authState) {
             print(authState);
             //? unauthenticated
-            if (authState is AuthUnauthenticated || authState is AuthLoading) {
+
+            if (authState is AuthAuthenticated) {
+              return DeafUserDashboardScreen();
+            } else if (authState is AuthUnauthenticated ||
+                authState is AuthLoading) {
               return const AuthScreen();
             }
             //? authenticated
-            else if (authState is AuthAuthenticated) {
-              return DeafUserDashboardScreen();
-            } else
+            else
             // ? unknown stuffs/errors
             {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text("$authState"), CircularProgressIndicator()],
+                  ),
+                ),
               );
             }
           },
           listener: (ctx, state) {
+            print(state);
             if (state is AuthError) {
               ctx.customShowErrorSnackBar(state.message);
             }

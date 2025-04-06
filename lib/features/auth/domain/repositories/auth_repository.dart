@@ -1,4 +1,5 @@
 import 'package:komunika/features/auth/domain/entities/app_user.dart';
+import 'package:komunika/features/auth/domain/entities/user_role.dart';
 
 // ? Outlines the possible auth operations
 
@@ -9,7 +10,7 @@ abstract class AuthRepository {
     String password,
     String username,
     String fullName,
-    String role,
+    UserRole role,
   );
   Future<void> signOut();
   Future<AppUser?> getCurrentUser();

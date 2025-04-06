@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/auth/domain/entities/app_user.dart';
+import 'package:komunika/features/auth/domain/entities/user_role.dart';
 import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -58,7 +59,7 @@ class AuthCubit extends Cubit<AuthStates> {
     String password,
     String username,
     String fullName,
-    String role,
+    UserRole role,
   ) async {
     try {
       emit(AuthLoading());
@@ -69,13 +70,16 @@ class AuthCubit extends Cubit<AuthStates> {
         fullName,
         role,
       );
-
+      print("User from auth_cubit $user");
       if (user != null) {
         _currentUser = user;
+        emit(AuthAuthenticated(user: user));
       } else {
         emit(AuthUnauthenticated());
       }
     } on AuthException catch (e) {
+      print("Auth exception error from cubit ");
+
       emit(AuthError(message: "Authentication error: ${e.message}"));
       emit(AuthUnauthenticated());
     } catch (e) {

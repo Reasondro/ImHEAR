@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:komunika/features/auth/domain/entities/user_role.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -44,9 +45,14 @@ class _AuthScreenState extends State<AuthScreen> {
       final AuthCubit authCubit = context.read<AuthCubit>();
 
       if (_isSigningUp) {
-        // TODO: Add any extra data if needed for signup
-        // Map<String, dynamic> userData = {'username': 'some_username'};
-        authCubit.signUp(email, password, username, fullName, "deaf");
+        // authCubit.signUp(email, password, username, fullName, "deaf");
+        authCubit.signUp(
+          email,
+          password,
+          "dummy1",
+          "fullName",
+          UserRole.deaf_user,
+        );
       } else {
         authCubit.signIn(email, password);
       }
@@ -59,10 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body:
-      // SafeArea(
-      // child:
-      Center(
+      body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
           child: Form(
