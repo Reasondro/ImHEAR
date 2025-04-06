@@ -1,26 +1,39 @@
 class AppUser {
   final String id;
   final String email;
-  final String? name;
-  // final String? avatarUrl;
+  final String username;
+  final String fullName;
+  final String? avatarUrl;
+  final String role;
 
   AppUser({
     required this.id,
     required this.email,
-    this.name,
-    //  this.avatarUrl
+    required this.username,
+    required this.fullName,
+    this.avatarUrl,
+    required this.role,
   });
 
   Map<String, dynamic> toJson() {
-    return {"id": id, "email": email, "name": name};
+    return {
+      "id": id,
+      "email": email,
+      "username": username,
+      "full_name": fullName,
+      "avatar_url": avatarUrl,
+      "role": role,
+    };
   }
 
   factory AppUser.fromJson(Map<String, dynamic> jsonUser) {
     return AppUser(
       id: jsonUser["id"],
       email: jsonUser["email"],
-      name: jsonUser["name"],
-      // avatarUrl: jsonUser["avatarUrl"],
+      username: jsonUser["username"],
+      fullName: jsonUser["full_name"],
+      avatarUrl: jsonUser["avatar_url"],
+      role: jsonUser["role"],
     );
   }
 }

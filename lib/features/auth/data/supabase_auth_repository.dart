@@ -12,7 +12,12 @@ class SupabaseAuthRepository implements AuthRepository {
         email: email,
         password: password,
       );
-      AppUser user = AppUser(id: authResponse.user!.id, email: email, name: "");
+
+      if (authResponse.user == null) {
+        throw Exception("User is null");
+      }
+
+      AppUser user = AppUser.fromJson(authResponse.user!.toJson());
       return user;
     } on AuthException catch (_) {
       rethrow;
@@ -25,18 +30,23 @@ class SupabaseAuthRepository implements AuthRepository {
   Future<AppUser?> signUpWithEmail(
     String email,
     String password,
-    String? name,
+    String username,
+    String fullName,
+    String role,
   ) async {
     try {
+      //? user sign up
       final AuthResponse authResponse = await supabase.auth.signUp(
         email: email,
         password: password,
+        data: {"username": username, "full_name": fullName, "role": role},
       );
-      AppUser user = AppUser(
-        id: authResponse.user!.id,
-        email: email,
-        name: name,
-      );
+
+      if (authResponse.user == null) {
+        throw Exception("User is null");
+      }
+      AppUser user = AppUser.fromJson(authResponse.user!.toJson());
+
       return user;
     } on AuthException catch (_) {
       rethrow;
@@ -57,11 +67,7 @@ class SupabaseAuthRepository implements AuthRepository {
     if (supabaseUser == null) {
       return null;
     }
-    AppUser user = AppUser(
-      id: supabaseUser.id,
-      email: supabaseUser.email!,
-      name: "",
-    );
+    AppUser user = AppUser.fromJson(supabaseUser.userMetadata!);
     return user;
   }
 }

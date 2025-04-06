@@ -13,28 +13,40 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   bool _isSigningUp = false;
 
   bool _obscurePassword = true;
   @override
   void dispose() {
+    _usernameController.dispose();
+    _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      final String username = _usernameController.text.trim();
+      final String fullName = _fullNameController.text.trim();
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
+      final String confirmPassword = _confirmPasswordController.text.trim();
+
       final AuthCubit authCubit = context.read<AuthCubit>();
 
       if (_isSigningUp) {
         // TODO: Add any extra data if needed for signup
         // Map<String, dynamic> userData = {'username': 'some_username'};
-        authCubit.signUp(email, password, "");
+        authCubit.signUp(email, password, username, fullName, "deaf");
       } else {
         authCubit.signIn(email, password);
       }
@@ -184,7 +196,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         setState(() {
                           _isSigningUp = !_isSigningUp;
                           _formKey.currentState
-                              ?.reset(); // Reset validation state
+                              ?.reset(); //? reset validation state
+                          _emailController.clear();
+                          _passwordController.clear();
                         });
                       },
                       child: Text(
