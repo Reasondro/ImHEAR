@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; // For openAppSettings/openLocationSettings
 
@@ -34,10 +35,19 @@ class DeafUserDashboardScreen extends StatelessWidget {
             tooltip: 'Stop Tracking',
             onPressed: () => context.read<UserLocationCubit>().stopTracking(),
           ),
+
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sign Out',
+            onPressed: () {
+              // Call the signOut method from AuthCubit
+              context.read<AuthCubit>().signOut();
+            },
+          ),
         ],
       ),
       body: Center(
-        //! Use BlocBuilder to automatically rebuild the UI based on the Cubit's state
+        //! use BlocBuilder to automatically rebuild the UI based on the Cubit's state
         child: BlocBuilder<UserLocationCubit, UserLocationState>(
           builder: (context, state) {
             //? --- handle different states ---

@@ -24,6 +24,9 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isSigningUp = false;
 
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  UserRole _selectedRole = UserRole.deaf_user; //? default value just in case
   @override
   void dispose() {
     _usernameController.dispose();
@@ -36,27 +39,19 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      final String username = _usernameController.text.trim();
-      final String fullName = _fullNameController.text.trim();
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
-      final String confirmPassword = _confirmPasswordController.text.trim();
 
       final AuthCubit authCubit = context.read<AuthCubit>();
 
       if (_isSigningUp) {
-        // authCubit.signUp(email, password, username, fullName, "deaf");
-        authCubit.signUp(
-          email,
-          password,
-          "dummy1",
-          "fullName",
-          UserRole.deaf_user,
-        );
+        final String username = _usernameController.text.trim();
+        final String fullName = _fullNameController.text.trim();
+        authCubit.signUp(email, password, username, fullName, _selectedRole);
       } else {
         authCubit.signIn(email, password);
       }
-    } else {}
+    }
   }
 
   @override
@@ -64,7 +59,7 @@ class _AuthScreenState extends State<AuthScreen> {
     final ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
@@ -99,6 +94,80 @@ class _AuthScreenState extends State<AuthScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 40),
+
+                //? only when sigining up
+
+                // ?username field
+                if (_isSigningUp) ...[
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: "Username",
+                      prefixIcon: const Icon(Icons.person_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (_isSigningUp && (value == null || value.isEmpty)) {
+                        return "Please enter a username";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  //? full name field
+                  TextFormField(
+                    controller: _fullNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Full Name',
+                      prefixIcon: const Icon(Icons.badge_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (_isSigningUp && (value == null || value.isEmpty)) {
+                        return 'Please enter your full name';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  //? role dropdown
+                  DropdownButtonFormField<UserRole>(
+                    value: UserRole.deaf_user, //? deafult
+                    decoration: InputDecoration(
+                      labelText: "User Type",
+                      prefixIcon: const Icon(Icons.category_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    items:
+                        UserRole.values.map((UserRole role) {
+                          String displayName =
+                              role == UserRole.deaf_user
+                                  ? "Deaf User"
+                                  : "Officials";
+                          return DropdownMenuItem<UserRole>(
+                            value: role,
+                            child: Text(displayName),
+                          );
+                        }).toList(),
+                    onChanged: (UserRole? newValue) {
+                      setState(() {
+                        _selectedRole = newValue ?? UserRole.deaf_user;
+                        print(_selectedRole.name);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
+                // ? role dropdown
 
                 //?--- email field ---
                 TextFormField(
@@ -153,6 +222,45 @@ class _AuthScreenState extends State<AuthScreen> {
                     return null;
                   },
                 ),
+
+                const SizedBox(height: 20),
+                //? confirm password field --
+                if (_isSigningUp)
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      labelText: "Confirm Password",
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureConfirmPassword = !_obscureConfirmPassword;
+                          });
+                        },
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    obscureText: _obscureConfirmPassword,
+                    validator: (value) {
+                      if (_isSigningUp) {
+                        if (value == null || value.isEmpty) {
+                          return "Please confirm your password";
+                        }
+                        if (value != _passwordController.text) {
+                          return "Passwords do not match";
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+
                 const SizedBox(height: 30),
 
                 // ?--- submit Button ---
@@ -200,8 +308,14 @@ class _AuthScreenState extends State<AuthScreen> {
                           _isSigningUp = !_isSigningUp;
                           _formKey.currentState
                               ?.reset(); //? reset validation state
+                          _usernameController.clear();
+                          _fullNameController.clear();
                           _emailController.clear();
+
                           _passwordController.clear();
+                          _confirmPasswordController.clear();
+                          _obscurePassword = true;
+                          _obscureConfirmPassword = true;
                         });
                       },
                       child: Text(

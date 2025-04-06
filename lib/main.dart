@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
           builder: (_, authState) {
             print(authState);
             //? unauthenticated
-
             if (authState is AuthAuthenticated) {
               return DeafUserDashboardScreen();
             } else if (authState is AuthUnauthenticated ||
@@ -72,7 +71,6 @@ class MyApp extends StatelessWidget {
             }
           },
           listener: (ctx, state) {
-            print(state);
             if (state is AuthError) {
               ctx.customShowErrorSnackBar(state.message);
             }
