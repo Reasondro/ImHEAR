@@ -96,14 +96,14 @@ class UserLocationCubit extends Cubit<UserLocationState> {
           print("Location Stream Error: $error");
           if (!isClosed) {
             emit(UserLocationError(message: "Error getting location: $error"));
-            // Optionally try restarting tracking after an error? Depends on desired behavior.
-            // stopTracking();
+            //? Optionally try restarting tracking after an error? Depends on desired behavior.
+            //? stopTracking();
           }
         },
         onDone: () {
           //? stream closed unexpectedly?
           if (!isClosed && state is UserLocationTracking) {
-            // If we were tracking and the stream just stops, maybe emit initial?
+            //? If we were tracking and the stream just stops, maybe emit initial?
             print("Location stream done.");
             emit(UserLocationInitial()); // Or another appropriate state
           }

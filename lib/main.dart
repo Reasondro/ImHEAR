@@ -4,7 +4,7 @@ import 'package:komunika/app/themes/light_mode.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/auth/presentation/screens/auth_screen.dart';
-import 'package:komunika/features/deaf_user_dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
+import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         home: BlocConsumer<AuthCubit, AuthStates>(
           builder: (_, authState) {
             print(authState);
-            //? unauthenticated
+            // unauthenticated
             if (authState is AuthAuthenticated) {
               return DeafUserDashboardScreen();
             } else if (authState is AuthUnauthenticated ||

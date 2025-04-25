@@ -31,6 +31,11 @@ class DeafUserDashboardScreen extends StatelessWidget {
             onPressed: () => context.read<UserLocationCubit>().startTracking(),
           ),
           IconButton(
+            icon: const Icon(Icons.social_distance),
+            tooltip: "Find distance",
+            onPressed: () {},
+          ),
+          IconButton(
             icon: const Icon(Icons.stop),
             tooltip: 'Stop Tracking',
             onPressed: () => context.read<UserLocationCubit>().stopTracking(),

@@ -1,113 +1,113 @@
-// import 'package:flutter/material.dart';
-// import 'package:supabase_flutter/supabase_flutter.dart';
-// import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
-// class DeafUserDashboardScreen extends StatefulWidget {
-//   const DeafUserDashboardScreen({super.key, required this.title});
+class DeafUserDashboardScreen extends StatefulWidget {
+  const DeafUserDashboardScreen({super.key, required this.title});
 
-//   final String title;
+  final String title;
 
-//   @override
-//   State<DeafUserDashboardScreen> createState() =>
-//       _DeafUserDashboardScreenState();
-// }
+  @override
+  State<DeafUserDashboardScreen> createState() =>
+      _DeafUserDashboardScreenState();
+}
 
-// class _DeafUserDashboardScreenState extends State<DeafUserDashboardScreen> {
-//   final SupabaseClient supabase = Supabase.instance.client;
+class _DeafUserDashboardScreenState extends State<DeafUserDashboardScreen> {
+  final SupabaseClient supabase = Supabase.instance.client;
 
-//   Future<Position> _determinePosition() async {
-//     bool serviceEnabled;
-//     LocationPermission permission;
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-//     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
-//     if (!serviceEnabled) {
-//       return Future.error("Location services are disabled ");
-//     }
-//     permission = await Geolocator.checkPermission();
+    if (!serviceEnabled) {
+      return Future.error("Location services are disabled ");
+    }
+    permission = await Geolocator.checkPermission();
 
-//     if (permission == LocationPermission.denied) {
-//       permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
 
-//       if (permission == LocationPermission.denied) {
-//         return Future.error("Location permissions are denied");
-//       }
-//     }
+      if (permission == LocationPermission.denied) {
+        return Future.error("Location permissions are denied");
+      }
+    }
 
-//     if (permission == LocationPermission.deniedForever) {
-//       return Future.error(
-//         "Location permissions are permanently denied, we cannot request permissions.",
-//       );
-//     }
-//     return await Geolocator.getCurrentPosition();
-//   }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        "Location permissions are permanently denied, we cannot request permissions.",
+      );
+    }
+    return await Geolocator.getCurrentPosition();
+  }
 
-//   void _nearbyRestaurants() async {
-//     Position currPos = await _determinePosition();
-//     double lat = currPos.latitude;
-//     double long = currPos.longitude;
-//     final data = await supabase.rpc(
-//       'nearby_restaurants',
-//       params: {"lat": lat, "long": long},
-//     );
-//     print(data);
-//   }
+  void _nearbyRestaurants() async {
+    Position currPos = await _determinePosition();
+    double lat = currPos.latitude;
+    double long = currPos.longitude;
+    final data = await supabase.rpc(
+      'nearby_restaurants',
+      params: {"lat": lat, "long": long},
+    );
+    print(data);
+  }
 
-//   void _addRestaurants() async {
-//     await supabase.from('restaurants').insert([
-//       {
-//         'name': 'Insittut Teknologi Bandung',
-//         'location': 'POINT(107.61014828217186 -6.890138014763959)',
-//       },
-//       {
-//         'name': 'Warunk Upnormal Sumur Bandung',
-//         'location': 'POINT(107.61307820317128 -6.885419093134816)',
-//       },
-//       {
-//         'name': 'McDonald\'s Dago',
-//         'location': 'POINT(107.6134826886188 -6.884932983955189)',
-//       },
-//     ]);
-//     print("success");
-//   }
+  void _addRestaurants() async {
+    await supabase.from('restaurants').insert([
+      {
+        'name': 'Insittut Teknologi Bandung',
+        'location': 'POINT(107.61014828217186 -6.890138014763959)',
+      },
+      {
+        'name': 'Warunk Upnormal Sumur Bandung',
+        'location': 'POINT(107.61307820317128 -6.885419093134816)',
+      },
+      {
+        'name': 'McDonald\'s Dago',
+        'location': 'POINT(107.6134826886188 -6.884932983955189)',
+      },
+    ]);
+    print("success");
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text(widget.title)),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             Text(
-//               "Location....",
-//               style: Theme.of(context).textTheme.headlineMedium,
-//             ),
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: Column(
-//         mainAxisAlignment: MainAxisAlignment.end,
-//         spacing: 15,
-//         children: [
-//           FloatingActionButton(
-//             onPressed: _determinePosition,
-//             child: const Icon(Icons.location_searching),
-//           ),
-//           FloatingActionButton(
-//             onPressed: _nearbyRestaurants,
-//             child: const Icon(Icons.food_bank),
-//           ),
-//           FloatingActionButton(
-//             onPressed: _addRestaurants,
-//             tooltip: 'Increment',
-//             child: const Icon(Icons.add),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Location....",
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 15,
+        children: [
+          FloatingActionButton(
+            onPressed: _determinePosition,
+            child: const Icon(Icons.location_searching),
+          ),
+          FloatingActionButton(
+            onPressed: _nearbyRestaurants,
+            child: const Icon(Icons.food_bank),
+          ),
+          FloatingActionButton(
+            onPressed: _addRestaurants,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 
 
