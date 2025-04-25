@@ -7,7 +7,10 @@ class SupabaseAuthRepository implements AuthRepository {
   final SupabaseClient supabase = Supabase.instance.client;
 
   @override
-  Future<AppUser?> signInWithEmail(String email, String password) async {
+  Future<AppUser?> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
     try {
       final AuthResponse authResponse = await supabase.auth.signInWithPassword(
         email: email,
@@ -17,7 +20,6 @@ class SupabaseAuthRepository implements AuthRepository {
       if (authResponse.user == null) {
         throw Exception("User is null");
       }
-
       AppUser user = AppUser.fromJson(authResponse.user!.toJson());
       print(user);
 
@@ -30,13 +32,13 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AppUser?> signUpWithEmail(
-    String email,
-    String password,
-    String username,
-    String fullName,
-    UserRole role,
-  ) async {
+  Future<AppUser?> signUpWithEmail({
+    required String email,
+    required String password,
+    required String username,
+    required String fullName,
+    required UserRole role,
+  }) async {
     try {
       //? user sign up
       final AuthResponse authResponse = await supabase.auth.signUp(

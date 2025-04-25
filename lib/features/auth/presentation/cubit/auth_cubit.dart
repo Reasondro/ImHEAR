@@ -30,12 +30,15 @@ class AuthCubit extends Cubit<AuthStates> {
 
   // ? sign in with email
 
-  Future<void> signInWithEmail(String email, String password) async {
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
     try {
       emit(AuthLoading());
       final AppUser? user = await authRepository.signInWithEmail(
-        email,
-        password,
+        email: email,
+        password: password,
       );
       if (user != null) {
         _currentUser = user;
@@ -54,21 +57,21 @@ class AuthCubit extends Cubit<AuthStates> {
 
   // ? sign up with email
 
-  Future<void> signUpWithEmail(
-    String email,
-    String password,
-    String username,
-    String fullName,
-    UserRole role,
-  ) async {
+  Future<void> signUpWithEmail({
+    required String email,
+    required String password,
+    required String username,
+    required String fullName,
+    required UserRole role,
+  }) async {
     try {
       emit(AuthLoading());
       final AppUser? user = await authRepository.signUpWithEmail(
-        email,
-        password,
-        username,
-        fullName,
-        role,
+        email: email,
+        password: password,
+        username: username,
+        fullName: fullName,
+        role: role,
       );
       print("User from auth_cubit $user");
       if (user != null) {
