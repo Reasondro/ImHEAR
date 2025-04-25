@@ -47,9 +47,15 @@ class _AuthScreenState extends State<AuthScreen> {
       if (_isSigningUp) {
         final String username = _usernameController.text.trim();
         final String fullName = _fullNameController.text.trim();
-        authCubit.signUp(email, password, username, fullName, _selectedRole);
+        authCubit.signUpWithEmail(
+          email,
+          password,
+          username,
+          fullName,
+          _selectedRole,
+        );
       } else {
-        authCubit.signIn(email, password);
+        authCubit.signInWithEmail(email, password);
       }
     }
   }

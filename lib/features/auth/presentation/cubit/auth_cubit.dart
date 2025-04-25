@@ -30,7 +30,7 @@ class AuthCubit extends Cubit<AuthStates> {
 
   // ? sign in with email
 
-  Future<void> signIn(String email, String password) async {
+  Future<void> signInWithEmail(String email, String password) async {
     try {
       emit(AuthLoading());
       final AppUser? user = await authRepository.signInWithEmail(
@@ -54,7 +54,7 @@ class AuthCubit extends Cubit<AuthStates> {
 
   // ? sign up with email
 
-  Future<void> signUp(
+  Future<void> signUpWithEmail(
     String email,
     String password,
     String username,
