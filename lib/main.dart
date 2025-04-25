@@ -4,6 +4,7 @@ import 'package:komunika/app/themes/light_mode.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/auth/presentation/screens/auth_screen.dart';
+import 'package:komunika/features/auth/presentation/screens/auth_wrapper.dart';
 import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
@@ -46,36 +47,7 @@ class MyApp extends StatelessWidget {
         title: 'Kotaba',
         debugShowCheckedModeBanner: false,
         theme: kotabaLightTheme,
-        home: BlocConsumer<AuthCubit, AuthStates>(
-          builder: (_, authState) {
-            print(authState);
-            // unauthenticated
-            if (authState is AuthAuthenticated) {
-              return DeafUserDashboardScreen();
-            } else if (authState is AuthUnauthenticated ||
-                authState is AuthLoading) {
-              return const AuthScreen();
-            }
-            //? authenticated
-            else
-            // ? unknown stuffs/errors
-            {
-              return Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text("$authState"), CircularProgressIndicator()],
-                  ),
-                ),
-              );
-            }
-          },
-          listener: (ctx, state) {
-            if (state is AuthError) {
-              ctx.customShowErrorSnackBar(state.message);
-            }
-          },
-        ),
+        home: AuthWrapper(),
       ),
     );
   }

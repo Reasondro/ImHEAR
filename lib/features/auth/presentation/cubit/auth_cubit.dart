@@ -5,7 +5,7 @@ import 'package:komunika/features/auth/domain/entities/user_role.dart';
 import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'auth_state.dart';
+part 'auth_states.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
   final AuthRepository authRepository;
