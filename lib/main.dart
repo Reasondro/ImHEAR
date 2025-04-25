@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:komunika/app/themes/light_mode.dart';
-import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
-import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:komunika/features/auth/presentation/screens/auth_screen.dart';
-import 'package:komunika/features/auth/presentation/screens/auth_wrapper.dart';
-import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
+import 'package:komunika/app/app.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:komunika/core/extensions/snackbar_extension.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -19,38 +11,7 @@ void main() async {
     url: dotenv.env["SUPABASE_PROJECT_URL"]!,
     anonKey: dotenv.env["SUPABASE_API_KEY"]!,
   );
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  final SupabaseAuthRepository authRepository = SupabaseAuthRepository();
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<UserLocationCubit>(
-          create:
-              (_) => UserLocationCubit(
-                //* optional: customize accuracy, distanceFilter, debounceDuration
-                //* accuracy: LocationAccuracy.best,
-                //* debounceDuration: const Duration(seconds: 2),
-              ),
-        ),
-        BlocProvider<AuthCubit>(
-          create: (_) => AuthCubit(authRepository: authRepository)..checkAuth(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Kotaba',
-        debugShowCheckedModeBanner: false,
-        theme: kotabaLightTheme,
-        home: AuthWrapper(),
-      ),
-    );
-  }
+  runApp(App());
 }
 
 
