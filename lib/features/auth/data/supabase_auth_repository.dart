@@ -6,6 +6,43 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseAuthRepository implements AuthRepository {
   final SupabaseClient supabase = Supabase.instance.client;
 
+  // ? helper function for stream stuffs
+  AppUser? _mapSupabaseUserToAppUser({User? supabaseUser}) {
+    if (supabaseUser == null) {
+      return null;
+    }
+    try {
+      final Map<String, dynamic> userData = {
+        "id": supabaseUser.id,
+        "email": supabaseUser.email,
+        "user_metadata": supabaseUser.userMetadata ?? {},
+      };
+      print("Mapping Supabase User ${userData["id"]}");
+      return AppUser.fromJson(userData);
+    } catch (e) {
+      print("Error mapping Supabase User to AppUser: $e");
+      return null;
+    }
+  }
+
+  @override
+  Stream<AppUser?> get authStateChanges {
+    return supabase.auth.onAuthStateChange
+        .map((AuthState authState) {
+          final User? supabaseUser = authState.session?.user;
+          print(
+            "Supabase AuthStateChange: Event=${authState.event}, User=${supabaseUser?.id}",
+          ); //? debug
+          return _mapSupabaseUserToAppUser(supabaseUser: supabaseUser);
+        })
+        .handleError((error) {
+          //? handle potential errors within the stream pipeline itself
+          print("Error in onAuthStateChange stream: $error");
+          //? emit null to indicate an unauthenticated state due to stream error
+          return null;
+        });
+  }
+
   @override
   Future<AppUser?> signInWithEmail({
     required String email,
@@ -17,10 +54,13 @@ class SupabaseAuthRepository implements AuthRepository {
         password: password,
       );
 
-      if (authResponse.user == null) {
-        throw Exception("User is null");
-      }
-      AppUser user = AppUser.fromJson(authResponse.user!.toJson());
+      // if (authResponse.user == null) {
+      //   throw Exception("User is null");
+      // }
+      // AppUser user = AppUser.fromJson(authResponse.user!.toJson());
+      AppUser? user = _mapSupabaseUserToAppUser(
+        supabaseUser: authResponse.user,
+      );
       print(user);
 
       return user;
@@ -46,15 +86,18 @@ class SupabaseAuthRepository implements AuthRepository {
         password: password,
         data: {"username": username, "full_name": fullName, "role": role.name},
       );
-      print("Auth response from supa_repo $authResponse");
-      if (authResponse.user == null) {
-        throw Exception("User is null");
-      }
-      print("AuthResponeUser from supa_repo ${authResponse.user}");
+      // print("Auth response from supa_repo $authResponse");
+      // if (authResponse.user == null) {
+      //   throw Exception("User is null");
+      // }
+      // print("AuthResponeUser from supa_repo ${authResponse.user}");
 
-      AppUser user = AppUser.fromJson(authResponse.user!.toJson());
-
-      print("User from supa_repo $user");
+      // AppUser user = AppUser.fromJson(authResponse.user!.toJson());
+      AppUser? user = _mapSupabaseUserToAppUser(
+        supabaseUser: authResponse.user,
+      );
+      print("SignUp response User: ${authResponse.user?.id}"); // Debug
+      // print("User from supa_repo $user");
       return user;
     } on AuthException catch (_) {
       print("Auth exception error from supa_repo");
@@ -71,24 +114,28 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<AppUser?> getCurrentUser() async {
-    try {
-      final User? supabaseUser = supabase.auth.currentUser;
+    // try {
+    //   final User? supabaseUser = supabase.auth.currentUser;
 
-      if (supabaseUser == null) {
-        return null;
-      }
+    //   if (supabaseUser == null) {
+    //     return null;
+    //   }
 
-      //? Construct the proper structure expected by AppUser.fromJson
-      final Map<String, dynamic> userData = {
-        "id": supabaseUser.id,
-        "email": supabaseUser.email,
-        "user_metadata": supabaseUser.userMetadata ?? {},
-      };
+    //   //? Construct the proper structure expected by AppUser.fromJson
+    //   final Map<String, dynamic> userData = {
+    //     "id": supabaseUser.id,
+    //     "email": supabaseUser.email,
+    //     "user_metadata": supabaseUser.userMetadata ?? {},
+    //   };
 
-      return AppUser.fromJson(userData);
-    } catch (e) {
-      print("Error parsing user data: $e");
-      return null; //? will trigger AuthUnauthenticated
-    }
+    //   return AppUser.fromJson(userData);
+    // } catch (e) {
+    //   print("Error parsing user data: $e");
+    //   return null; //? will trigger AuthUnauthenticated
+    // }
+
+    final User? supabaseUser = supabase.auth.currentUser;
+    final AppUser? user = _mapSupabaseUserToAppUser(supabaseUser: supabaseUser);
+    return user;
   }
 }

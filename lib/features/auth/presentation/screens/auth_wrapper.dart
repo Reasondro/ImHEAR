@@ -12,14 +12,14 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthStates>(
       builder: (_, authState) {
-        print(authState);
+        print("AuthWrapper building with state $authState");
         if (authState is AuthAuthenticated)
         //? authenticated
         {
           return DeafUserDashboardScreen();
-        } else if (authState is AuthUnauthenticated ||
-            authState is AuthLoading ||
-            authState is AuthInitial)
+        } else if (authState is AuthUnauthenticated || authState is AuthLoading
+        // ||authState is AuthInitial
+        )
         //? authenticating
         {
           return const AuthScreen();
