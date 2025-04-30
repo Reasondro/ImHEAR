@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'user_location_state.dart';
 
 class UserLocationCubit extends Cubit<UserLocationState> {
@@ -37,17 +38,17 @@ class UserLocationCubit extends Cubit<UserLocationState> {
     if (state is UserLocationTracking || state is UserLocationLoading) return;
 
     emit(UserLocationLoading());
-    _permissionRequested = false; // Reset permission request flag
+    _permissionRequested = false; //? reset permission request flag
 
     try {
-      //! 1. Check Location Service Enabled
+      //! 1. check location service enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         emit(UserLocationServiceDisabled());
         return;
       }
 
-      //! 2. Check and Request Permissions
+      //! 2. check and request permissions
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         _permissionRequested = true;
@@ -77,7 +78,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
         locationSettings: _locationSettings,
       );
 
-      //?aApply debounce if duration is greater than zero
+      //? aApply debounce if duration is greater than zero
       final Stream<Position> streamToListen =
           (_debounceDuration > Duration.zero)
               ? positionStream.debounceTime(_debounceDuration)

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; // For openAppSettings/openLocationSettings
 
@@ -32,7 +33,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.social_distance),
-            tooltip: "Find distance",
+            tooltip: "Find nearby officials",
             onPressed: () {},
           ),
           IconButton(

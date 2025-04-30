@@ -12,6 +12,7 @@ class SupabaseAuthRepository implements AuthRepository {
       return null;
     }
     try {
+      // supabaseUser.toJson();
       final Map<String, dynamic> userData = {
         "id": supabaseUser.id,
         "email": supabaseUser.email,
@@ -112,6 +113,8 @@ class SupabaseAuthRepository implements AuthRepository {
     await supabase.auth.signOut();
   }
 
+  //? this synchronous check might still be useful,
+  //? but the cubit should primarily rely on the stream (hopefully)
   @override
   Future<AppUser?> getCurrentUser() async {
     // try {

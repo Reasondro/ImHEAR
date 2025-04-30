@@ -109,6 +109,22 @@ class _DeafUserDashboardScreenState extends State<DeafUserDashboardScreen> {
   }
 }
 
+Future<void> findNearbyOfficials() async {
+  double long = 107.61307820317128;
+  double lat = -6.885419093134816;
+  double distance = 1000;
+
+  final dynamic data = await Supabase.instance.client.rpc(
+    "find_nearby_officials",
+    params: {
+      "user_lat": lat,
+      "user_lon": long,
+      "search_radius_meters": distance,
+    },
+  );
+  print(data);
+}
+
 
 
 // class UserLocationCubit extends Cubit<UserLocationState> {

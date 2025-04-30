@@ -13,11 +13,12 @@ class AuthCubit extends Cubit<AuthStates> {
   final AuthRepository authRepository;
   AppUser? _currentUser;
   late final StreamSubscription<AppUser?> _authStateSubscription;
+
   AuthCubit({required this.authRepository}) : super(AuthInitial()) {
-    //? --- subscribe to the auth state stream when Cubit is created ---
+    //? subscribe to the auth state stream when Cubit is created
     _authStateSubscription = authRepository.authStateChanges.listen(
       (AppUser? user) {
-        print("AuthCubit received user from stream: ${user?.id}"); // Debug
+        print("AuthCubit received user from stream: ${user?.id}"); //? debug
         if (user != null) {
           _currentUser = user;
           emit(AuthAuthenticated(user: user));
@@ -27,12 +28,18 @@ class AuthCubit extends Cubit<AuthStates> {
         }
       },
       onError: (error) {
-        print("AuthCubit stream error: $error"); // Debug
-        // Emit an error state if the stream itself has an issue
+        print("AuthCubit stream error: $error"); //? debuug
+        //? emit an error state if the stream itself has an issue
         emit(AuthError(message: "Authentication stream error: $error"));
       },
     );
-    // ----------------------------------------------------------------
+  }
+
+  @override
+  Future<void> close() {
+    print("AuthCubit closing, cancelling subsciption.");
+    _authStateSubscription.cancel();
+    return super.close();
   }
 
   // // ? check if user is authenticated
@@ -124,12 +131,5 @@ class AuthCubit extends Cubit<AuthStates> {
     } catch (e) {
       emit(AuthError(message: "Failed to sign out ${e.toString()}"));
     }
-  }
-
-  @override
-  Future<void> close() {
-    print("AuthCubit closing, cancelling subsciption.");
-    _authStateSubscription.cancel();
-    return super.close();
   }
 }
