@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseNearbyOfficialsRepository extends NearbyOfficialsRepository {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
 
+  @override
   Future<List<NearbyOfficial>> findNearbyOfficials({
     required double latitude,
     required double longitude,

@@ -4,7 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
-import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; // For openAppSettings/openLocationSettings
+import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; //? for openAppSettings/openLocationSettings
+import 'package:komunika/core/extensions/snackbar_extension.dart';
 
 class DeafUserDashboardScreen extends StatelessWidget {
   const DeafUserDashboardScreen({super.key});
@@ -34,12 +35,28 @@ class DeafUserDashboardScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.social_distance),
             tooltip: "Find nearby officials",
-            onPressed: () {},
+            onPressed: () {
+              final UserLocationState userLocationState =
+                  context.read<UserLocationCubit>().state;
+              if (userLocationState is UserLocationTracking) {
+                context.read<NearbyOfficialsCubit>().findNearbyOfficials(
+                  position: userLocationState.position,
+                  radius: 20,
+                );
+              } else {
+                context.customShowErrorSnackBar(
+                  "Start location tracking first",
+                );
+              }
+            },
           ),
           IconButton(
             icon: const Icon(Icons.stop),
             tooltip: 'Stop Tracking',
-            onPressed: () => context.read<UserLocationCubit>().stopTracking(),
+            onPressed: () {
+              context.read<UserLocationCubit>().stopTracking;
+              context.read<NearbyOfficialsCubit>().clearOfficials();
+            },
           ),
 
           IconButton(

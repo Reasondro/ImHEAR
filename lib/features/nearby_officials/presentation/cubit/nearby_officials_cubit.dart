@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:komunika/features/nearby_officials/domain/entities/nearby_official.dart';
 import 'package:komunika/features/nearby_officials/domain/repositories/nearby_officials_repository.dart';
 
@@ -14,19 +15,41 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
        super(NearbyOfficialsInitial());
 
   Future<void> findNearbyOfficials({
-    required double latitude,
-    required double longitude,
+    required Position position,
     required double radius,
   }) async {
-    List<NearbyOfficial> nearbyOfficials = await _nearbyOfficialRepository
-        .findNearbyOfficials(
-          latitude: latitude,
-          longitude: longitude,
-          radius: radius,
+    if (state is NearbyOfficialsLoading) {
+      return;
+    }
+    print(
+      "NearbyOfficialCubit: Fetching officials around Lat: ${position.latitude}, Lon: ${position.longitude} with radius $radius",
+    );
+
+    emit(NearbyOfficialsLoading());
+    try {
+      List<NearbyOfficial> nearbyOfficials = await _nearbyOfficialRepository
+          .findNearbyOfficials(
+            latitude: position.latitude,
+            longitude: position.longitude,
+            radius: radius,
+          );
+      if (!isClosed) {
+        print(
+          "NearbyOfficialsCubit: Sucesfully loaded ${nearbyOfficials.length} officials",
         );
+      }
+      print("Nearby officials from repo: \n $nearbyOfficials");
+    } catch (e) {
+      if (!isClosed) {
+        print("NearbyOfficialsCubit: Error fetching officials - $e");
+        emit(NearbyOfficialsError(message: "NearbyOfficialsCubit error: $e"));
+      }
+    }
+  }
 
-    print("Nearby officials from repo: \n $nearbyOfficials");
-
-    // return nearbyOfficials;
+  void clearOfficials() {
+    if (!isClosed) {
+      emit(NearbyOfficialsInitial());
+    }
   }
 }

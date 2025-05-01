@@ -4,11 +4,15 @@ import 'package:komunika/app/themes/light_mode.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/auth/presentation/screens/auth_wrapper.dart';
+import 'package:komunika/features/nearby_officials/data/repositories/supabase_nearby_officials_repository.dart';
+import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 
 class App extends StatelessWidget {
   App({super.key});
   final SupabaseAuthRepository authRepository = SupabaseAuthRepository();
+  final SupabaseNearbyOfficialsRepository nearbyOfficialsRepository =
+      SupabaseNearbyOfficialsRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +27,12 @@ class App extends StatelessWidget {
 
         BlocProvider<AuthCubit>(
           create: (_) => AuthCubit(authRepository: authRepository),
+        ),
+        BlocProvider<NearbyOfficialsCubit>(
+          create:
+              (_) => NearbyOfficialsCubit(
+                nearbyOfficialRepository: nearbyOfficialsRepository,
+              ),
         ),
       ],
       child: MaterialApp(
