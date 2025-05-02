@@ -23,7 +23,7 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
       return;
     }
     print(
-      "NearbyOfficialCubit: Fetching officials around Lat(Y): ${position.latitude}, Long(X): ${position.longitude} with radius $radius",
+      "NearbyOfficialCubit: Fetching officials around Lat(Y): ${position.latitude}, Lon(X): ${position.longitude} with radius $radius",
     );
 
     emit(NearbyOfficialsLoading());
