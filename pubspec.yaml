@@ -41,7 +41,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.3
   rename_app: ^1.6.2
   flutter_native_splash: ^2.4.5
-  flutter_bloc: ^9.1.0
+  flutter_bloc: ^9.1.1
   permission_handler: ^11.4.0
   geolocator: ^13.0.2
   duration: ^4.0.3
@@ -49,6 +49,7 @@ dependencies:
   google_maps_flutter: ^2.10.1
   equatable: ^2.0.7
   rxdart: ^0.28.0
+  flutter_svg: ^2.1.0
 
 dev_dependencies:
   flutter_test:
