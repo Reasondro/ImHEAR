@@ -87,7 +87,9 @@ class UserLocationCubit extends Cubit<UserLocationState> {
         (Position pos) {
           if (!isClosed) {
             //? check if cubit is still active
-            print("Location Emitted: ${pos.latitude}, ${pos.longitude}");
+            print(
+              "Location Emitted: Lat(Y): ${pos.latitude}, Long(X): ${pos.longitude}",
+            );
             emit(UserLocationTracking(position: pos));
           }
         },

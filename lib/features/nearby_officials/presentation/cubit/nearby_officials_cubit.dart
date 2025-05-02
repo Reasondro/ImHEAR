@@ -16,13 +16,14 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
 
   Future<void> findNearbyOfficials({
     required Position position,
-    required double radius,
+    // double radius = 50,
+    double radius = 500,
   }) async {
     if (state is NearbyOfficialsLoading) {
       return;
     }
     print(
-      "NearbyOfficialCubit: Fetching officials around Lat: ${position.latitude}, Lon: ${position.longitude} with radius $radius",
+      "NearbyOfficialCubit: Fetching officials around Lat(Y): ${position.latitude}, Long(X): ${position.longitude} with radius $radius",
     );
 
     emit(NearbyOfficialsLoading());
@@ -37,8 +38,9 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
         print(
           "NearbyOfficialsCubit: Sucesfully loaded ${nearbyOfficials.length} officials",
         );
+        print("Nearby officials from repo: \n $nearbyOfficials");
+        emit(NearbyOfficialsLoaded(officials: nearbyOfficials));
       }
-      print("Nearby officials from repo: \n $nearbyOfficials");
     } catch (e) {
       if (!isClosed) {
         print("NearbyOfficialsCubit: Error fetching officials - $e");
