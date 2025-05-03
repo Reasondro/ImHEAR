@@ -1,12 +1,15 @@
+// ignore_for_file: constant_identifier_names
+
 enum UserRole {
   deaf_user,
-  official;
+  official,
+  org_admin;
 
-  // Helper method to convert String to enum
+  //? helper method to convert String to enum
   static UserRole fromString(String value) {
     return UserRole.values.firstWhere(
       (role) => role.name == value,
-      orElse: () => UserRole.deaf_user, // Default role
+      orElse: () => UserRole.deaf_user, //? default role
     );
   }
 }

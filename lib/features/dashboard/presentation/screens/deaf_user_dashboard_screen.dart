@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
+import 'package:komunika/features/chat/presentation/screens/chat_screen.dart';
 import 'package:komunika/features/nearby_officials/domain/entities/nearby_official.dart';
 import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
@@ -185,31 +187,85 @@ class DeafUserDashboardScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final NearbyOfficial official =
                               state.officials[index];
+                          final String subSpaceName = official.locationName;
+                          final String subSpaceId = official.subSpaceId;
+
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 4.0),
                             child: ListTile(
-                              title: Text(
-                                official.locationName,
-                              ), // Or FullName?
+                              title: Text(subSpaceName),
                               subtitle: Text(
-                                '${official.officialFullName} (${official.officialUserName})\n${official.locationDescription ?? 'No description'}\nDistance: ${official.distanceMeters.toStringAsFixed(0)}m',
+                                "Handled by: ${official.officialFullName} (${official.officialUserName})\n${official.locationDescription ?? 'No description'}\nDistance: ${official.distanceMeters.toStringAsFixed(0)}m",
                               ),
                               isThreeLine: true,
-                              // TODO: Add onTap to potentially open a chat?
-                              onTap: () {
-                                //? placeholder for future chat functionality
-                                print("Tapped on ${official.officialUserName}");
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "Tapped on ${official.officialUserName}",
-                                    ),
-                                    duration: Duration(seconds: 1),
-                                  ),
-                                );
+                              onTap: () async {
+                                try {
+                                  final ChatRepository chatRepository =
+                                      context.read<ChatRepository>();
+                                  print("Tapped on SubSpace ID: $subSpaceId");
+                                  final int roomId = await chatRepository
+                                      .getOrCreateChatRoom(
+                                        subSpaceId: subSpaceId,
+                                      );
+                                  print(
+                                    "Obtained Room ID: $roomId for SubSpace ID: $subSpaceId",
+                                  );
+
+                                  if (context.mounted) {
+                                    // Navigator.of(context).push(ChatScreen(roomId: roomId, subSpaceName: subSpaceName))
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => ChatScreen(
+                                              roomId: roomId,
+                                              subSpaceName: subSpaceName,
+                                            ),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  print(
+                                    "Error in onTap getOrCreateChatRoom: $e",
+                                  );
+                                  if (context.mounted) {
+                                    context.customShowErrorSnackBar(
+                                      "Error opening chat: ${e.toString()}",
+                                    );
+                                  }
+                                }
                               },
                             ),
                           );
+                          // ! --------- BEFORE CHAT SCREEN
+                          // final NearbyOfficial official =
+                          //     state.officials[index];
+                          // return Card(
+                          //   margin: const EdgeInsets.symmetric(vertical: 4.0),
+                          //   child: ListTile(
+                          //     title: Text(
+                          //       official.locationName,
+                          //     ), // Or FullName?
+                          //     subtitle: Text(
+                          //       '${official.officialFullName} (${official.officialUserName})\n${official.locationDescription ?? 'No description'}\nDistance: ${official.distanceMeters.toStringAsFixed(0)}m',
+                          //     ),
+                          //     isThreeLine: true,
+                          //     // TODO: Add onTap to potentially open a chat?
+                          //     onTap: () {
+                          //       //? placeholder for future chat functionality
+                          //       print("Tapped on ${official.officialUserName}");
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         SnackBar(
+                          //           content: Text(
+                          //             "Tapped on ${official.officialUserName}",
+                          //           ),
+                          //           duration: Duration(seconds: 1),
+                          //         ),
+                          //       );
+                          //     },
+                          //   ),
+                          // );
+                          // ! --------- BEFORE CHAT SCREEN
                         },
                       );
                     } else {
