@@ -212,9 +212,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
                                   );
 
                                   if (context.mounted) {
-                                    // Navigator.of(context).push(ChatScreen(roomId: roomId, subSpaceName: subSpaceName))
-                                    Navigator.push(
-                                      context,
+                                    Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder:
                                             (_) => ChatScreen(
@@ -223,6 +221,16 @@ class DeafUserDashboardScreen extends StatelessWidget {
                                             ),
                                       ),
                                     );
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder:
+                                    //         (_) => ChatScreen(
+                                    //           roomId: roomId,
+                                    //           subSpaceName: subSpaceName,
+                                    //         ),
+                                    //   ),
+                                    // );
                                   }
                                 } catch (e) {
                                   print(
@@ -237,35 +245,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
                               },
                             ),
                           );
-                          // ! --------- BEFORE CHAT SCREEN
-                          // final NearbyOfficial official =
-                          //     state.officials[index];
-                          // return Card(
-                          //   margin: const EdgeInsets.symmetric(vertical: 4.0),
-                          //   child: ListTile(
-                          //     title: Text(
-                          //       official.locationName,
-                          //     ), // Or FullName?
-                          //     subtitle: Text(
-                          //       '${official.officialFullName} (${official.officialUserName})\n${official.locationDescription ?? 'No description'}\nDistance: ${official.distanceMeters.toStringAsFixed(0)}m',
-                          //     ),
-                          //     isThreeLine: true,
-                          //     // TODO: Add onTap to potentially open a chat?
-                          //     onTap: () {
-                          //       //? placeholder for future chat functionality
-                          //       print("Tapped on ${official.officialUserName}");
-                          //       ScaffoldMessenger.of(context).showSnackBar(
-                          //         SnackBar(
-                          //           content: Text(
-                          //             "Tapped on ${official.officialUserName}",
-                          //           ),
-                          //           duration: Duration(seconds: 1),
-                          //         ),
-                          //       );
-                          //     },
-                          //   ),
-                          // );
-                          // ! --------- BEFORE CHAT SCREEN
                         },
                       );
                     } else {
@@ -283,102 +262,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-
-      //! -------------- ! BEFORE !  --------------  //
-      // Center(
-      //   //! use BlocBuilder to automatically rebuild the UI based on the Cubit's state
-      //   child: BlocBuilder<UserLocationCubit, UserLocationState>(
-      //     builder: (context, state) {
-      //       //? --- handle different states ---
-
-      //       if (state is UserLocationInitial) {
-      //         return const Text('Location tracking stopped or not started.');
-      //       } else if (state is UserLocationLoading) {
-      //         return const Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             CircularProgressIndicator(),
-      //             SizedBox(height: 10),
-      //             Text('Getting location...'),
-      //           ],
-      //         );
-      //       } else if (state is UserLocationServiceDisabled) {
-      //         return Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             const Text('Location services are disabled.'),
-      //             const SizedBox(height: 10),
-      //             ElevatedButton(
-      //               onPressed: () async {
-      //                 //? attempting to open settings
-      //                 await Geolocator.openLocationSettings();
-      //                 //? optionally recheck after returning from settings
-      //                 if (!context.mounted) {
-      //                   return;
-      //                 }
-      //                 context.read<UserLocationCubit>().startTracking();
-      //               },
-      //               child: const Text('Open Location Settings'),
-      //             ),
-      //           ],
-      //         );
-      //       } else if (state is UserLocationPermissionDenied) {
-      //         return Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             const Text('Location permission denied.'),
-      //             const SizedBox(height: 10),
-      //             ElevatedButton(
-      //               onPressed: () {
-      //                 //? retr starting => include the permission request
-      //                 context.read<UserLocationCubit>().startTracking();
-      //               },
-      //               child: const Text('Request Permission Again'),
-      //             ),
-      //           ],
-      //         );
-      //       } else if (state is UserLocationPermissionDeniedForever) {
-      //         return Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //             const Text(
-      //               'Location permission permanently denied. Please enable it in your device\'s app settings.',
-      //             ),
-      //             const SizedBox(height: 10),
-      //             ElevatedButton(
-      //               onPressed: () async {
-      //                 // Open the app settings page for the user
-      //                 await Geolocator.openAppSettings();
-      //               },
-      //               child: const Text('Open App Settings'),
-      //             ),
-      //           ],
-      //         );
-      //       } else if (state is UserLocationTracking) {
-      //         //? display curr location
-      //         return Text(
-      //           'Current Location:\n'
-      //           'Latitude: ${state.position.latitude.toStringAsFixed(6)}\n'
-      //           'Longitude: ${state.position.longitude.toStringAsFixed(6)}\n'
-      //           'Accuracy: ${state.position.accuracy.toStringAsFixed(1)} m\n'
-      //           'Timestamp: ${state.position.timestamp}',
-      //           textAlign: TextAlign.center,
-      //         );
-      //       } else if (state is UserLocationError) {
-      //         //? display error message
-      //         return Text(
-      //           'Error fetching location:\n${state.message}',
-      //           style: const TextStyle(color: Colors.red),
-      //           textAlign: TextAlign.center,
-      //         );
-      //       } else {
-      //         //? fallback for any unhandled state
-      //         return const Text('Unknown location state.');
-      //       }
-      //     },
-      //   ),
-      // ),
-      //! -------------- ! BEFORE !  --------------  //
     );
   }
 }
