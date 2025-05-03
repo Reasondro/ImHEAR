@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:komunika/features/nearby_officials/domain/entities/nearby_official.dart';
 import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_state.dart'; //? for openAppSettings/openLocationSettings
@@ -101,10 +101,9 @@ class DeafUserDashboardScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Use BlocBuilder for location status UI
+                      //? use BlocBuilder for location status UI
                       BlocBuilder<UserLocationCubit, UserLocationState>(
                         builder: (context, state) {
-                          // (Keep your existing UI logic for location states here)
                           if (state is UserLocationInitial) {
                             return const Text(
                               'Location tracking stopped or not started.',
@@ -123,14 +122,14 @@ class DeafUserDashboardScreen extends StatelessWidget {
                               'Location services are disabled.',
                               style: TextStyle(color: Colors.orange),
                             );
-                            // Add button to open settings if needed
+                            //? add button to open settings if needed
                           } else if (state is UserLocationPermissionDenied ||
                               state is UserLocationPermissionDeniedForever) {
                             return const Text(
                               'Location permission denied.',
                               style: TextStyle(color: Colors.red),
                             );
-                            // Add button to open settings if needed
+                            //? add button to open settings if needed
                           } else if (state is UserLocationTracking) {
                             return Text(
                               'Tracking Active:\n'
@@ -162,7 +161,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Expanded(
-                // Use BlocBuilder for nearby officials UI
+                //? use BlocBuilder for nearby officials UI
                 child: BlocBuilder<NearbyOfficialsCubit, NearbyOfficialsState>(
                   builder: (context, state) {
                     if (state is NearbyOfficialsLoading) {
@@ -180,11 +179,12 @@ class DeafUserDashboardScreen extends StatelessWidget {
                           child: Text('No officials found nearby.'),
                         );
                       }
-                      // Display the list of officials
+                      //? display the list of officials
                       return ListView.builder(
                         itemCount: state.officials.length,
                         itemBuilder: (context, index) {
-                          final official = state.officials[index];
+                          final NearbyOfficial official =
+                              state.officials[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 4.0),
                             child: ListTile(
@@ -197,7 +197,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
                               isThreeLine: true,
                               // TODO: Add onTap to potentially open a chat?
                               onTap: () {
-                                // Placeholder for future chat functionality
+                                //? placeholder for future chat functionality
                                 print("Tapped on ${official.officialUserName}");
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -213,7 +213,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
                         },
                       );
                     } else {
-                      // NearbyOfficialsInitial state
+                      //? nearbyOfficialsInitial state
                       return const Center(
                         child: Text(
                           'Start location tracking to find officials.',
