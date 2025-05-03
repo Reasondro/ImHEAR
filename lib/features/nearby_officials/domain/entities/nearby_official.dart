@@ -2,7 +2,8 @@ import 'package:equatable/equatable.dart';
 
 class NearbyOfficial extends Equatable {
   const NearbyOfficial({
-    required this.locationID,
+    required this.locationId,
+    required this.subSpaceId,
     required this.officialUserId,
     required this.officialUserName,
     required this.officialFullName,
@@ -11,7 +12,8 @@ class NearbyOfficial extends Equatable {
     required this.distanceMeters,
   });
 
-  final int locationID;
+  final int locationId;
+  final String subSpaceId;
   final String officialUserId;
   final String officialUserName;
   final String officialFullName;
@@ -21,7 +23,7 @@ class NearbyOfficial extends Equatable {
 
   @override
   List<Object?> get props => [
-    locationID,
+    locationId,
     officialUserId,
     officialUserName,
     officialFullName,

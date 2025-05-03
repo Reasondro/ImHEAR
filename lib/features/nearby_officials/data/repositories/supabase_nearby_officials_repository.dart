@@ -55,7 +55,8 @@ class SupabaseNearbyOfficialsRepository extends NearbyOfficialsRepository {
             // to NearbyOfficial fields. Handle types carefully.
             return NearbyOfficial(
               // Ensure keys match EXACTLY the column names returned by the function
-              locationID: data['location_id'] as int,
+              locationId: data['location_id'] as int,
+              subSpaceId: data['sub_space_id'] as String,
               officialUserId: data['official_user_id'] as String,
               officialUserName:
                   data['official_username']
