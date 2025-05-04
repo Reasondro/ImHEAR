@@ -34,7 +34,7 @@ class AppUser {
       final email = jsonUser['email'];
       final userMetadata = jsonUser['user_metadata'];
 
-      // ? --- validate top-level fields ---
+      // ? validate top-level fields
       if (id == null || id is! String) {
         throw FormatException(
           "Invalid or missing 'id' ($id) in user JSON: $jsonUser",
@@ -50,13 +50,13 @@ class AppUser {
           "Invalid or missing 'user_metadata' ($userMetadata) in user JSON: $jsonUser",
         );
       }
-      // ? --- extract fields from user_metadata ---
+      // ? extract fields from user_metadata
       final username = userMetadata['username'];
       final fullName = userMetadata['full_name'];
-      final avatarUrl = userMetadata['avatar_url']; // Optional
+      final avatarUrl = userMetadata['avatar_url']; // ? optional
       final roleString = userMetadata['role'];
 
-      // ? --- validate user_metadata fields ---
+      // ? validate user_metadata fields
       if (username == null || username is! String) {
         throw FormatException(
           "Invalid or missing 'username' ($username) in user_metadata: $userMetadata",
@@ -78,7 +78,7 @@ class AppUser {
           "Invalid or missing 'role' ($roleString) in user_metadata: $userMetadata",
         );
       }
-      // ? --- parse Role ---
+      // ? parse Role
       final UserRole role;
       try {
         role = UserRole.fromString(roleString);

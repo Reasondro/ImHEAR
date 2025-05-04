@@ -17,7 +17,8 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
   Future<void> findNearbyOfficials({
     required Position position,
     // double radius = 50,
-    double radius = 500,
+    // double radius = 500,
+    double radius = 100,
   }) async {
     if (state is NearbyOfficialsLoading) {
       return;
