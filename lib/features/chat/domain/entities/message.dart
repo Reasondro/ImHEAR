@@ -18,26 +18,16 @@ class Message extends Equatable {
   @override
   List<Object?> get props => [id, roomId, senderId, content, createdAt];
 
-  // factory Message.fromMap(Map<String, dynamic> map) {
-  //   return Message(
-  //     id: map["id"] as int,
-  //     roomId: map["roomId"] as int,
-  //     senderId: map["senderId"] as String,
-  //     content: map["content"] as String,
-  //     createdAt: DateTime.parse(map["createdAt"] as String),
-  //   );
-  // }
-
   factory Message.fromMap(Map<String, dynamic> map) {
     try {
       //!  THIS IS IMPORTANT -> Perform null and type checks before casting
       final id = map['id'];
       final roomId = map['room_id'];
-      final senderId = map['sender_id']; // Can be null
+      final senderId = map['sender_id']; //?  can be null
       final content = map['content'];
       final createdAtStr = map['created_at'];
 
-      // //!  THIS IS IMPORTANT  --- Validation ---
+      // //!  THIS IS IMPORTANT -->  --- Validation ---
       if (id == null || id is! int) {
         throw FormatException(
           "Invalid or missing 'id' ($id) in message map: $map",
@@ -48,12 +38,19 @@ class Message extends Equatable {
           "Invalid or missing 'room_id' ($roomId) in message map: $map",
         );
       }
-      // //!  THIS IS IMPORTANT  senderId can be null, but check if it's a String if present
+      // ! THIS IS IMPORTANT  senderId can be null, but check if it's a String if present
       if (senderId != null && senderId is! String) {
         throw FormatException(
           "Invalid 'sender_id' type (${senderId.runtimeType}) in message map: $map",
         );
       }
+
+      // if (senderId == null || senderId is! String) {
+      //   throw FormatException(
+      //     "Invalid 'sender_id' type (${senderId.runtimeType}) in message map: $map",
+      //   );
+      // }
+
       if (content == null || content is! String) {
         throw FormatException(
           "Invalid or missing 'content' ($content) in message map: $map",
@@ -69,9 +66,7 @@ class Message extends Equatable {
       return Message(
         id: id,
         roomId: roomId,
-        senderId:
-            senderId
-                as String?, // //!  THIS IS IMPORTANT  Cast as nullable String
+        senderId: senderId,
         content: content,
         createdAt:
             DateTime.parse(
@@ -85,8 +80,31 @@ class Message extends Equatable {
       throw Exception("Failed to parse message data: $e");
     }
   }
-}
 
-// features/chat/domain/entities/message.dart
-// Should have fields like: id (int), roomId (int), senderId (String), content (String), createdAt (DateTime)
-// Remember to use Equatable!
+  // ? BELOW METHOD STILL WORKS FOR SOME REASON. BUT NEVER BE SO SURE. USE THE MOST SAFEST METHOD ABOVE
+  // factory Message.fromMap(Map<String, dynamic> map) {
+  //   final id = map['id'] as int;
+  //   final roomId = map['room_id'] as int;
+  //   final senderId = map['sender_id'] as String;
+  //   final content = map['content'] as String;
+  //   final createdAtStr = map['created_at'] as String;
+  //   return Message(
+  //     id: id,
+  //     roomId: roomId,
+  //     senderId: senderId,
+  //     content: content,
+  //     createdAt: DateTime.parse(createdAtStr).toLocal(),
+  //   );
+  // }
+
+  // ! DON'T USE THIS METHOD. DOES NOT WORK. NULL / INT ERROR SHENANIGNAS.
+  // factory Message.fromMap(Map<String, dynamic> map) {
+  //   return Message(
+  //     id: map["id"] as int,
+  //     roomId: map["roomId"] as int,
+  //     senderId: map["senderId"] as String,
+  //     content: map["content"] as String,
+  //     createdAt: DateTime.parse(map["createdAt"] as String),
+  //   );
+  // }
+}
