@@ -103,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   padding: EdgeInsets.only(
                     top: 8.0,
-                    // bottom: 32.0,
+
                     bottom:
                         MediaQuery.of(context).viewInsets.bottom > 0
                             ? 8.0
@@ -115,6 +115,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Expanded(
                         child: TextField(
+                          maxLines: 6,
+                          minLines: 1,
                           controller: _textController,
                           textCapitalization: TextCapitalization.sentences,
                           autocorrect: true,

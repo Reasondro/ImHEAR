@@ -17,9 +17,11 @@ class UserLocationCubit extends Cubit<UserLocationState> {
   UserLocationCubit({
     LocationAccuracy accuracy =
         LocationAccuracy.bestForNavigation, //? default for tracking
-    int distanceFilter = 2, //? update only after x meters change
+    // int distanceFilter = 2, //? update only after x meters change
+    int distanceFilter = 5, //? update only after x meters change
     Duration debounceDuration = const Duration(
-      milliseconds: 500,
+      // milliseconds: 500,
+      milliseconds: 2000,
       // milliseconds: 10000, //? fuck around and find out
     ),
   }) : _locationSettings = LocationSettings(

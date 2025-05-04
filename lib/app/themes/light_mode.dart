@@ -10,8 +10,8 @@ final ThemeData kotabaLightTheme = ThemeData().copyWith(
   colorScheme: kotabaLightColorTheme,
   // colorScheme: ColorScheme.light(),
   textTheme: GoogleFonts.dmSansTextTheme(),
-  appBarTheme: AppBarTheme(
-    backgroundColor: const Color.fromARGB(255, 25, 25, 63),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 25, 25, 63),
     foregroundColor: Colors.white,
   ),
   scaffoldBackgroundColor: Colors.white,

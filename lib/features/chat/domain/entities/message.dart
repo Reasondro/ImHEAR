@@ -20,14 +20,14 @@ class Message extends Equatable {
 
   factory Message.fromMap(Map<String, dynamic> map) {
     try {
-      //!  THIS IS IMPORTANT -> Perform null and type checks before casting
+      // !  THIS IS IMPORTANT ==>  Perform null and type checks before casting
       final id = map['id'];
       final roomId = map['room_id'];
       final senderId = map['sender_id']; //?  can be null
       final content = map['content'];
       final createdAtStr = map['created_at'];
 
-      // //!  THIS IS IMPORTANT -->  --- Validation ---
+      //  !  THIS IS IMPORTANT ==>   --- Validation ---
       if (id == null || id is! int) {
         throw FormatException(
           "Invalid or missing 'id' ($id) in message map: $map",
@@ -38,18 +38,12 @@ class Message extends Equatable {
           "Invalid or missing 'room_id' ($roomId) in message map: $map",
         );
       }
-      // ! THIS IS IMPORTANT  senderId can be null, but check if it's a String if present
+      //  !  THIS IS IMPORTANT ==>  senderId can be null, but check if it's a String if present
       if (senderId != null && senderId is! String) {
         throw FormatException(
           "Invalid 'sender_id' type (${senderId.runtimeType}) in message map: $map",
         );
       }
-
-      // if (senderId == null || senderId is! String) {
-      //   throw FormatException(
-      //     "Invalid 'sender_id' type (${senderId.runtimeType}) in message map: $map",
-      //   );
-      // }
 
       if (content == null || content is! String) {
         throw FormatException(
@@ -61,7 +55,7 @@ class Message extends Equatable {
           "Invalid or missing 'created_at' ($createdAtStr) in message map: $map",
         );
       }
-      // ---  //!  THIS IS IMPORTANT  End Validation ---
+      // !  THIS IS IMPORTANT ==> End Validation ---
 
       return Message(
         id: id,
