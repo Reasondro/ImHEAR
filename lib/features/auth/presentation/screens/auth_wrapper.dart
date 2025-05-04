@@ -16,7 +16,7 @@ class AuthWrapper extends StatelessWidget {
         if (authState is AuthAuthenticated)
         //? authenticated
         {
-          return DeafUserDashboardScreen();
+          return const DeafUserDashboardScreen();
         } else if (authState is AuthUnauthenticated || authState is AuthLoading
         // ||authState is AuthInitial
         )
@@ -30,7 +30,10 @@ class AuthWrapper extends StatelessWidget {
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [CircularProgressIndicator(), Text("$authState")],
+                children: [
+                  const CircularProgressIndicator(),
+                  Text("$authState"),
+                ],
               ),
             ),
           );

@@ -215,7 +215,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder:
-                                            (_) => ChatScreen(
+                                            (context) => ChatScreen(
                                               roomId: roomId,
                                               subSpaceName: subSpaceName,
                                             ),
