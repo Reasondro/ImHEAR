@@ -1,6 +1,7 @@
 // features/chat/data/repositories/supabase_chat_repository.dart
 
 import 'dart:async';
+import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:komunika/features/chat/domain/entities/message.dart';
 import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
@@ -51,13 +52,14 @@ class SupabaseChatRepository implements ChatRepository {
           .eq('room_id', roomId) //? filter for the specific room
           .order(
             'created_at',
-            ascending: true,
+            // ascending: true, //? why did put this lmfao
           ); //? order messages chronologically
 
       //?  stream emits List<Map<String, dynamic>> representing the current state
       //? map this raw data to  Message entity
       return stream
           .map((List<Map<String, dynamic>> listOfMaps) {
+            print("List of maps: $listOfMaps");
             return listOfMaps
                 .map(
                   (Map<String, dynamic> messageMap) =>

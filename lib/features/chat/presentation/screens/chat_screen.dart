@@ -38,10 +38,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final String text = _textController.text.trim();
 
     if (text.isNotEmpty) {
-      // Use the descendantContext to find the ChatCubit
+      // ? use the descendantContext to find the ChatCubit
       descendantContext.read<ChatCubit>().sendMessage(text);
       _textController.clear();
-      // Use the descendantContext for FocusScope as well
+      // ? use the descendantContext for FocusScope as well
       FocusScope.of(descendantContext).unfocus();
     }
   }
@@ -96,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             Builder(
-              builder: (descendantContext) {
+              builder: (BuildContext descendantContext) {
                 return Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
