@@ -38,3 +38,55 @@ void main() async {
 // * CHAT APP TUTOR
 // * DATABSE DESGIN???
 // * BLUETOOTH CONNNECTION
+
+
+
+// TODO NEW TODO LIST
+
+// Ah, okay! Thank you for adding that crucial context. Knowing that hardware integration is a main objective and scores highly in the competition definitely changes the prioritization. My previous recommendation focused on software completeness, but competition goals are paramount.
+
+// Given this, let's adjust the plan to prioritize demonstrating the Bluetooth/ESP32 link earlier, while still making logical progress. Here’s a revised suggested order:
+
+//     Step 1: Minimum Viable Official Response Path:
+//         Goal: Create the absolute simplest way for some message to be sent back as if from an official, which can later trigger the wristband.
+//         Action: You don't need the full Official UI yet. You could:
+//             Implement the sendMessage part of the SupabaseChatRepository (already done).
+//             Create a temporary "Send Reply" button within the Deaf User's ChatScreen (just for testing!) that calls sendMessage, maybe hardcoding the senderId to be the official user's ID you created earlier.
+//             OR, even simpler, use the Supabase Studio (database table editor) to manually insert a new message into the messages table for the relevant room_id, setting the sender_id to your test official's ID.
+//         Reasoning: This gives you a way to trigger the "message received" event in the app's ChatCubit stream without building the full official UI right now.
+
+//     Step 2: Basic Bluetooth (BLE) Integration & Wristband Trigger:
+//         Goal: Prove the core hardware connection and a simple reaction.
+//         Action:
+//             Set up your ESP32 project to act as a BLE peripheral.
+//             Use a Flutter BLE package (like flutter_blue_plus or flutter_reactive_ble) in your Flutter app to scan for and connect to the ESP32.
+//             Define a very simple BLE characteristic or service. For example, the app writes a value (1 for vibrate, 2 for display icon X) to a characteristic on the ESP32.
+//             Modify the ChatCubit or the ChatScreen's BlocListener listening to the message stream: When a new message arrives (and isMe is false), send the "vibrate" command over BLE to the connected ESP32.
+//             Get the ESP32 to react (vibrate the motor, light up an LED, display something basic).
+//         Reasoning: This directly tackles the high-priority hardware objective. Getting a simple end-to-end "message received -> BLE command -> wristband vibrates" flow working early is a huge win for the competition aspect.
+
+//     Step 3: Integrate Simple Mandatory AI Feature:
+//         Goal: Fulfill the competition requirement with a functional, demonstrable AI integration.
+//         Action: Choose the simplest viable AI feature first. A basic FAQ chatbot accessible from a button, or simple pre-defined response suggestions based on keywords, might be faster to implement than complex context-aware features. Integrate the Gemini/Gemma API call.
+//         Reasoning: Checks off the mandatory AI requirement without getting bogged down in complex AI logic before the hardware link is proven.
+
+//     Step 4: Build Out Core UI & Remaining Functionality:
+//         Goal: Make the app fully functional and presentable.
+//         Action: Now, circle back to fully implementing Option 1 from before:
+//             Build the proper Official User UI based on Figma (logging in, seeing assigned sub spaces, viewing chat lists, sending replies properly). Replace the temporary message sending mechanism from Step 1.
+//             Build the Org Admin UI for managing sub spaces (like your Figma settings page).
+//             Implement GoRouter and navigation shells as planned.
+//             Polish the overall UI/UX.
+//             Enhance the AI feature if time permits.
+//             Refine the hardware interaction with more specific commands/displays.
+
+// Why this revised order?
+
+// This prioritizes tackling the highest impact competition requirements (Hardware Integration, Mandatory AI) earlier, ensuring you have something demonstrable for those key areas. Step 1 provides the minimum linkage needed to test Step 2 effectively. Step 4 then fleshes out the complete application once the core differentiators are addressed.
+
+// Does this revised plan, focusing on getting a basic hardware interaction working sooner, feel like a better approach given the competition's emphasis?
+
+
+
+
+
