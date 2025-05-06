@@ -69,7 +69,7 @@ class CustomBluetoothService {
       // Stop scan after timeout automatically by FlutterBluePlus usually,
       // but ensure it stops if startScan is called again or on error.
       await Future.delayed(
-        Duration(seconds: 11),
+        const Duration(seconds: 11),
       ); // Wait a bit longer than timeout
       stopScan(); // Ensure stop
     } catch (e) {

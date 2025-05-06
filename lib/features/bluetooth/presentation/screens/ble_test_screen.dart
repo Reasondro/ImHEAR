@@ -15,9 +15,13 @@ class _BleTestScreenState extends State<BleTestScreen> {
   final CustomBluetoothService _bluetoothService = CustomBluetoothService();
   BluetoothDevice?
   _selectedDevice; // To store the device user wants to connect to
+
+  final TextEditingController _commandController = TextEditingController();
+
   @override
   void dispose() {
     _bluetoothService.dispose(); // Clean up service
+    _commandController.dispose(); // Dispose the controller
     super.dispose();
   }
 
@@ -119,35 +123,72 @@ class _BleTestScreenState extends State<BleTestScreen> {
             ValueListenableBuilder<bool>(
               valueListenable: _bluetoothService.isConnected,
               builder: (context, isConnected, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                return Column(
                   children: [
-                    ElevatedButton(
-                      onPressed:
-                          isConnected
-                              ? () async {
-                                String dummy = await _bluetoothService
-                                    .sendCommand("1");
-                                setState(() {
-                                  result = dummy;
-                                });
-                              }
-                              : null,
-                      child: const Text("Send '1'"),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _commandController,
+                            decoration: const InputDecoration(
+                              hintText: "Enter command",
+                              border: OutlineInputBorder(),
+                            ),
+                            enabled: isConnected,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        ElevatedButton(
+                          onPressed:
+                              isConnected
+                                  ? () async {
+                                    if (_commandController.text.isNotEmpty) {
+                                      String commandToSend =
+                                          _commandController.text;
+                                      String commandResult =
+                                          await _bluetoothService.sendCommand(
+                                            commandToSend,
+                                          );
+                                      setState(() {
+                                        result = commandResult;
+                                      });
+                                      _commandController.clear();
+                                    }
+                                  }
+                                  : null,
+                          child: const Icon(Icons.send),
+                        ),
+                        // ElevatedButton(
+                        //   onPressed:
+                        //       isConnected
+                        //           ? () async {
+                        //             String dummy = await _bluetoothService
+                        //                 .sendCommand("1");
+                        //             setState(() {
+                        //               result = dummy;
+                        //             });
+                        //           }
+                        //           : null,
+                        //   child: const Text("Send '1'"),
+                        // ),
+                        // ElevatedButton(
+                        //   onPressed:
+                        //       isConnected
+                        //           ? () async {
+                        //             String dummy = await _bluetoothService
+                        //                 .sendCommand("2");
+                        //             setState(() {
+                        //               result = dummy;
+                        //             });
+                        //           }
+                        //           : null,
+                        //   child: const Text("Send '2'"),
+                        // ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed:
-                          isConnected
-                              ? () async {
-                                String dummy = await _bluetoothService
-                                    .sendCommand("2");
-                                setState(() {
-                                  result = dummy;
-                                });
-                              }
-                              : null,
-                      child: const Text("Send '2'"),
-                    ),
+                    const SizedBox(height: 10),
+                    // Disconnect Button (moved here for better grouping)
                     ElevatedButton(
                       onPressed:
                           isConnected ? _bluetoothService.disconnect : null,
