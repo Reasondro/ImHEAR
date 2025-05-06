@@ -190,14 +190,14 @@ class CustomBluetoothService {
       print("Sending command: '$command' as bytes: $bytesToSend");
       result = "Sending command: '$command' as bytes: $bytesToSend";
       // Use write without response for simple commands, or false for acknowledged write
-      await _targetCharacteristic!.write(bytesToSend, withoutResponse: true);
+      await _targetCharacteristic!.write(bytesToSend, withoutResponse: false);
       print("Command sent successfully.");
       result = "Command sent successfully.";
       return result;
     } catch (e) {
       print("Error writing command: $e");
 
-      result = "Error writing co mmand: $e";
+      result = "Error writing command: $e";
       return result;
     }
   }
