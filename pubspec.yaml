@@ -42,7 +42,7 @@ dependencies:
   rename_app: ^1.6.2
   flutter_native_splash: ^2.4.5
   flutter_bloc: ^9.1.1
-  permission_handler: ^11.4.0
+  permission_handler: ^12.0.0+1
   geolocator: ^13.0.2
   duration: ^4.0.3
   intl: ^0.20.2
