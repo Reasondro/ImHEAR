@@ -17,7 +17,9 @@ class AuthWrapper extends StatelessWidget {
         //? authenticated
         {
           return const DeafUserDashboardScreen();
-        } else if (authState is AuthUnauthenticated || authState is AuthLoading
+        } else if (authState is AuthUnauthenticated ||
+            authState is AuthLoading ||
+            authState is AuthError
         // ||authState is AuthInitial
         )
         //? authenticating
