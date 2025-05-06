@@ -58,6 +58,7 @@ class SupabaseChatRepository implements ChatRepository {
       return stream
           .map((List<Map<String, dynamic>> listOfMaps) {
             print("List of maps: $listOfMaps");
+            // {"id" : 1}
             return listOfMaps
                 .map(
                   (Map<String, dynamic> messageMap) =>

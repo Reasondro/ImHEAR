@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:komunika/features/bluetooth/presentation/screens/ble_test_screen.dart';
 import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
 import 'package:komunika/features/chat/presentation/screens/chat_screen.dart';
 import 'package:komunika/features/nearby_officials/domain/entities/nearby_official.dart';
@@ -66,6 +67,17 @@ class DeafUserDashboardScreen extends StatelessWidget {
             onPressed: () {
               // Call the signOut method from AuthCubit
               context.read<AuthCubit>().signOut();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.bluetooth),
+            tooltip: 'Bluetooth',
+            onPressed: () {
+              // Call the signOut method from AuthCubit
+              // context.read<AuthCubit>().signOut();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const BleTestScreen()),
+              );
             },
           ),
         ],

@@ -170,27 +170,35 @@ class CustomBluetoothService {
   }
 
   // --- Writing Data ---
-  Future<void> sendCommand(String command) async {
+  Future<String> sendCommand(String command) async {
+    String result;
     if (_targetCharacteristic == null || !isConnected.value) {
       print("Not connected or characteristic not found.");
-      return;
+      result = "Not connected or characteristic not found.";
+      return result;
     }
 
     if (!_targetCharacteristic!.properties.write) {
       print("Characteristic does not support writing.");
-      return;
+      result = "Characteristic does not support writing.";
+      return result;
     }
 
     try {
       // IMPORTANT: ESP32 code expects a string. Encode string to bytes (UTF-8).
       List<int> bytesToSend = utf8.encode(command);
       print("Sending command: '$command' as bytes: $bytesToSend");
-
+      result = "Sending command: '$command' as bytes: $bytesToSend";
       // Use write without response for simple commands, or false for acknowledged write
       await _targetCharacteristic!.write(bytesToSend, withoutResponse: true);
       print("Command sent successfully.");
+      result = "Command sent successfully.";
+      return result;
     } catch (e) {
       print("Error writing command: $e");
+
+      result = "Error writing co mmand: $e";
+      return result;
     }
   }
 

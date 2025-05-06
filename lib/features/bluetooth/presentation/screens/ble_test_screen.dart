@@ -21,6 +21,8 @@ class _BleTestScreenState extends State<BleTestScreen> {
     super.dispose();
   }
 
+  String result = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +113,7 @@ class _BleTestScreenState extends State<BleTestScreen> {
                 },
               ),
             ),
+            Text("Result: $result"),
 
             // Action Buttons (only enabled if connected)
             ValueListenableBuilder<bool>(
@@ -122,14 +125,26 @@ class _BleTestScreenState extends State<BleTestScreen> {
                     ElevatedButton(
                       onPressed:
                           isConnected
-                              ? () => _bluetoothService.sendCommand("1")
+                              ? () async {
+                                String dummy = await _bluetoothService
+                                    .sendCommand("1");
+                                setState(() {
+                                  result = dummy;
+                                });
+                              }
                               : null,
                       child: const Text("Send '1'"),
                     ),
                     ElevatedButton(
                       onPressed:
                           isConnected
-                              ? () => _bluetoothService.sendCommand("2")
+                              ? () async {
+                                String dummy = await _bluetoothService
+                                    .sendCommand("2");
+                                setState(() {
+                                  result = dummy;
+                                });
+                              }
                               : null,
                       child: const Text("Send '2'"),
                     ),
