@@ -86,8 +86,7 @@ class CustomBluetoothService {
           print(
             "Android: Location permission is granted, but Location Services are disabled. Please enable them.",
           );
-          // Optionally, you can try to open settings
-          await openAppSettings();
+          // Optionally, you can try to open settings // await openAppSettings();
           return false; // Critical for scanning
         }
       }
@@ -123,8 +122,7 @@ class CustomBluetoothService {
           print(
             "iOS: Location permission is granted, but Location Services are disabled. Please enable them.",
           );
-          // Optionally, you can try to open settings:
-          await openAppSettings();
+          // Optionally, you can try to open settings await openAppSettings();
           return false; // If critical for your iOS use case
         }
       }
