@@ -1,6 +1,7 @@
 // Example Test Widget
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:komunika/core/extensions/snackbar_extension.dart';
 import 'package:komunika/core/services/custom_bluetooth_service.dart';
 
 class BleTestScreen extends StatefulWidget {
@@ -63,7 +64,19 @@ class _BleTestScreenState extends State<BleTestScreen> {
                           )
                           : const Icon(Icons.search),
                   label: Text(isScanning ? "Scanning..." : "Start Scan"),
-                  onPressed: isScanning ? null : _bluetoothService.startScan,
+                  onPressed:
+                      isScanning
+                          ? null
+                          : () async {
+                            final currentContext = context;
+                            bool scanStarted =
+                                await _bluetoothService.startScan();
+                            if (!scanStarted && currentContext.mounted) {
+                              currentContext.customShowErrorSnackBar(
+                                "Could not start scan. Please ensure Bluetooth/Location permissions are granted and Bluetooth is on.",
+                              );
+                            }
+                          },
                 );
               },
             ),

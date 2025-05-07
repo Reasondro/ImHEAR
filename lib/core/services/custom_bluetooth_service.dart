@@ -3,8 +3,13 @@
 
 import 'dart:async';
 import 'dart:convert'; // For utf8.encode
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'; // For ValueNotifier
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
 
 // Define your ESP32's specific UUIDs here
 const String SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
@@ -23,13 +28,95 @@ class CustomBluetoothService {
   ValueNotifier<List<ScanResult>> scanResults = ValueNotifier([]);
   ValueNotifier<bool> isScanning = ValueNotifier(false);
 
+  // ? Permission handler
+
+  // Example of requesting permissions (e.g., call this before starting scan)
+  Future<bool> _requestBlePermissions() async {
+    List<Permission> permissionsToRequest = [
+      // These are primarily for Android 12+ but permission_handler
+      // should handle them gracefully on iOS.
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+    ];
+
+    if (Platform.isAndroid) {
+      permissionsToRequest.add(Permission.locationWhenInUse);
+    } else if (Platform.isIOS) {
+      // For iOS, Permission.bluetooth corresponds to the Info.plist entries
+      // NSBluetoothPeripheralUsageDescription or NSBluetoothAlwaysUsageDescription
+      permissionsToRequest.add(Permission.bluetooth);
+      permissionsToRequest.add(Permission.locationWhenInUse);
+      // Note: Location permission (Permission.locationWhenInUse) might also be
+      // needed on iOS for certain BLE operations like iBeacon monitoring or if your
+      // app uses location in conjunction with BLE. Add it here if required for your use case.
+      // permissionsToRequest.add(Permission.locationWhenInUse);
+    }
+
+    Map<Permission, PermissionStatus> statuses =
+        await permissionsToRequest.request();
+
+    PermissionStatus? scanStatus = statuses[Permission.bluetoothScan];
+    PermissionStatus? connectStatus = statuses[Permission.bluetoothConnect];
+    PermissionStatus? locationStatus =
+        statuses[Permission.locationWhenInUse]; // Will be null if not requested
+    PermissionStatus? iosBluetoothStatus =
+        statuses[Permission.bluetooth]; // Will be null if not iOS
+
+    if (Platform.isAndroid) {
+      if (scanStatus != PermissionStatus.granted) {
+        print("Android: Bluetooth Scan permission denied");
+        // Handle denial
+        return false;
+      }
+      if (connectStatus != PermissionStatus.granted) {
+        print("Android: Bluetooth Connect permission denied");
+        // ? handle denial
+        return false;
+      }
+      if (locationStatus != PermissionStatus.granted) {
+        print(
+          "Android: Location permission denied. BLE scanning might not work as expected or at all.",
+        );
+        //? handle denial
+        return false;
+      }
+    } else if (Platform.isIOS) {
+      if (iosBluetoothStatus != PermissionStatus.granted) {
+        print("iOS: Bluetooth permission denied");
+        //?  handle denial - inform the user they need to enable Bluetooth
+        //?v in settings for the app.
+        // TODO add ui to tell them to turn on bluetooth
+        return false;
+      }
+      if (locationStatus != PermissionStatus.granted) {
+        print("iOS: Location permission denied.");
+        //? handle denial
+        return false;
+      }
+    }
+    if (!kIsWeb && Platform.isAndroid) {
+      await FlutterBluePlus.turnOn();
+    }
+    print("Required BLE permissions seem to be granted or handled.");
+    return true;
+  }
+
   // --- Scanning ---
-  Future<void> startScan() async {
+  Future<bool> startScan() async {
     // TODO: Request Bluetooth/Location permissions first using permission_handler
+
+    bool permissionGranted = await _requestBlePermissions();
+
+    if (!permissionGranted) {
+      print("Permissions not granted. Aborting scan.");
+      isScanning.value = false; //? ensure scanning state is resett
+      // ? or notify the ui or user here
+      return false;
+    }
 
     if (FlutterBluePlus.isScanningNow) {
       print("Already scanning");
-      return;
+      return true;
     }
     print("Starting BLE Scan...");
     isScanning.value = true;
@@ -39,13 +126,14 @@ class CustomBluetoothService {
       await FlutterBluePlus.startScan(
         // withServices: [Guid(SERVICE_UUID)], // Filter by service UUID - more reliable
         timeout: const Duration(seconds: 10), // Scan duration
+        androidUsesFineLocation: true,
       );
 
       _scanSubscription = FlutterBluePlus.scanResults.listen(
         (results) {
           // Filter results - look for your specific device name OR service UUID
           // Using name is easier initially but less robust than UUID
-          final filteredResults =
+          final List<ScanResult> filteredResults =
               results
                   .where(
                     (r) =>
@@ -64,28 +152,46 @@ class CustomBluetoothService {
           print("Scan Error: $e");
           stopScan();
         },
+        onDone: () {
+          print("Scan results stream is done.");
+          //? ensure our state is updated if it still thinks it's scanning
+          if (isScanning.value) {
+            print(
+              "Stream done, explicitly calling stopScan to update UI state.",
+            );
+            stopScan();
+          }
+        },
       );
-
-      // Stop scan after timeout automatically by FlutterBluePlus usually,
+      //?  stop scan after timeout automatically by FlutterBluePlus usually,
       // but ensure it stops if startScan is called again or on error.
-      await Future.delayed(
-        const Duration(seconds: 11),
-      ); // Wait a bit longer than timeout
+      await Future.delayed(const Duration(seconds: 11));
       stopScan(); // Ensure stop
+      return true;
     } catch (e) {
       print("Error starting scan: $e");
       isScanning.value = false;
+      return false;
     }
   }
 
   void stopScan() {
-    if (isScanning.value) {
-      print("Stopping scan");
-      FlutterBluePlus.stopScan();
-      isScanning.value = false;
-      _scanSubscription?.cancel();
-      _scanSubscription = null;
+    // if (isScanning.value) {
+    //   print("Stopping scan");
+    //   FlutterBluePlus.stopScan();
+    //   isScanning.value = false;
+    //   _scanSubscription?.cancel();
+    //   _scanSubscription = null;
+    // }
+    if (!FlutterBluePlus.isScanningNow && !isScanning.value) {
+      //? avoid redundant calls or messages if already stopped
+      return;
     }
+    print("Stopping BLE Scan...");
+    FlutterBluePlus.stopScan();
+    _scanSubscription?.cancel();
+    _scanSubscription = null;
+    isScanning.value = false;
   }
 
   // --- Connection ---
