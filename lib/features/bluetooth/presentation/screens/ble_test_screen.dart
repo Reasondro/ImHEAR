@@ -73,7 +73,7 @@ class _BleTestScreenState extends State<BleTestScreen> {
                                 await _bluetoothService.startScan();
                             if (!scanStarted && currentContext.mounted) {
                               currentContext.customShowErrorSnackBar(
-                                "Could not start scan. Please ensure Bluetooth/Location permissions are granted and Bluetooth is on.",
+                                "Could not start scan. Please ensure Bluetooth & Location permissions are granted and Bluetooth & Location are on.",
                               );
                             }
                           },
