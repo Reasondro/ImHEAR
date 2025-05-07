@@ -33,23 +33,22 @@ class CustomBluetoothService {
   // Example of requesting permissions (e.g., call this before starting scan)
   Future<bool> _requestBlePermissions() async {
     List<Permission> permissionsToRequest = [
-      // These are primarily for Android 12+ but permission_handler
-      // should handle them gracefully on iOS.
+      //? primarily for Android 12+ but permission_handler
+      //? should handle them gracefully on iOS.
       Permission.bluetoothScan,
       Permission.bluetoothConnect,
     ];
+    bool isLocationPermissionRequired = false;
 
     if (Platform.isAndroid) {
       permissionsToRequest.add(Permission.locationWhenInUse);
+      isLocationPermissionRequired = true;
     } else if (Platform.isIOS) {
       // For iOS, Permission.bluetooth corresponds to the Info.plist entries
       // NSBluetoothPeripheralUsageDescription or NSBluetoothAlwaysUsageDescription
       permissionsToRequest.add(Permission.bluetooth);
       permissionsToRequest.add(Permission.locationWhenInUse);
-      // Note: Location permission (Permission.locationWhenInUse) might also be
-      // needed on iOS for certain BLE operations like iBeacon monitoring or if your
-      // app uses location in conjunction with BLE. Add it here if required for your use case.
-      // permissionsToRequest.add(Permission.locationWhenInUse);
+      isLocationPermissionRequired = true;
     }
 
     Map<Permission, PermissionStatus> statuses =
@@ -80,22 +79,75 @@ class CustomBluetoothService {
         //? handle denial
         return false;
       }
+      if (isLocationPermissionRequired) {
+        ServiceStatus locationServiceStatus =
+            await Permission.locationWhenInUse.serviceStatus;
+        if (!locationServiceStatus.isEnabled) {
+          print(
+            "Android: Location permission is granted, but Location Services are disabled. Please enable them.",
+          );
+          // Optionally, you can try to open settings
+          await openAppSettings();
+          return false; // Critical for scanning
+        }
+      }
     } else if (Platform.isIOS) {
+      // if (iosBluetoothStatus != PermissionStatus.granted) {
+      //   print("iOS: Bluetooth permission denied");
+      //   //?  handle denial - inform the user they need to enable Bluetooth
+      //   //?v in settings for the app.
+      //   // TODO add ui to tell them to turn on bluetooth
+      //   return false;
+      // }
+      // if (locationStatus != PermissionStatus.granted) {
+      //   print("iOS: Location permission denied.");
+      //   //? handle denial
+      //   return false;
+      // }
+      // ! DIBAWAH FIX DARI AI MAKE SURE INI GA ERROR
       if (iosBluetoothStatus != PermissionStatus.granted) {
         print("iOS: Bluetooth permission denied");
-        //?  handle denial - inform the user they need to enable Bluetooth
-        //?v in settings for the app.
-        // TODO add ui to tell them to turn on bluetooth
         return false;
       }
-      if (locationStatus != PermissionStatus.granted) {
+      if (isLocationPermissionRequired &&
+          locationStatus != PermissionStatus.granted) {
         print("iOS: Location permission denied.");
-        //? handle denial
         return false;
+      }
+      // After permission, check if Location Service is enabled
+      if (isLocationPermissionRequired &&
+          locationStatus == PermissionStatus.granted) {
+        ServiceStatus locationServiceStatus =
+            await Permission.locationWhenInUse.serviceStatus;
+        if (!locationServiceStatus.isEnabled) {
+          print(
+            "iOS: Location permission is granted, but Location Services are disabled. Please enable them.",
+          );
+          // Optionally, you can try to open settings:
+          await openAppSettings();
+          return false; // If critical for your iOS use case
+        }
       }
     }
+    // if (!kIsWeb && Platform.isAndroid) {
+    //   await FlutterBluePlus.turnOn();
+    // }
     if (!kIsWeb && Platform.isAndroid) {
-      await FlutterBluePlus.turnOn();
+      // First, check if Bluetooth adapter is already on
+      bool isBluetoothOn =
+          await FlutterBluePlus.adapterState.first == BluetoothAdapterState.on;
+      if (!isBluetoothOn) {
+        print("Android: Bluetooth is off, attempting to turn it on.");
+        await FlutterBluePlus.turnOn();
+        // Re-check after attempting to turn on
+        isBluetoothOn =
+            await FlutterBluePlus.adapterState.first ==
+            BluetoothAdapterState.on;
+        if (!isBluetoothOn) {
+          print("Android: Failed to turn on Bluetooth or user denied.");
+          return false; // Bluetooth is critical
+        }
+      }
     }
     print("Required BLE permissions seem to be granted or handled.");
     return true;
