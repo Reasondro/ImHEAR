@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/app/themes/light_mode.dart';
+import 'package:komunika/core/services/custom_bluetooth_service.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
 import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
@@ -29,6 +30,9 @@ class App extends StatelessWidget {
         // ? for  chat cubit in dashboard
         RepositoryProvider<ChatRepository>(
           create: (_) => SupabaseChatRepository(),
+        ),
+        RepositoryProvider<CustomBluetoothService>(
+          create: (_) => CustomBluetoothService(),
         ),
       ],
       child: MultiBlocProvider(
