@@ -71,35 +71,36 @@ class _ChatScreenState extends State<ChatScreen> {
             if (state is ChatLoaded) {
               final String? currentUserId =
                   Supabase.instance.client.auth.currentUser?.id;
-              if (state.messages.isNotEmpty &&
-                  state.messages.length > _lastMessageCount) {
-                final Message latestMessage =
-                    state.messages.first; //? check this could be got it flip
-                if (latestMessage.senderId != currentUserId) {
-                  print(
-                    "New message received from official, triggering BLE command!",
-                  );
-                  try {
-                    // ? make sure to provide/use CustomBluetoothService
-                    //?  and the device is connected.
-                    final CustomBluetoothService bleService =
-                        context.read<CustomBluetoothService>();
-                    if (bleService.isConnected.value) {
-                      //? check if connected
-                      bleService.sendCommand(
-                        "Vibrate",
-                      ); //? "vibrate" for new message
-                    } else {
-                      print("BLE: Not connected, can't send command.");
-                    }
-                  } catch (e) {
-                    print("Error sending BLE command: $e");
-                    // ? or show a less prentious error, e.g., a small toast
-                    context.customShowSnackBar("Wristband not notified.");
+              // if (state.messages.isNotEmpty &&
+              //     state.messages.length > _lastMessageCount) {
+
+              final Message latestMessage =
+                  state.messages.first; //? check this could be got it flip
+              if (latestMessage.senderId != currentUserId) {
+                print(
+                  "New message received from official, triggering BLE command!",
+                );
+                try {
+                  // ? make sure to provide/use CustomBluetoothService
+                  //?  and the device is connected.
+                  final CustomBluetoothService bleService =
+                      context.read<CustomBluetoothService>();
+                  if (bleService.isConnected.value) {
+                    //? check if connected
+                    bleService.sendCommand(
+                      "Vibrate",
+                    ); //? "vibrate" for new message
+                  } else {
+                    print("BLE: Not connected, can't send command.");
                   }
+                } catch (e) {
+                  print("Error sending BLE command: $e");
+                  // ? or show a less prentious error, e.g., a small toast
+                  context.customShowSnackBar("Wristband not notified.");
                 }
               }
-              //? update the last message count
+              // }
+              //? update the last message count for debugging
               _lastMessageCount = state.messages.length;
               print("Just updated message count to: $_lastMessageCount");
             }
