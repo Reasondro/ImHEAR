@@ -78,7 +78,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.logout),
             tooltip: 'Sign Out',
             onPressed: () {
-              // Call the signOut method from AuthCubit
               context.read<AuthCubit>().signOut();
             },
           ),
@@ -86,8 +85,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
             icon: const Icon(Icons.bluetooth),
             tooltip: 'Bluetooth',
             onPressed: () {
-              // Call the signOut method from AuthCubit
-              // context.read<AuthCubit>().signOut();
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const BleTestScreen()),
               );
@@ -108,7 +105,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
           }
         },
         child: Center(
-          // padding: const EdgeInsets.all(0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

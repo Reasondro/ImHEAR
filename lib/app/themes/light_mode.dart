@@ -27,7 +27,7 @@ final ThemeData imHearLightTheme = ThemeData().copyWith(
     labelTextStyle: WidgetStateProperty.resolveWith(
       (Set<WidgetState> states) =>
           states.contains(WidgetState.selected)
-              ? const TextStyle(color: AppColors.white)
+              ? const TextStyle(color: AppColors.bittersweet)
               // : const TextStyle(color: AppColors.haiti),
               : const TextStyle(color: AppColors.white),
     ),
