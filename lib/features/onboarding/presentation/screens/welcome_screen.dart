@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+import 'package:komunika/app/themes/app_colors.dart';
+
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({super.key});
+
+  static const String routeName = "/welcome";
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    return Scaffold(
+      backgroundColor: AppColors.haiti,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const Spacer(flex: 2),
+              Container(
+                height: 300,
+                alignment: Alignment.center,
+                child: Image.asset("assets/images/Mascot - 2.png"),
+              ),
+              const SizedBox(height: 40),
+              // TODO use smooth_page_indicator or something, basically not static
+              Text(
+                'Need Help ?',
+                textAlign: TextAlign.center,
+                style: textTheme.headlineMedium?.copyWith(
+                  color: AppColors.bittersweet,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Don\'t worry! This app makes\ncommunication easy',
+                textAlign: TextAlign.center,
+                style: textTheme.titleMedium?.copyWith(
+                  color: AppColors.white.withAlpha(230),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // TODO: Page Indicators - Placeholder for now
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.circle, color: Colors.white24, size: 10),
+                  const SizedBox(width: 8),
+                  Icon(Icons.circle, color: Colors.white, size: 10), // Active
+                  const SizedBox(width: 8),
+                  Icon(Icons.circle, color: Colors.white24, size: 10),
+                ],
+              ),
+              const Spacer(flex: 3),
+
+              // Get Started Button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.white,
+                  foregroundColor: AppColors.haiti, // Text color
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  textStyle: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                  ),
+                ),
+                onPressed: () {
+                  // TODO: Navigate to Select Role Screen or Sign Up Flow
+                  // context.push(SelectRoleScreen.routeName); // Example with GoRouter
+                  print('Get Started Clicked!');
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(width: 28),
+                    Text('Get Started', style: TextStyle(fontSize: 18)),
+                    Spacer(),
+                    Icon(Icons.arrow_forward_ios, size: 24),
+                    SizedBox(width: 28),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Log In Link
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Have an account? ',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: AppColors.white.withAlpha(204),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Navigate to Login Screen
+                      // context.push(LoginScreen.routeName); // Example with GoRouter
+                      print('Log In Clicked!');
+                    },
+                    child: Text(
+                      'Log In',
+                      style: textTheme.bodyMedium?.copyWith(
+                        color:
+                            AppColors
+                                .columbiaBlue, // Or a specific blue from Figma
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(flex: 1),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

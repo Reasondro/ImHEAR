@@ -5,7 +5,7 @@ import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
 import 'package:komunika/features/profile/presentation/profile_screen.dart';
-import 'package:komunika/features/welcome/presentation/screens/welcome_screen.dart';
+import 'package:komunika/features/onboarding/presentation/screens/welcome_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: "root",
@@ -14,7 +14,8 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
 class RoutingService {
   final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: Routes.homeScreen,
+    // initialLocation: Routes.homeScreen,
+    initialLocation: Routes.welcomeScreen,
     routes: [
       StatefulShellRoute.indexedStack(
         builder:
