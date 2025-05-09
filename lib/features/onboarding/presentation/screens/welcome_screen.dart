@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  static const String routeName = "/welcome";
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -24,7 +25,6 @@ class WelcomeScreen extends StatelessWidget {
                 child: Image.asset("assets/images/Mascot - 2.png"),
               ),
               const SizedBox(height: 40),
-              // TODO use smooth_page_indicator or something, basically not static
               Text(
                 'Need Help ?',
                 textAlign: TextAlign.center,
@@ -71,7 +71,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   // TODO: Navigate to Select Role Screen or Sign Up Flow
-                  // context.push(SelectRoleScreen.routeName); // Example with GoRouter
+                  GoRouter.of(context).go(Routes.nestedSelectRoleScreen);
                   print('Get Started Clicked!');
                 },
                 child: const Row(

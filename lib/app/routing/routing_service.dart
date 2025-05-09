@@ -4,6 +4,7 @@ import 'package:komunika/app/layouts/layout_scaffold_with_nav.dart';
 import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
+import 'package:komunika/features/onboarding/presentation/screens/select_role_screen.dart';
 import 'package:komunika/features/profile/presentation/profile_screen.dart';
 import 'package:komunika/features/onboarding/presentation/screens/welcome_screen.dart';
 
@@ -57,6 +58,13 @@ class RoutingService {
       GoRoute(
         path: Routes.welcomeScreen,
         builder: (context, state) => const WelcomeScreen(),
+        routes: <RouteBase>[
+          GoRoute(
+            name: "Select Role",
+            path: Routes.selectRoleScreen,
+            builder: (context, state) => const SelectRoleScreen(),
+          ),
+        ],
       ), //? how to link this with auth wrapper
     ],
   );
