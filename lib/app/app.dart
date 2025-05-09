@@ -60,7 +60,7 @@ class App extends StatelessWidget {
         child: MaterialApp(
           title: "Kotaba",
           debugShowCheckedModeBanner: false,
-          theme: kotabaLightTheme,
+          theme: imHearLightTheme,
           home: const AuthWrapper(),
         ),
       ),

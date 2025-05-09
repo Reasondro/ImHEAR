@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:komunika/app/layouts/destinations.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/bluetooth/presentation/screens/ble_test_screen.dart';
 import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
@@ -27,6 +28,18 @@ class DeafUserDashboardScreen extends StatelessWidget {
     //     //? or add a button. If starting automatically here, uncomment the line above.
 
     return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        destinations:
+            destinations
+                .map(
+                  (d) => NavigationDestination(
+                    icon: Icon(d.icon),
+                    label: d.label,
+                    selectedIcon: Icon(d.icon),
+                  ),
+                )
+                .toList(),
+      ),
       appBar: AppBar(
         title: const Text('Deaf User Dashboard'),
         actions: [
@@ -233,16 +246,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
                                             ),
                                       ),
                                     );
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder:
-                                    //         (_) => ChatScreen(
-                                    //           roomId: roomId,
-                                    //           subSpaceName: subSpaceName,
-                                    //         ),
-                                    //   ),
-                                    // );
                                   }
                                 } catch (e) {
                                   print(
