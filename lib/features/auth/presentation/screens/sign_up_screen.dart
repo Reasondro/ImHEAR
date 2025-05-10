@@ -51,7 +51,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (widget.selectedRole == UserRole.org_admin) {
         organizationName = _organizationNameController.text.trim();
       }
-
       context.read<AuthCubit>().signUpWithEmail(
         email: email,
         password: password,

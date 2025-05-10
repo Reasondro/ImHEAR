@@ -15,42 +15,8 @@ void main() async {
   );
   GoRouter router = RoutingService().router;
   runApp(App(router: router));
-
-  // runApp(MyApp(router: router));
 }
 
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key, required this.router});
-//   final GoRouter router;
-
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
-
-// class _MyAppState extends State<MyApp> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     // initialize();
-//   }
-
-//   // void initialize() async {
-//   //   await Future.delayed(const Duration(milliseconds: 650));
-//   //   FlutterNativeSplash.remove();
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // SystemChrome.setPreferredOrientations(
-//     //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-//     return MaterialApp.router(
-//       debugShowCheckedModeBanner: false,
-//       title: 'ImHear',
-//       theme: imHearLightTheme,
-//       routerConfig: widget.router,
-//     );
-//   }
-// }
 
 
 // TODO LIST

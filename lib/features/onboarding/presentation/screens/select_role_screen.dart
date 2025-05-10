@@ -1,13 +1,9 @@
-// features/onboarding/presentation/screens/select_role_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 import 'package:komunika/features/auth/domain/entities/user_role.dart';
-// Import your RoleSelectionCard widget (create this next)
 import 'package:komunika/features/onboarding/presentation/widgets/role_selection_card.dart';
-// Import your UserRole enum if you want to pass it
-// import 'package:komunika/features/auth/domain/entities/user_role.dart';
 
 class SelectRoleScreen extends StatelessWidget {
   const SelectRoleScreen({super.key});
@@ -20,7 +16,7 @@ class SelectRoleScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.haiti,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Or AppColors.haiti
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.white),
@@ -36,7 +32,7 @@ class SelectRoleScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Select your Role",
+              "Select Your Role",
               style: textTheme.headlineLarge?.copyWith(
                 color: AppColors.bittersweet,
                 fontWeight: FontWeight.bold,
@@ -44,16 +40,14 @@ class SelectRoleScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            // Role Selection Cards
+            //? role selection cards
             RoleSelectionCard(
-              roleName: "Mimi's Friend", // Or "User with Disability"
+              roleName: "Mimi's Friend", //? or "User with Disability"
               roleDescription:
                   "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
 
               imageAssetPath: 'assets/images/Mascot - 5.png',
               onTap: () {
-                // TODO: Handle role selection, pass UserRole.deaf_user
-                // context.pushNamed(SignupFormScreen.routeName, extra: UserRole.deaf_user);
                 GoRouter.of(
                   context,
                 ).go(Routes.nestedSignUpScreen, extra: UserRole.deaf_user);
@@ -67,7 +61,6 @@ class SelectRoleScreen extends StatelessWidget {
                   "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
               imageAssetPath: 'assets/images/Mascot - 3.png',
               onTap: () {
-                // TODO: Handle role selection, pass UserRole.org_admin
                 GoRouter.of(
                   context,
                 ).go(Routes.nestedSignUpScreen, extra: UserRole.org_admin);
@@ -76,20 +69,19 @@ class SelectRoleScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             RoleSelectionCard(
-              roleName: "Mimi's Helper", // Or "Employee"
+              roleName: "Mimi's Helper", //? or "Employee"
               roleDescription:
                   "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
 
               imageAssetPath: 'assets/images/Mascot - 4.png',
               onTap: () {
-                // TODO: Handle role selection, pass UserRole.official
                 GoRouter.of(
                   context,
                 ).go(Routes.nestedSignUpScreen, extra: UserRole.official);
                 print("Selected Official Staff");
               },
             ),
-            const Spacer(), // Pushes content to top if Column height is more than content
+            const Spacer(), //?  pushes content to top if Column height is more than content
           ],
         ),
       ),
