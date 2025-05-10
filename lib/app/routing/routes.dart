@@ -10,12 +10,19 @@ class Routes {
   static const String nestedSelectRoleScreen =
       "$welcomeScreen/$selectRoleScreen";
 
-  // ? select auth screen (base)
-  static const String authScreen =
-      "auth"; //? or split it between sign up and sign in
+  static const String signInScreen = "sign-in";
+  static const String nestedSignInScreen = "$welcomeScreen/$signInScreen";
 
-  // ? select auth screen (the actual path)
-  static const String nestedAuthScreen = "$nestedSelectRoleScreen/$authScreen";
+  static const String signUpScreen = "sign-up";
+  static const String nestedSignUpScreen =
+      "$nestedSelectRoleScreen/$signUpScreen";
+
+  // // ? select auth screen (base)
+  // static const String authScreen =
+  // "auth"; // // ? or split it between sign up and sign in
+
+  // // ? select auth screen (the actual path)
+  // static const String nestedAuthScreen = "$nestedSelectRoleScreen/$authScreen";
 
   // ? home screen
   static const String homeScreen = "/home";

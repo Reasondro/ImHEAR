@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:komunika/app/themes/light_mode.dart';
 import 'package:komunika/core/services/custom_bluetooth_service.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
@@ -14,7 +15,8 @@ import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_off
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({super.key, required this.router});
+  final GoRouter router;
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +59,11 @@ class App extends StatelessWidget {
                 ),
           ),
         ],
-        child: MaterialApp(
-          title: "Kotaba",
+        child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
+          title: 'ImHear',
           theme: imHearLightTheme,
-          home: const AuthWrapper(),
+          routerConfig: router,
         ),
       ),
     );

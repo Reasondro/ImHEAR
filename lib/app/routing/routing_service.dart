@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/layouts/layout_scaffold_with_nav.dart';
 import 'package:komunika/app/routing/routes.dart';
+import 'package:komunika/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:komunika/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
 import 'package:komunika/features/onboarding/presentation/screens/select_role_screen.dart';
@@ -60,9 +62,21 @@ class RoutingService {
         builder: (context, state) => const WelcomeScreen(),
         routes: <RouteBase>[
           GoRoute(
+            name: "Sign In",
+            path: Routes.signInScreen,
+            builder: (context, state) => const SignInScreen(),
+          ),
+          GoRoute(
             name: "Select Role",
             path: Routes.selectRoleScreen,
             builder: (context, state) => const SelectRoleScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                name: "Sign Up",
+                path: Routes.signUpScreen,
+                builder: (context, state) => const SignUpScreen(),
+              ),
+            ],
           ),
         ],
       ), //? how to link this with auth wrapper

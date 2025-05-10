@@ -44,13 +44,13 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               // TODO: Page Indicators - Placeholder for now
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.circle, color: Colors.white24, size: 10),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Icon(Icons.circle, color: Colors.white, size: 10), // Active
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Icon(Icons.circle, color: Colors.white24, size: 10),
                 ],
               ),
@@ -99,12 +99,11 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // TODO: Navigate to Login Screen
-                      // context.push(LoginScreen.routeName); // Example with GoRouter
-                      print('Log In Clicked!');
+                      GoRouter.of(context).go(Routes.nestedSignInScreen);
+                      print('Sign In Clicked!');
                     },
                     child: Text(
-                      'Log In',
+                      'Sign In',
                       style: textTheme.bodyMedium?.copyWith(
                         color:
                             AppColors
