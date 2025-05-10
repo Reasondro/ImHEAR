@@ -84,10 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           },
         ),
       ),
-      body:
-      // Center(
-      // child:
-      SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
 
         child: Form(
@@ -117,7 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // ? Username Field
               TextFormField(
                 controller: _usernameController,
-                style: const TextStyle(color: AppColors.white),
+                style: const TextStyle(color: AppColors.haiti),
                 decoration: _inputDecoration(
                   labelText: "Username",
                   hintText: 'Create your username',
@@ -136,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // ? Full Name Field
               TextFormField(
                 controller: _fullNameController,
-                style: const TextStyle(color: AppColors.white),
+                style: const TextStyle(color: AppColors.haiti),
                 decoration: _inputDecoration(
                   labelText: "Full name",
                   hintText: 'Enter your full name',
@@ -154,7 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               if (widget.selectedRole == UserRole.org_admin) ...[
                 TextFormField(
                   controller: _organizationNameController,
-                  style: const TextStyle(color: AppColors.white),
+                  style: const TextStyle(color: AppColors.haiti),
                   decoration: _inputDecoration(
                     labelText: "Organization name",
                     hintText: 'Enter your organization name',
@@ -163,7 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   validator: (value) {
                     if (widget.selectedRole == UserRole.org_admin &&
                         (value == null || value.trim().isEmpty)) {
-                      return 'Please enter the organization name';
+                      return 'Please enter your organization name';
                     }
                     return null;
                   },
@@ -174,7 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               //?  Email Field
               TextFormField(
                 controller: _emailController,
-                style: const TextStyle(color: AppColors.white),
+                style: const TextStyle(color: AppColors.haiti),
                 decoration: _inputDecoration(
                   labelText: "Email",
                   hintText: 'Enter your email',
@@ -182,7 +179,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
-                  /* ... your email validator ... */
+                  if (value == null || value.isEmpty || !value.contains('@')) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
                 },
               ),
               const SizedBox(height: 20),
@@ -190,7 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // ? Password Field
               TextFormField(
                 controller: _passwordController,
-                style: const TextStyle(color: AppColors.white),
+                style: const TextStyle(color: AppColors.haiti),
                 decoration: _inputDecoration(
                   labelText: "Password",
                   hintText: 'Create your password',
@@ -203,15 +203,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 obscureText: _obscurePassword,
                 validator: (value) {
-                  /* ... your password validator ... */
+                  if (value == null || value.isEmpty || value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+                  return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              //?  Confirm Password Field
+              //?  confirm password field
               TextFormField(
                 controller: _confirmPasswordController,
-                style: const TextStyle(color: AppColors.white),
+                style: const TextStyle(color: AppColors.haiti),
                 decoration: _inputDecoration(
                   labelText: "Confirm password",
                   hintText: 'Confirm your password',
@@ -235,7 +238,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 40),
 
-              // ? Submit Button
+              // ? submit button
               BlocBuilder<AuthCubit, AuthStates>(
                 builder: (context, state) {
                   if (state is AuthLoading) {
@@ -263,7 +266,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 20),
 
-              // ? Toggle to Sign In
+              // ? toggle sign In
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
