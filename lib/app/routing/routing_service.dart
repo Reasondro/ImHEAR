@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/layouts/layout_scaffold_with_nav.dart';
 import 'package:komunika/app/routing/routes.dart';
+import 'package:komunika/features/auth/domain/entities/user_role.dart';
 import 'package:komunika/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:komunika/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
@@ -74,7 +75,21 @@ class RoutingService {
               GoRoute(
                 name: "Sign Up",
                 path: Routes.signUpScreen,
-                builder: (context, state) => const SignUpScreen(),
+                builder: (context, state) {
+                  final UserRole? selectedRole = state.extra as UserRole?;
+
+                  if (selectedRole == null) {
+                    assert(
+                      selectedRole != null,
+                      "SignUpScreen was navigated to without a 'selectedRole' in 'extra'. "
+                      "Please ensure it's passed during navigation from SelectRoleScreen.",
+                    );
+                    return const Scaffold(
+                      body: Center(child: Text("Error: Role not provided.")),
+                    );
+                  }
+                  return SignUpScreen(selectedRole: selectedRole);
+                },
               ),
             ],
           ),

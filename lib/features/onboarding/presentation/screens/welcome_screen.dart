@@ -11,6 +11,7 @@ class WelcomeScreen extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       backgroundColor: AppColors.haiti,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32),
@@ -92,7 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Have an account? ',
+                    'Already have an account? ',
                     style: textTheme.bodyMedium?.copyWith(
                       color: AppColors.white.withAlpha(204),
                     ),

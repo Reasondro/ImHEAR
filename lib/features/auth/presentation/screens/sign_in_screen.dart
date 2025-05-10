@@ -2,11 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 
-// Import GoRouter or your navigation service if you want to wire up the "Sign Up" link
-// import 'package:go_router/go_router.dart';
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -18,7 +17,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  bool _obscureText = true;
 
   @override
   void dispose() {
@@ -40,11 +39,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context); // Or use AppColors directly
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.white, // Match Figma
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -64,7 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                height: 190,
+                height: 210,
                 alignment: Alignment.center,
                 child: Image.asset("assets/images/ImHEAR.png"),
               ),
@@ -75,59 +74,26 @@ class _SignInScreenState extends State<SignInScreen> {
                   color: AppColors.haiti,
                   fontWeight: FontWeight.bold,
                 ),
-                textAlign: TextAlign.left, // Match Figma
+                textAlign: TextAlign.left,
               ),
+              // const SizedBox(height: 10),
+              // Text(
+              //   'Welcome back', // Subtitle suggestion
+              //   style: theme.textTheme.titleMedium?.copyWith(
+              //     color: AppColors.haiti,
+              //   ),
+              //   textAlign: TextAlign.left,
+              // ),
               const SizedBox(height: 20),
 
-              // Email Field
+              //?  email Field
               TextFormField(
                 controller: _emailController,
                 style: const TextStyle(color: AppColors.haiti),
-                decoration: InputDecoration(
+                decoration: _inputDecoration(
                   labelText: "Email",
-                  hintText: 'Enter your email', // From Figma
-                  hintStyle: TextStyle(
-                    // color: AppColors.lavender.withAlpha(122),
-                    color: AppColors.haiti.withAlpha(122),
-                  ),
-                  prefixIcon: const Icon(
-                    Icons.email_outlined,
-                    color: AppColors.haiti,
-                  ),
-                  filled: true,
-                  fillColor: AppColors.white.withAlpha(122), // Darker input bg
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.deluge,
-                      width: 1.8,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.columbiaBlue,
-                      width: 2.3,
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.paleCarmine,
-                      width: 1.8,
-                    ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.paleCarmine,
-                      width: 1.8,
-                    ),
-                  ),
+                  hintText: "Enter your email",
+                  icon: Icons.email_outlined,
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
@@ -139,66 +105,22 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Password Field
+              //?  password Field
               TextFormField(
                 controller: _passwordController,
                 style: const TextStyle(color: AppColors.haiti),
-                decoration: InputDecoration(
+                decoration: _inputDecoration(
                   labelText: "Password",
-                  hintText: 'Enter your password', // From Figma
-                  hintStyle: TextStyle(color: AppColors.haiti.withAlpha(122)),
-                  prefixIcon: const Icon(
-                    Icons.lock_outline,
-                    color: AppColors.haiti,
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed:
-                        () => setState(
-                          () => _obscurePassword = !_obscurePassword,
-                        ),
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: AppColors.haiti,
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: AppColors.white.withAlpha(122),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.deluge,
-                      width: 1.8,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.columbiaBlue,
-                      width: 2.3,
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.paleCarmine,
-                      width: 1.8,
-                    ),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.paleCarmine,
-                      width: 1.8,
-                    ),
-                  ),
+                  hintText: "Enter your password",
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  obscureText: _obscureText,
+                  onObscureToggle:
+                      () => setState(() {
+                        _obscureText = !_obscureText;
+                      }),
                 ),
-                obscureText: _obscurePassword,
+                obscureText: _obscureText,
                 validator: (value) {
                   if (value == null || value.isEmpty || value.length < 6) {
                     return 'Password must be at least 6 characters';
@@ -208,7 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 25),
 
-              // Submit Button
+              //?  submit Button
               BlocBuilder<AuthCubit, AuthStates>(
                 builder: (context, state) {
                   if (state is AuthLoading) {
@@ -221,12 +143,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      backgroundColor:
-                          AppColors.haiti, // Match Figma button color
+                      backgroundColor: AppColors.haiti,
                       foregroundColor: AppColors.white,
                     ),
                     child: const Text(
-                      'Sign In', // From Figma
+                      'Sign In',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -237,7 +158,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Toggle to Sign Up
+              // ? toggle Sign Up
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -247,9 +168,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // TODO add routes to sign up screen
-                      // GoRouter.of(context).pushReplacemen(SignUpScreen.routeName, extra: UserRole.deaf_user); // Or via SelectRole first
-                      print('Navigate to Sign Up');
+                      // GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
+                      GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
+                      print('Navigate to Select Role');
                     },
                     child: const Text(
                       'Sign Up', // From Figma
@@ -266,6 +187,56 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
       // ),
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String labelText,
+    required String hintText,
+    required IconData icon,
+    bool isPassword = false,
+    bool obscureText = false,
+    VoidCallback? onObscureToggle,
+  }) {
+    return InputDecoration(
+      labelText: labelText,
+      hintText: hintText,
+      hintStyle: TextStyle(color: AppColors.haiti.withAlpha(122)),
+      prefixIcon: Icon(icon, color: AppColors.haiti),
+      suffixIcon:
+          isPassword
+              ? IconButton(
+                icon: Icon(
+                  obscureText
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  color: AppColors.haiti,
+                ),
+                onPressed: onObscureToggle,
+              )
+              : null,
+      filled: true,
+      fillColor: AppColors.white.withAlpha(122), // Darker input bg
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.deluge, width: 1.8),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.columbiaBlue, width: 2.3),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.paleCarmine, width: 1.8),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.paleCarmine, width: 1.8),
+      ),
     );
   }
 }

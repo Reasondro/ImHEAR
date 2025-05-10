@@ -1,7 +1,9 @@
 // features/onboarding/presentation/screens/select_role_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/app/themes/app_colors.dart';
+import 'package:komunika/features/auth/domain/entities/user_role.dart';
 // Import your RoleSelectionCard widget (create this next)
 import 'package:komunika/features/onboarding/presentation/widgets/role_selection_card.dart';
 // Import your UserRole enum if you want to pass it
@@ -10,14 +12,12 @@ import 'package:komunika/features/onboarding/presentation/widgets/role_selection
 class SelectRoleScreen extends StatelessWidget {
   const SelectRoleScreen({super.key});
 
-  // Define a route name for GoRouter
-  // static const String routeName = '/select-role';
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.haiti,
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Or AppColors.haiti
@@ -54,6 +54,9 @@ class SelectRoleScreen extends StatelessWidget {
               onTap: () {
                 // TODO: Handle role selection, pass UserRole.deaf_user
                 // context.pushNamed(SignupFormScreen.routeName, extra: UserRole.deaf_user);
+                GoRouter.of(
+                  context,
+                ).go(Routes.nestedSignUpScreen, extra: UserRole.deaf_user);
                 print("Selected Disabled User");
               },
             ),
@@ -65,6 +68,9 @@ class SelectRoleScreen extends StatelessWidget {
               imageAssetPath: 'assets/images/Mascot - 3.png',
               onTap: () {
                 // TODO: Handle role selection, pass UserRole.org_admin
+                GoRouter.of(
+                  context,
+                ).go(Routes.nestedSignUpScreen, extra: UserRole.org_admin);
                 print("Selected Organization Admin");
               },
             ),
@@ -77,6 +83,9 @@ class SelectRoleScreen extends StatelessWidget {
               imageAssetPath: 'assets/images/Mascot - 4.png',
               onTap: () {
                 // TODO: Handle role selection, pass UserRole.official
+                GoRouter.of(
+                  context,
+                ).go(Routes.nestedSignUpScreen, extra: UserRole.official);
                 print("Selected Official Staff");
               },
             ),
