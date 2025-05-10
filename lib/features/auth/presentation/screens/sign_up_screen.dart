@@ -235,7 +235,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 25),
 
               // ? submit button
               BlocBuilder<AuthCubit, AuthStates>(
@@ -275,7 +275,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).go(Routes.nestedSignInScreen);
+                      GoRouter.of(context).goNamed(Routes.signInScreen);
                       print('Navigate to Sign In');
                     },
                     child: const Text(

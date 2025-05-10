@@ -169,7 +169,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   GestureDetector(
                     onTap: () {
                       // GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
-                      GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
+                      GoRouter.of(context).goNamed(Routes.selectRoleScreen);
                       print('Navigate to Select Role');
                     },
                     child: const Text(

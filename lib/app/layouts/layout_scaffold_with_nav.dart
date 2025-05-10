@@ -9,6 +9,7 @@ class LayoutScaffoldWithNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
         destinations:
             destinations

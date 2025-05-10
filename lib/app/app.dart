@@ -15,16 +15,17 @@ import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_off
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 
 class App extends StatelessWidget {
-  const App({super.key, required this.router});
+  const App({super.key, required this.router, required this.authCubit});
   final GoRouter router;
+  final AuthCubit authCubit;
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>(
-          create: (_) => SupabaseAuthRepository(),
-        ),
+        // RepositoryProvider<AuthRepository>(
+        //   create: (_) => SupabaseAuthRepository(),
+        // ),
         RepositoryProvider<NearbyOfficialsRepository>(
           create: (_) => SupabaseNearbyOfficialsRepository(),
         ),
@@ -39,6 +40,12 @@ class App extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          // BlocProvider<AuthCubit>(
+          //   create:
+          //       (context) =>
+          //           AuthCubit(authRepository: context.read<AuthRepository>()),
+          // ),
+          BlocProvider<AuthCubit>.value(value: authCubit),
           BlocProvider<UserLocationCubit>(
             create: (context) => UserLocationCubit(),
             //* optional: customize accuracy, distanceFilter, debounceDuration
@@ -46,11 +53,6 @@ class App extends StatelessWidget {
             //* debounceDuration: const Duration(seconds: 2),
           ),
 
-          BlocProvider<AuthCubit>(
-            create:
-                (context) =>
-                    AuthCubit(authRepository: context.read<AuthRepository>()),
-          ),
           BlocProvider<NearbyOfficialsCubit>(
             create:
                 (context) => NearbyOfficialsCubit(

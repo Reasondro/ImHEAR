@@ -50,7 +50,7 @@ class SelectRoleScreen extends StatelessWidget {
               onTap: () {
                 GoRouter.of(
                   context,
-                ).go(Routes.nestedSignUpScreen, extra: UserRole.deaf_user);
+                ).goNamed(Routes.signUpScreen, extra: UserRole.deaf_user);
                 print("Selected Disabled User");
               },
             ),
@@ -63,7 +63,7 @@ class SelectRoleScreen extends StatelessWidget {
               onTap: () {
                 GoRouter.of(
                   context,
-                ).go(Routes.nestedSignUpScreen, extra: UserRole.org_admin);
+                ).goNamed(Routes.signUpScreen, extra: UserRole.org_admin);
                 print("Selected Organization Admin");
               },
             ),
@@ -77,7 +77,7 @@ class SelectRoleScreen extends StatelessWidget {
               onTap: () {
                 GoRouter.of(
                   context,
-                ).go(Routes.nestedSignUpScreen, extra: UserRole.official);
+                ).goNamed(Routes.signUpScreen, extra: UserRole.official);
                 print("Selected Official Staff");
               },
             ),

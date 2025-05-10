@@ -72,7 +72,7 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   // TODO: Navigate to Select Role Screen or Sign Up Flow
-                  GoRouter.of(context).go(Routes.nestedSelectRoleScreen);
+                  GoRouter.of(context).goNamed(Routes.selectRoleScreen);
                   print('Get Started Clicked!');
                 },
                 child: const Row(
@@ -100,7 +100,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).go(Routes.nestedSignInScreen);
+                      GoRouter.of(context).goNamed(Routes.signInScreen);
                       print('Sign In Clicked!');
                     },
                     child: Text(
