@@ -79,14 +79,27 @@ class SupabaseAuthRepository implements AuthRepository {
     required String username,
     required String fullName,
     required UserRole role,
+    String? organizationName,
   }) async {
     try {
+      final Map<String, dynamic> userMetadata = {
+        "username": username,
+        "full_name": fullName,
+        "role": role.name,
+      };
+
+      if (organizationName != null && organizationName.isNotEmpty) {
+        userMetadata["organization_name"] = organizationName;
+      }
+
       //? user sign up
       final AuthResponse authResponse = await supabase.auth.signUp(
         email: email,
         password: password,
-        data: {"username": username, "full_name": fullName, "role": role.name},
+        // data: {"username": username, "full_name": fullName, "role": role.name},
+        data: userMetadata,
       );
+
       // print("Auth response from supa_repo $authResponse");
       // if (authResponse.user == null) {
       //   throw Exception("User is null");

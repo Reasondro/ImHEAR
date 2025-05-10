@@ -46,7 +46,7 @@ class SelectRoleScreen extends StatelessWidget {
 
             // Role Selection Cards
             RoleSelectionCard(
-              roleName: "Disabled User", // Or "User with Disability"
+              roleName: "Mimi's Friend", // Or "User with Disability"
               roleDescription:
                   "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
 
@@ -59,7 +59,7 @@ class SelectRoleScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             RoleSelectionCard(
-              roleName: "Admin",
+              roleName: "Mimi's Admin",
               roleDescription:
                   "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
               imageAssetPath: 'assets/images/Mascot - 3.png',

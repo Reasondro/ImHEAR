@@ -92,17 +92,28 @@ class AuthCubit extends Cubit<AuthStates> {
     required String username,
     required String fullName,
     required UserRole role,
+    String? organizationName,
   }) async {
     try {
       emit(AuthLoading());
-      // final AppUser? user =
-      await authRepository.signUpWithEmail(
-        email: email,
-        password: password,
-        username: username,
-        fullName: fullName,
-        role: role,
-      );
+      if (organizationName != null && organizationName.isNotEmpty) {
+        await authRepository.signUpWithEmail(
+          email: email,
+          password: password,
+          username: username,
+          fullName: fullName,
+          role: role,
+          organizationName: organizationName,
+        );
+      } else {
+        await authRepository.signUpWithEmail(
+          email: email,
+          password: password,
+          username: username,
+          fullName: fullName,
+          role: role,
+        );
+      }
       // print("User from auth_cubit $user");
       print("SignUp called in Cubit, waiting for stream update...");
       // if (user != null) {

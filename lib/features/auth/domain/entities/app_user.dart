@@ -6,6 +6,7 @@ class AppUser {
   final String username;
   final String fullName;
   final String? avatarUrl;
+  final String? organizationName;
   final UserRole role;
 
   AppUser({
@@ -14,6 +15,7 @@ class AppUser {
     required this.username,
     required this.fullName,
     this.avatarUrl,
+    this.organizationName,
     required this.role,
   });
 
@@ -24,6 +26,7 @@ class AppUser {
       "username": username,
       "full_name": fullName,
       "avatar_url": avatarUrl,
+      "organization_name": organizationName,
       "role": role.name,
     };
   }
@@ -54,6 +57,7 @@ class AppUser {
       final username = userMetadata['username'];
       final fullName = userMetadata['full_name'];
       final avatarUrl = userMetadata['avatar_url']; // ? optional
+      final organizationName = userMetadata['organization_name']; // ? optional
       final roleString = userMetadata['role'];
 
       // ? validate user_metadata fields
@@ -71,6 +75,11 @@ class AppUser {
       if (avatarUrl != null && avatarUrl is! String) {
         throw FormatException(
           "Invalid 'avatar_url' type (${avatarUrl.runtimeType}) in user_metadata: $userMetadata",
+        );
+      }
+      if (organizationName != null && organizationName is! String) {
+        throw FormatException(
+          "Invalid 'organization_name' type (${organizationName.runtimeType}) in user_metadata: $userMetadata",
         );
       }
       if (roleString == null || roleString is! String) {
@@ -93,6 +102,7 @@ class AppUser {
         username: username,
         fullName: fullName,
         avatarUrl: avatarUrl, //? already checked for String? type
+        organizationName: organizationName,
         role: role,
       );
     } catch (e) {

@@ -23,7 +23,7 @@ class RoleSelectionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.deluge),
+          border: Border.all(color: AppColors.deluge, width: 5),
           // color: AppColors.deluge.withAlpha(204),
           color: AppColors.deluge.withAlpha(100),
           borderRadius: BorderRadius.circular(16.0),

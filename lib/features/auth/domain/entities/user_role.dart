@@ -2,8 +2,8 @@
 
 enum UserRole {
   deaf_user,
-  official,
-  org_admin;
+  org_admin,
+  official;
 
   //? helper method to convert String to enum
   static UserRole fromString(String value) {

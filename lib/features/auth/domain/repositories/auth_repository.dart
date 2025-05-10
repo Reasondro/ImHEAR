@@ -14,6 +14,7 @@ abstract class AuthRepository {
     required String username,
     required String fullName,
     required UserRole role,
+    String? organizationName,
   });
   Future<void> signOut();
   Future<AppUser?> getCurrentUser();

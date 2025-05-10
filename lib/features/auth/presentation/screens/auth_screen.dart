@@ -154,18 +154,13 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     items:
                         UserRole.values.map((UserRole role) {
-                          // String displayName =
-                          //     role == UserRole.deaf_user
-                          //         ? "Deaf User"
-                          //         : "Officials";
-
                           late String displayName;
                           if (role == UserRole.deaf_user) {
-                            displayName = "Deaf User";
-                          } else if (role == UserRole.official) {
-                            displayName = "Officials";
+                            displayName = "Mimi's Friend";
                           } else if (role == UserRole.org_admin) {
-                            displayName = "Org Admin";
+                            displayName = "Mimi's Admin";
+                          } else if (role == UserRole.official) {
+                            displayName = "Mimi's Helper";
                           }
                           return DropdownMenuItem<UserRole>(
                             value: role,
