@@ -420,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                               "subSpaceName":
                                                   official.locationName,
                                             },
-                                            // extra: official.officialUserName,
+                                            extra: official.officialUserName,
                                           );
                                         }
                                       } catch (e) {

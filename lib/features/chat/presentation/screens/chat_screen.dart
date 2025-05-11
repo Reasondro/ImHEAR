@@ -17,12 +17,13 @@ class ChatScreen extends StatefulWidget {
     required this.roomId,
     required this.subSpaceName,
     // required this.officialName,
+    this.officialName,
     super.key,
   });
 
   final int roomId;
   final String subSpaceName;
-  // final String officialName;
+  final String? officialName;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -65,9 +66,32 @@ class _ChatScreenState extends State<ChatScreen> {
             roomId: widget.roomId,
           ),
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text(widget.subSpaceName),
+          title:
+              // Text(widget.subSpaceName),
+              widget.officialName != null && widget.officialName!.isNotEmpty
+                  ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        // widget.officialName!,
+                        widget.subSpaceName,
+                        style: const TextStyle(fontSize: 18.0),
+                      ),
+                      Text(
+                        // widget.subSpaceName,
+                        "currently operate by ${widget.officialName}",
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          color: AppColors.white.withAlpha(204),
+                        ),
+                      ),
+                    ],
+                  )
+                  : Text(
+                    widget.subSpaceName,
+                  ), //? fallback if officialName is not available
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.white),
             onPressed: () {
@@ -169,19 +193,25 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Builder(
                   builder: (BuildContext descendantContext) {
-                    final double keyboardHeight =
-                        MediaQuery.of(descendantContext).viewInsets.bottom;
-                    return Container(
+                    return
+                    // Container(
+                    AnimatedContainer(
+                      // duration: const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 300),
+                      // duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeOut,
                       margin: EdgeInsets.only(
                         left: 0.0,
                         right: 0.0,
                         top: 4.0,
                         bottom:
-                            //  0,
+                            // 0,
+                            // 5.0,
+                            // keyboardHeight > 0 ? 5 : 0,
                             MediaQuery.of(context).viewInsets.bottom > 0
-                                ? 400
+                                ? 8
                                 : 0,
-                        // keyboardHeight > 0 ? keyboardHeight : 0,
+                        // keyboardHeight > 0 ? keyboardHeight + 5 : 0,
                       ),
 
                       padding: const EdgeInsets.only(

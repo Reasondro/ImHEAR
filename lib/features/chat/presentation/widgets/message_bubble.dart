@@ -16,10 +16,12 @@ class MessageBubble extends StatelessWidget {
         isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final Color bubbleColor =
         // isMe ? AppColors.lavender : theme.colorScheme.secondary;
-        isMe ? AppColors.lavender : AppColors.white;
+        // isMe ? AppColors.lavender : AppColors.white;
+        isMe ? AppColors.lavender : Colors.grey.withAlpha(50);
     final Color textColor =
         // isMe ? AppColors.haiti : theme.colorScheme.onSecondary;
         AppColors.haiti;
+    // isMe ? AppColors.haiti : Colors.black;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       child: Column(
@@ -49,14 +51,17 @@ class MessageBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!isMe)
-                  Text(
-                    "Username",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                // if (!isMe)
+                //   Text(
+                //     "Username",
+                //     style: TextStyle(fontWeight: FontWeight.bold),
+                //   ),
                 Text(
                   message.content,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: textColor),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: textColor,
+                    // fontWeight: FontWeight.w600,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4.0),

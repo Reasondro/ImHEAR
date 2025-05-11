@@ -172,7 +172,7 @@ class RoutingService {
                       final int? roomId = int.tryParse(
                         state.pathParameters["roomId"] ?? "",
                       );
-                      // final String officialName = state.extra as String;
+                      final String? officialName = state.extra as String?;
                       final String subSpaceName =
                           state.pathParameters["subSpaceName"] ?? "Chat";
                       if (roomId == null) {
@@ -185,7 +185,7 @@ class RoutingService {
                         return ChatScreen(
                           roomId: roomId,
                           subSpaceName: subSpaceName,
-                          // officialName: officialName,
+                          officialName: officialName,
                         );
                       }
                     },
