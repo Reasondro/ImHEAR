@@ -9,11 +9,11 @@ import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:komunika/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:komunika/features/chat/presentation/screens/chat_screen.dart';
-import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
+// import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
-import 'package:komunika/features/home/presentation/screens/official_dashboard_screen.dart';
-import 'package:komunika/features/home/presentation/screens/org_admin_dashboard_screen.dart';
+import 'package:komunika/features/dashboard/presentation/screens/official_dashboard_screen.dart';
+import 'package:komunika/features/dashboard/presentation/screens/org_admin_dashboard_screen.dart';
 import 'package:komunika/features/onboarding/presentation/screens/select_role_screen.dart';
 import 'package:komunika/features/profile/presentation/profile_screen.dart';
 import 'package:komunika/features/onboarding/presentation/screens/welcome_screen.dart';
@@ -65,14 +65,14 @@ class RoutingService {
         "/welcome/${Routes.signInScreen}",
       ];
 
-      final List<String> authenticatedBaseRoutes = [
-        Routes.deafUserHome,
-        Routes.officialHome,
-        Routes.orgAdminHome,
-        Routes.devicesScreen,
-        Routes.profileScreen,
-        //? Add more base paths for authenticated areas if needed (like /settings)
-      ];
+      // final List<String> authenticatedBaseRoutes = [
+      //   Routes.deafUserHome,
+      //   Routes.officialHome,
+      //   Routes.orgAdminHome,
+      //   Routes.devicesScreen,
+      //   Routes.profileScreen,
+      //   //? Add more base paths for authenticated areas if needed (like /settings)
+      // ];
 
       // ? not authenticated
       if (!isAuthenticated) {
@@ -164,6 +164,7 @@ class RoutingService {
                 // builder: (context, state) => const DeafUserDashboardScreen(), // ? for testing
                 routes: <RouteBase>[
                   GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
                     name: Routes.deafUserChatScreen,
                     path: "${Routes.chatScreen}/:roomId/:subSpaceName",
                     // path: "${Routes.chatScreen}/:subSpaceName/:roomId",

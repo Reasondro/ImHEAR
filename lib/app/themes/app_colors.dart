@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class AppColors {
+  AppColors._();
   //? haiti/dark blue color
   static const Color haiti = Color.fromARGB(255, 25, 25, 63);
 

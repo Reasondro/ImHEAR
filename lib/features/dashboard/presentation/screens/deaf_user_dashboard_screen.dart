@@ -18,30 +18,7 @@ class DeafUserDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //     //! --- Important: Initiate tracking ---
-    //     //? decision to  startTracking.
-    //     //? option 1: Call it here if the dashboard is the primary place tracking starts.
-    //     // context.read<UserLocationCubit>().startTracking();
-    //     //? pption 2: Call it earlier (e.g., after signin, in main.dart) if tracking
-    //     //?           should start as soon as the app knows it's needed.
-    //     //? option 3: Add a button in the UI for the user to manually start tracking.
-
-    //     //? ALT1 ,  assume tracking  started elsewhere,
-    //     //? or add a button. If starting automatically here, uncomment the line above.
-
     return Scaffold(
-      // bottomNavigationBar: NavigationBar(
-      //   destinations:
-      //       destinations
-      //           .map(
-      //             (d) => NavigationDestination(
-      //               icon: Icon(d.icon),
-      //               label: d.label,
-      //               selectedIcon: Icon(d.icon),
-      //             ),
-      //           )
-      //           .toList(),
-      // ),
       appBar: AppBar(
         title: const Text('Deaf User Dashboard'),
         actions: [
@@ -235,15 +212,6 @@ class DeafUserDashboardScreen extends StatelessWidget {
                                   );
 
                                   if (context.mounted) {
-                                    // Navigator.of(context).push(
-                                    //   MaterialPageRoute(
-                                    //     builder:
-                                    //         (context) => ChatScreen(
-                                    //           roomId: roomId,
-                                    //           subSpaceName: subSpaceName,
-                                    //         ),
-                                    //   ),
-                                    // );
                                     GoRouter.of(context).goNamed(
                                       Routes.deafUserChatScreen,
                                       pathParameters: {
@@ -285,3 +253,18 @@ class DeafUserDashboardScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+    //     //! --- Important: Initiate tracking ---
+    //     //? decision to  startTracking.
+    //     //? option 1: Call it here if the dashboard is the primary place tracking starts.
+    //     // context.read<UserLocationCubit>().startTracking();
+    //     //? pption 2: Call it earlier (e.g., after signin, in main.dart) if tracking
+    //     //?           should start as soon as the app knows it's needed.
+    //     //? option 3: Add a button in the UI for the user to manually start tracking.
+
+    //     //? ALT1 ,  assume tracking  started elsewhere,
+    //     //? or add a button. If starting automatically here, uncomment the line above.
