@@ -18,7 +18,9 @@ class NearbySpaceListItem extends StatelessWidget {
     return Card(
       color: AppColors.haiti,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      // margin: const EdgeInsets.symmetric(vertical: 6), //? for whole scrool screen
+      // margin: const EdgeInsets.symmetric(vertical: 0),
+      margin: const EdgeInsets.only(bottom: 6),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),

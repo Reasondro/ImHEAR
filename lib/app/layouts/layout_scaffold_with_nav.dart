@@ -13,7 +13,7 @@ class LayoutScaffoldWithNav extends StatelessWidget {
       body:
           //  SafeArea(child:
           navigationShell,
-      // ),
+      // )
       bottomNavigationBar: NavigationBar(
         destinations:
             destinations

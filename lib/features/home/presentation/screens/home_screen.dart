@@ -106,11 +106,16 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.only(
           left: 20.0,
           right: 20,
-          bottom: 12.0,
-          top: 20.0,
+          // bottom: 12.0,
+          bottom: 0,
+          top: 50.0,
+          // top: 40.0,
+          // top: 16.0, //? or 20 for whole screen scrool
         ),
-        child: ListView(
-          // crossAxisAlignment: CrossAxisAlignment.start,
+        // child: ListView( //? for whole screen scrool
+        child: Column(
+          //? for whole screen scrool
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             // ? hello usernanme
             RichText(
@@ -190,7 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20), // ? search bar
+            // const SizedBox(height: 20), // ? search bar
+            const SizedBox(height: 10), // ? search bar
             Row(
               children: [
                 Expanded(
@@ -257,102 +263,115 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16), //? for whole scrool screen
             // ? list of nearby spaces
-            // Expanded(
-            // child:
-            BlocBuilder<NearbyOfficialsCubit, NearbyOfficialsState>(
-              builder: (context, state) {
-                if (state is NearbyOfficialsLoading
-                // && !(state is NearbyOfficialsLoaded &&
-                //     state.officials.loaded)
-                ) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is NearbyOfficialsError) {
-                  return Center(
-                    child: Text("Error finding spaces: ${state.message}"),
-                  );
-                }
-                if (state is NearbyOfficialsLoaded) {
-                  if (state.officials.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "No active spaces found nearby",
-                        style: TextStyle(color: AppColors.bittersweet),
-                      ),
+            Expanded(
+              child: BlocBuilder<NearbyOfficialsCubit, NearbyOfficialsState>(
+                builder: (context, state) {
+                  if (state is NearbyOfficialsLoading
+                  // && !(state is NearbyOfficialsLoaded &&
+                  //     state.officials.loaded)
+                  ) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (state is NearbyOfficialsError) {
+                    return Center(
+                      child: Text("Error finding spaces: ${state.message}"),
                     );
                   }
-                  final List<NearbyOfficial> displayedOfficials =
-                      state.officials.where((official) {
-                        final String searchTerm =
-                            _searchController.text.toLowerCase();
-                        if (searchTerm.isEmpty) return true;
-                        return official.locationName.toLowerCase().contains(
-                              searchTerm,
-                            ) ||
-                            official.officialFullName.toLowerCase().contains(
-                              searchTerm,
-                            );
-                      }).toList();
-                  if (displayedOfficials.isEmpty &&
-                      _searchController.text.isNotEmpty) {
-                    return const Center(
-                      child: Text(
-                        "No spaces match your search.",
-                        style: TextStyle(color: AppColors.deluge),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: displayedOfficials.length,
-                    itemBuilder: (context, index) {
-                      final NearbyOfficial official = displayedOfficials[index];
-                      return NearbySpaceListItem(
-                        official: official,
-                        onTap: () async {
-                          try {
-                            final ChatRepository chatRepository =
-                                context.read<ChatRepository>();
-                            final int roomId = await chatRepository
-                                .getOrCreateChatRoom(
-                                  subSpaceId: official.subSpaceId,
-                                );
-
-                            if (context.mounted) {
-                              GoRouter.of(context).goNamed(
-                                Routes.deafUserChatScreen,
-                                pathParameters: {
-                                  "roomId": roomId.toString(),
-
-                                  // "subSpaceName": Uri.encodeComponent(
-                                  "subSpaceName": official.locationName,
-                                },
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              context.customShowErrorSnackBar(
-                                "Error opening chat: $e",
-                              );
-                            }
-                          }
-                        },
+                  if (state is NearbyOfficialsLoaded) {
+                    if (state.officials.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "No active spaces found nearby",
+                          style: TextStyle(color: AppColors.bittersweet),
+                        ),
                       );
-                    },
+                    }
+                    final List<NearbyOfficial> displayedOfficials =
+                        state.officials.where((official) {
+                          final String searchTerm =
+                              _searchController.text.toLowerCase();
+                          if (searchTerm.isEmpty) return true;
+                          return official.locationName.toLowerCase().contains(
+                                searchTerm,
+                              ) ||
+                              official.officialFullName.toLowerCase().contains(
+                                searchTerm,
+                              );
+                        }).toList();
+
+                    // ---- START: For testing with many items ----
+                    if (displayedOfficials.isNotEmpty) {
+                      final List<NearbyOfficial> originalList = List.from(
+                        displayedOfficials,
+                      );
+                      for (int i = 0; i < 10; i++) {
+                        // Multiply by 10 (adjust as needed)
+                        displayedOfficials.addAll(originalList);
+                      }
+                    }
+                    // ---- END: For testing with many items ----
+                    if (displayedOfficials.isEmpty &&
+                        _searchController.text.isNotEmpty) {
+                      return const Center(
+                        child: Text(
+                          "No spaces match your search.",
+                          style: TextStyle(color: AppColors.deluge),
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(top: 0),
+                      // shrinkWrap: true, //? for whole screen scrool
+                      // physics: const NeverScrollableScrollPhysics(), //? for whole screen scrool
+                      itemCount: displayedOfficials.length,
+                      itemBuilder: (context, index) {
+                        final NearbyOfficial official =
+                            displayedOfficials[index];
+                        return NearbySpaceListItem(
+                          official: official,
+                          onTap: () async {
+                            try {
+                              final ChatRepository chatRepository =
+                                  context.read<ChatRepository>();
+                              final int roomId = await chatRepository
+                                  .getOrCreateChatRoom(
+                                    subSpaceId: official.subSpaceId,
+                                  );
+
+                              if (context.mounted) {
+                                GoRouter.of(context).goNamed(
+                                  Routes.deafUserChatScreen,
+                                  pathParameters: {
+                                    "roomId": roomId.toString(),
+
+                                    // "subSpaceName": Uri.encodeComponent(
+                                    "subSpaceName": official.locationName,
+                                  },
+                                );
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                context.customShowErrorSnackBar(
+                                  "Error opening chat: $e",
+                                );
+                              }
+                            }
+                          },
+                        );
+                      },
+                    );
+                  }
+                  return const Center(
+                    child: Text(
+                      "Scanning for nearby spaces...",
+                      style: TextStyle(color: AppColors.deluge),
+                    ),
                   );
-                }
-                return const Center(
-                  child: Text(
-                    "Scanning for nearby spaces...",
-                    style: TextStyle(color: AppColors.deluge),
-                  ),
-                );
-              },
+                },
+              ),
             ),
-            // ),
           ],
         ),
       ),
