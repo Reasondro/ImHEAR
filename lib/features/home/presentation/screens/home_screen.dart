@@ -63,9 +63,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       print(
         "HomeScreen: App resumed, and was attempting to enable location from settings. Re-trying startTracking.",
       );
-      // Reset the flag
+      //? reset the flag
       _isAttemptingToEnableLocationFromSettings = false;
-      // Attempt to start tracking again
+      //? attempt to start tracking again
       context.read<UserLocationCubit>().startTracking();
     }
   }
@@ -151,20 +151,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         print(
                           "Just opened location settings, will attempt tracking on app resume.",
                         );
-                        // await Geolocator.openLocationSettings();
-                        // print("Just open location settings");
-                        // // await Geolocator.openLocationSettings()
-                        // // .then((_)
-                        // // {
-                        // await Future.delayed(const Duration(milliseconds: 500));
-                        // // Optionally try starting tracking again after user returns from settings
-                        // if (context.mounted) {
-                        //   print(
-                        //     "HomeScreen: Attempting to start tracking after returning from settings with delay.",
-                        //   );
-                        //   context.read<UserLocationCubit>().startTracking();
-                        // }
-                        // // });
+                      },
+                      secondaryButtonText: "Retry Scan",
+                      onSecondaryButtonPressed: () {
+                        print(
+                          "Retry Scan button pressed for disabled service.",
+                        );
+                        context.read<UserLocationCubit>().startTracking();
                       },
                     );
                   }
@@ -186,9 +179,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       "Location Permission Denied",
                       "Permission is permanently denied. Please enable it from app settings.",
                       "Open App Settings",
-                      // () async => await Geolocator.openAppSettings(),
                       () async {
-                        // Set the flag before opening settings - useful if you want to re-check on resume
+                        // ? set the flag before opening settings - useful to recheck on resume
                         _isAttemptingToEnableLocationFromSettings = true;
                         await Geolocator.openAppSettings();
                         print(
@@ -212,7 +204,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     children: [
                       Center(
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            context.read<UserLocationCubit>().stopTracking();
+                            context.read<UserLocationCubit>().startTracking();
+                            context.customShowSnackBar(
+                              "Radar tapped, attempting to start/restart location tracking.",
+                            );
+                          },
                           child:
                               BlocBuilder<UserLocationCubit, UserLocationState>(
                                 builder: (context, locationState) {
@@ -462,8 +460,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     String title,
     String message,
     String buttonText,
-    VoidCallback onButtonPressed,
-  ) {
+    VoidCallback onButtonPressed, {
+    String? secondaryButtonText, //? optional: text for a second button
+    VoidCallback?
+    onSecondaryButtonPressed, //? optional: action for a second button
+  }) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -500,6 +501,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 style: const TextStyle(color: AppColors.white),
               ),
             ),
+            if (secondaryButtonText != null &&
+                onSecondaryButtonPressed != null) ...[
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: onSecondaryButtonPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.deluge,
+                ),
+                child: Text(
+                  secondaryButtonText,
+                  style: const TextStyle(color: AppColors.white),
+                ),
+              ),
+            ],
           ],
         ),
       ),

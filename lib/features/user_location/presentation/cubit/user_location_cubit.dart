@@ -36,7 +36,10 @@ class UserLocationCubit extends Cubit<UserLocationState> {
 
   Future<void> startTracking() async {
     //? prevent starting if already tracking or loading
-    if (state is UserLocationTracking || state is UserLocationLoading) return;
+    if (state is UserLocationTracking || state is UserLocationLoading) {
+      print("UserLocationCubit has already been tracking");
+      return;
+    }
 
     emit(UserLocationLoading());
     // _permissionRequested = false; //? reset permission request flag
