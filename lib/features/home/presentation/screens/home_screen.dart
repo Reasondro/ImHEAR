@@ -263,7 +263,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16), //? for whole scrool screen
+            // const SizedBox(height: 16), //? for whole scrool screen
+            const SizedBox(height: 10), //? for whole scrool screen
             // ? list of nearby spaces
             Expanded(
               child: BlocBuilder<NearbyOfficialsCubit, NearbyOfficialsState>(
