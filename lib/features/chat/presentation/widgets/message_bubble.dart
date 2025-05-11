@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:komunika/app/themes/app_colors.dart';
 import 'package:komunika/features/chat/domain/entities/message.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -14,9 +15,11 @@ class MessageBubble extends StatelessWidget {
     final CrossAxisAlignment allignment =
         isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final Color bubbleColor =
-        isMe ? theme.colorScheme.primary : theme.colorScheme.secondary;
+        // isMe ? AppColors.lavender : theme.colorScheme.secondary;
+        isMe ? AppColors.lavender : AppColors.white;
     final Color textColor =
-        isMe ? theme.colorScheme.onPrimary : theme.colorScheme.onSecondary;
+        // isMe ? AppColors.haiti : theme.colorScheme.onSecondary;
+        AppColors.haiti;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       child: Column(
@@ -34,16 +37,23 @@ class MessageBubble extends StatelessWidget {
               color: bubbleColor,
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(12),
-                topRight: const Radius.circular(12),
+                topRight:
+                    //  const Radius.circular(12),
+                    isMe ? const Radius.circular(0) : const Radius.circular(12),
                 bottomLeft:
                     isMe ? const Radius.circular(12) : const Radius.circular(0),
-                bottomRight:
-                    isMe ? const Radius.circular(0) : const Radius.circular(12),
+                bottomRight: const Radius.circular(12),
+                // isMe ? const Radius.circular(0) : const Radius.circular(12),
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (!isMe)
+                  Text(
+                    "Username",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 Text(
                   message.content,
                   style: theme.textTheme.bodyMedium?.copyWith(color: textColor),
