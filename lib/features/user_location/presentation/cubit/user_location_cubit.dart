@@ -12,7 +12,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
 
   // ?Keep track if permission was requested during the current 'startTracking' call
   // ?to avoid asking multiple times if already denied in the same flow.
-  bool _permissionRequested = false;
+  // bool _permissionRequested = false;
 
   UserLocationCubit({
     LocationAccuracy accuracy =
@@ -35,11 +35,11 @@ class UserLocationCubit extends Cubit<UserLocationState> {
        super(UserLocationInitial());
 
   Future<void> startTracking() async {
-    // Prevent starting if already tracking or loading
+    //? prevent starting if already tracking or loading
     if (state is UserLocationTracking || state is UserLocationLoading) return;
 
     emit(UserLocationLoading());
-    _permissionRequested = false; //? reset permission request flag
+    // _permissionRequested = false; //? reset permission request flag
 
     try {
       //! 1. check location service enabled
@@ -52,7 +52,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
       //! 2. check and request permissions
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
-        _permissionRequested = true;
+        // _permissionRequested = true;
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           emit(UserLocationPermissionDenied());
