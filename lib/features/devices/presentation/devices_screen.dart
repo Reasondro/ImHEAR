@@ -141,44 +141,65 @@ class _DevicesScreenState extends State<DevicesScreen> {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: ValueListenableBuilder<List<ScanResult>>(
-                  valueListenable: _bluetoothService.scanResults,
-                  builder: (_, results, __) {
-                    if (!_bluetoothService.isScanning.value &&
-                        results.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          "No devices found. Ensure your wristband is on and discoverable.",
-                        ),
-                      );
-                    }
-                    if (results.isEmpty && _bluetoothService.isScanning.value) {
-                      return const Center(child: Text("Scanning..."));
-                    }
-                    return ListView.builder(
-                      itemCount: results.length,
-                      itemBuilder: (_, index) {
-                        final result = results[index];
-                        return ListTile(
-                          title: Text(
-                            result.device.platformName.isNotEmpty
-                                ? result.device.platformName
-                                : "Unknown Device",
-                          ),
-                          subtitle: Text(result.device.remoteId.toString()),
-                          onTap: () async {
-                            _bluetoothService.stopScan(); //? stop scan
-                            setState(() {
-                              _pairedDevice =
-                                  result
-                                      .device; //? set as the device to connect to
-                            });
-                            Navigator.pop(modalContext); //? close modal
-                            await _bluetoothService.connectToDevice(
-                              _pairedDevice!,
-                            ); //? Attempt connection
-                          },
-                        );
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _bluetoothService.isScanning,
+                  builder: (_, isScanning, __) {
+                    return ValueListenableBuilder<List<ScanResult>>(
+                      valueListenable: _bluetoothService.scanResults,
+                      builder: (_, scanResults, __) {
+                        if (
+                        // !_bluetoothService.isScanning.value &&
+                        //   results.isEmpty
+                        !isScanning && scanResults.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              "No devices found. Ensure your wristband is on and discoverable.",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          );
+                        }
+                        // if (results.isEmpty &&
+                        //     _bluetoothService.isScanning.value) {
+                        //   return const Center(child: Text("Scanning..."));
+                        // }
+                        if (isScanning && scanResults.isEmpty) {
+                          return const Center(child: Text("Scanning..."));
+                        }
+                        //? if results are available, display them mfs
+                        if (scanResults.isNotEmpty) {
+                          return ListView.builder(
+                            itemCount: scanResults.length,
+                            itemBuilder: (_, index) {
+                              final result = scanResults[index];
+                              return ListTile(
+                                title: Text(
+                                  result.device.platformName.isNotEmpty
+                                      ? result.device.platformName
+                                      : "Unknown Device",
+                                ),
+                                subtitle: Text(
+                                  result.device.remoteId.toString(),
+                                ),
+                                onTap: () async {
+                                  _bluetoothService.stopScan(); //? stop scan
+                                  setState(() {
+                                    _pairedDevice =
+                                        result
+                                            .device; // ? set as the device to connect to
+                                  });
+                                  Navigator.pop(modalContext); //? close modal
+                                  await _bluetoothService.connectToDevice(
+                                    _pairedDevice!,
+                                  ); //? attempt connection
+                                },
+                              );
+                            },
+                          );
+                        }
+                        //? fallback if none of the above conditions are met (e.g., !isScanning and scanResults is not empty, but handled by the above)
+                        //? or if isScanning is true and scanResults is not empty (also handled by the ListView)
+                        //? this case should IDEALLY NOT be reached if logic is exhaustive.
+                        return const SizedBox.shrink();
                       },
                     );
                   },
@@ -191,7 +212,14 @@ class _DevicesScreenState extends State<DevicesScreen> {
                     _bluetoothService.stopScan();
                     Navigator.pop(modalContext);
                   },
-                  child: const Text("Cancel"),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(
+                      color: AppColors.paleCarmine,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -200,7 +228,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
         // );
       },
     ).whenComplete(() {
-      print("when complete block");
+      print("When complete block");
       _bluetoothService
           .stopScan(); //? ensure scan stops when modal is dismissed
     });
@@ -208,7 +236,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
@@ -295,7 +323,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                         await _bluetoothService.connectToDevice(_pairedDevice!);
                       } else {
                         //? no paired device, prompt to scan via "Switch Devices"
-                        context.customShowSnackBar(
+                        context.customShowErrorSnackBar(
                           "No device selected. Please use 'Switch Devices' to scan.",
                         );
                       }

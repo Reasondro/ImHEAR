@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:komunika/app/themes/app_colors.dart';
 
 extension ContextExtension on BuildContext {
   void customShowSnackBar(String message) {
@@ -7,8 +8,9 @@ extension ContextExtension on BuildContext {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(
-            color: Theme.of(this).colorScheme.onPrimary,
+          style: const TextStyle(
+            // color: Theme.of(this).colorScheme.onPrimary,
+            color: AppColors.white,
             fontSize: 15,
           ),
           textAlign: TextAlign.left,
@@ -21,7 +23,8 @@ extension ContextExtension on BuildContext {
         ),
         margin: const EdgeInsets.only(bottom: 10, left: 14, right: 14),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Theme.of(this).colorScheme.primary,
+        // backgroundColor: Theme.of(this).colorScheme.primary,
+        backgroundColor: AppColors.haiti,
         dismissDirection: DismissDirection.horizontal,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(7)),
@@ -36,8 +39,9 @@ extension ContextExtension on BuildContext {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(
-            color: Theme.of(this).colorScheme.onError,
+          style: const TextStyle(
+            // color: Theme.of(this).colorScheme.onError,
+            color: AppColors.white,
             fontSize: 15,
           ),
           textAlign: TextAlign.left,
@@ -50,7 +54,8 @@ extension ContextExtension on BuildContext {
         ),
         margin: const EdgeInsets.only(bottom: 10, left: 14, right: 14),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Theme.of(this).colorScheme.error,
+        // backgroundColor: Theme.of(this).colorScheme.error,
+        backgroundColor: AppColors.paleCarmine,
         dismissDirection: DismissDirection.horizontal,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(7)),
