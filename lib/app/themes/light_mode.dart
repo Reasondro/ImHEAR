@@ -12,7 +12,8 @@ final ThemeData imHearLightTheme = ThemeData().copyWith(
   // colorScheme: ColorScheme.light(),
   textTheme: GoogleFonts.outfitTextTheme(),
   appBarTheme: const AppBarTheme(
-    toolbarHeight: 75,
+    // toolbarHeight: 75,
+    toolbarHeight: 65,
     backgroundColor: AppColors.haiti,
     foregroundColor: AppColors.white,
   ),

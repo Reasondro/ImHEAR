@@ -198,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       () => context.read<UserLocationCubit>().startTracking(),
                     );
                   }
+
                   // ? if location is Initial, Loading, or Tracking, show main UI
                   // ? (radar, count, search, list)
                   return Column(
@@ -223,6 +224,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                           locationState
                                               is UserLocationLoading ||
                                           nearbyState is NearbyOfficialsLoading;
+
                                       if (isLoading) {
                                         return Lottie.asset(
                                           height: 250,
