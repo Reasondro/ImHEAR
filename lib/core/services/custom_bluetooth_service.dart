@@ -1,4 +1,3 @@
-// lib/core/services/bluetooth_service.dart
 // ignore_for_file: constant_identifier_names
 
 import 'dart:async';
@@ -6,7 +5,6 @@ import 'dart:convert'; // For utf8.encode
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart'; // For ValueNotifier
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:device_info_plus/device_info_plus.dart';
@@ -22,6 +20,8 @@ class CustomBluetoothService {
   BluetoothCharacteristic? _targetCharacteristic;
   StreamSubscription<BluetoothConnectionState>? _connectionStateSubscription;
   StreamSubscription<List<ScanResult>>? _scanSubscription;
+
+  BluetoothDevice? get connectedDevice => _targetDevice; // <<< ADD THIS GETTER
 
   // Use ValueNotifier for simple state exposure to UI
   ValueNotifier<bool> isConnected = ValueNotifier(false);

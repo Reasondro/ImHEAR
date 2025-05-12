@@ -1,4 +1,3 @@
-// Example Test Widget
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:komunika/core/extensions/snackbar_extension.dart';
@@ -172,32 +171,6 @@ class _BleTestScreenState extends State<BleTestScreen> {
                                   : null,
                           child: const Icon(Icons.send),
                         ),
-                        // ElevatedButton(
-                        //   onPressed:
-                        //       isConnected
-                        //           ? () async {
-                        //             String dummy = await _bluetoothService
-                        //                 .sendCommand("1");
-                        //             setState(() {
-                        //               result = dummy;
-                        //             });
-                        //           }
-                        //           : null,
-                        //   child: const Text("Send '1'"),
-                        // ),
-                        // ElevatedButton(
-                        //   onPressed:
-                        //       isConnected
-                        //           ? () async {
-                        //             String dummy = await _bluetoothService
-                        //                 .sendCommand("2");
-                        //             setState(() {
-                        //               result = dummy;
-                        //             });
-                        //           }
-                        //           : null,
-                        //   child: const Text("Send '2'"),
-                        // ),
                       ],
                     ),
                     const SizedBox(height: 10),

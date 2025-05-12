@@ -9,6 +9,7 @@ class LayoutScaffoldWithNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(title: Text("LayoutScaffold")),
       // resizeToAvoidBottomInset: false,
       body:
           //  SafeArea(child:
