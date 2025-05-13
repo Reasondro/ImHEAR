@@ -11,6 +11,7 @@ import 'package:komunika/features/auth/presentation/screens/sign_up_screen.dart'
 import 'package:komunika/features/chat/presentation/screens/chat_screen.dart';
 // import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
+import 'package:komunika/features/hear_ai/presentation/hear_ai_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
 import 'package:komunika/features/dashboard/presentation/screens/official_dashboard_screen.dart';
 import 'package:komunika/features/dashboard/presentation/screens/org_admin_dashboard_screen.dart';
@@ -47,7 +48,7 @@ class RoutingService {
   RoutingService({required this.authCubit});
   late final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    debugLogDiagnostics: true,
+    // debugLogDiagnostics: true, //? for debugging
 
     // initialLocation: Routes.homeScreen, //? in production might be use home screen instead
     initialLocation: Routes.welcomeScreen,
@@ -195,7 +196,19 @@ class RoutingService {
             ],
           ),
 
-          // ? branch 2 : Deaf user devices
+          // ? branch 2 : Deaf user hearai scan
+          StatefulShellBranch(
+            // navigatorKey: _shellNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                name: Routes.hearAIScreen,
+                path: Routes.hearAIScreen,
+                builder: (context, state) => const HearAIScreen(),
+              ),
+            ],
+          ),
+
+          // ? branch 3 : Deaf user devices
           StatefulShellBranch(
             // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[
@@ -207,7 +220,7 @@ class RoutingService {
             ],
           ),
 
-          // ? branch 3 : Deaf user profile
+          // ? branch 4 : Deaf user profile
           StatefulShellBranch(
             // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[

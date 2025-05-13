@@ -341,7 +341,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppColors.paleCarmine, width: 1.8),
+        borderSide: const BorderSide(color: AppColors.paleCarmine, width: 2.3),
       ),
     );
   }

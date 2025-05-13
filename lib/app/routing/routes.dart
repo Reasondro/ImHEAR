@@ -34,6 +34,10 @@ class Routes {
   // static const String nestedChatScreen =
   //     "$homeScreen/$chatScreen"; //? after the deaf user clicked the available sub-spaces
 
+  // ? hearAI screen
+  static const String hearAIScreen =
+      "/hear-ai"; //? screen for the deaf user to scan enviroment
+
   // ? devices screen
   static const String devicesScreen =
       "/devices"; //? screen for the deaf user to connect the device

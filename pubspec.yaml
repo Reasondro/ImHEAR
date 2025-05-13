@@ -51,6 +51,10 @@ dependencies:
   flutter_blue_plus: ^1.35.5
   device_info_plus: ^11.4.0
   lottie: ^3.3.1
+  speech_to_text: ^7.0.0
+  record: ^6.0.0
+  path_provider: ^2.1.5
+  google_generative_ai: ^0.4.7
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +81,8 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - flutter_launcher_icons.yaml
+    - flutter_native_splash.yaml
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

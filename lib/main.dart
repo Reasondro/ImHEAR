@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/app.dart';
 import 'package:komunika/app/routing/routing_service.dart';
 import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
-import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
+// import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: dotenv.env["SUPABASE_PROJECT_URL"]!,
