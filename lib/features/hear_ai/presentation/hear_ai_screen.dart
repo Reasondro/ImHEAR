@@ -59,8 +59,8 @@ class _HearAIScreenState extends State<HearAIScreen> {
     }
     final GenerativeModel model = GenerativeModel(
       model: "gemini-2.0-flash-lite",
-      // model: "gemini-2.0-flash",
-      // model: "gemini-2.5-flash-preview-04-17",
+      // model: "gemini-2.0-flash", //? for testing
+      // model: "gemini-2.5-flash-preview-04-17", // ? for testing
       apiKey: apiKey,
     );
 
@@ -80,11 +80,8 @@ class _HearAIScreenState extends State<HearAIScreen> {
         "SPEECH_UNCLEAR",
         //? sounds
         "SOUND_ALARM",
-        // "SOUND_SIREN", //? this shit always take the spot
-        // "SOUND_CAR_HORN",
+        // "SOUND_SIREN", //? this is error prone
         "SOUND_VEHICLE_HORN",
-        // "SOUND_ALARM_FIRE",
-        // "SOUND_ALARM_SMOKE",
         "SOUND_DOORBELL_KNOCK",
         "SOUND_PHONE_RINGING",
         "SOUND_CROWD_NOISE",
@@ -291,7 +288,7 @@ class _HearAIScreenState extends State<HearAIScreen> {
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child:
-          // ListView(
+          // ListView( //? for later use if want to use list view
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -300,7 +297,7 @@ class _HearAIScreenState extends State<HearAIScreen> {
                 TweenAnimationBuilder<double>(
                   tween: Tween<double>(begin: 0.8, end: 1.2),
                   duration: const Duration(milliseconds: 700),
-                  curve: Curves.easeInOut, // Added a curve
+                  curve: Curves.easeInOut,
                   builder: (context, scale, child) {
                     return Transform.scale(scale: scale, child: child);
                   },
