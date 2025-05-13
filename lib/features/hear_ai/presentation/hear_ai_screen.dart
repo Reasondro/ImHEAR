@@ -25,6 +25,7 @@ class _HearAIScreenState extends State<HearAIScreen> {
   // ? ai stuffs
   String _transcribedText = "";
   String _analysisCategory = "";
+  String _eventDetails = "";
   bool _isProcessingAI = false;
 
   Future<void> _processAudioWithGemini() async {
@@ -39,6 +40,7 @@ class _HearAIScreenState extends State<HearAIScreen> {
       _isProcessingAI = true;
       _transcribedText = "";
       _analysisCategory = "";
+      _eventDetails = "";
     });
 
     const String mimeType = "audio/opus";
@@ -65,16 +67,52 @@ class _HearAIScreenState extends State<HearAIScreen> {
         mimeType,
         Uint8List.fromList(_recordedAudioBytes!),
       );
-      const String categories =
-          "NEUTRAL, URGENT_QUESTION, URGENT_STATEMENT, HAPPY_EXCLAMATION, GENERAL_QUESTION, ANNOYED_STATEMENT";
+      // const String categories =
+      //     "NEUTRAL, URGENT_QUESTION, URGENT_STATEMENT, HAPPY_EXCLAMATION, GENERAL_QUESTION, ANNOYED_STATEMENT";
+
+      final String soundCategories = [
+        // ? speech
+        "SPEECH_NEUTRAL", "SPEECH_QUESTION", "SPEECH_HAPPY_EXCITED",
+        "SPEECH_ANGRY_STRESSED",
+        "SPEECH_URGENT_IMPORTANT",
+        "SPEECH_INSTRUCTION",
+        // "SPEECH_SAD",
+        "SPEECH_UNCLEAR",
+        //? sounds
+        "SOUND_CAR_HORN",
+        "SOUND_SIREN",
+        "SOUND_ALARM",
+        // "SOUND_ALARM_FIRE",
+        // "SOUND_ALARM_SMOKE",
+        "SOUND_DOORBELL_KNOCK",
+        "SOUND_DOG_BARK",
+        "SOUND_LOUD_IMPACT",
+        "SOUND_BABY_CRYING",
+        //? fallbacks
+        "SOUND_GENERAL_LOUD", "AMBIENT_NOISE_ONLY",
+      ].join(", ");
+
+      // final TextPart promptPart = TextPart(
+      //   "Transcribe the following audio. "
+      //   "Then, analyze the speaker's likely intent and emotional tone. "
+      //   "Classify the overall tone into ONE of these categories: $categories. "
+      //   "Format your response EXACTLY like this: "
+      //   "Transcription: [The transcribed text here] "
+      //   "ToneCategory: [ONE_OF_THE_CATEGORIES_ABOVE]",
+      // );
+
       final TextPart promptPart = TextPart(
-        "Transcribe the following audio. "
-        "Then, analyze the speaker's likely intent and emotional tone. "
-        "Classify the overall tone into ONE of these categories: $categories. "
-        "Format your response EXACTLY like this: "
-        "Transcription: [The transcribed text here] "
-        "ToneCategory: [ONE_OF_THE_CATEGORIES_ABOVE]",
+        "Analyze the provided audio. "
+        "1. If clear human speech is present, transcribe it. Also determine its dominant tone/intent. "
+        "2. Independently, listen for any of the following specific environmental sounds if they are prominent: CAR_HORN, SIREN, ALARM, DOORBELL_KNOCK, DOG_BARK, LOUD_IMPACT, BABY_CRYING."
+        "3. Determine the single most significant event or type of speech from the audio. "
+        "4. Classify this primary event into ONE of these categories: $soundCategories. "
+        "Output your response STRICTLY in the following format, ensuring each field is on a new line: "
+        "EVENT_TYPE: [THE CHOSEN CATEGORY FROM THE LIST ABOVE] "
+        "TRANSCRIPTION: [The transcribed speech if EVENT_TYPE starts with 'SPEECH_', otherwise 'N/A'] "
+        "DETAILS: [If speech, provide a concise description of the speaker's tone, intent, or emotion (e.g., 'questioning', 'urgent', 'happy', 'annoyed'). If an environmental sound, provide any further context or nuance if discernible (e.g., 'distant siren', 'intermittent barking', 'loud continuous alarm'); if no further specific context, output 'N/A'. If AMBIENT_NOISE_ONLY, describe the nature of the ambient noise (e.g., 'quiet room', 'wind noise', 'traffic rumble'). If the primary event is UNCLEAR, provide a brief reason if possible (e.g., 'muffled sound', 'overlapping sounds'), otherwise 'N/A'.]",
       );
+      // ? OLD "DETAILS: [If speech, the specific tone/intent words like 'urgent question' or 'happy statement'. If an environmental sound, the name of the sound like 'CAR_HORN' or 'LOUD_IMPACT'. If AMBIENT_NOISE_ONLY, 'Low ambient noise' or similar.]",
 
       print("Sending audio to Gemini for processing ...".toUpperCase());
       final GenerateContentResponse response = await model.generateContent([
@@ -83,42 +121,77 @@ class _HearAIScreenState extends State<HearAIScreen> {
       print("Gemini Raw Response: ${response.text}");
 
       if (response.text != null) {
-        // ? start basic parsing
         String rawResponseText = response.text!;
-        String transcription =
-            "Could not parse transcription"; //? default value
-        String tone = "Could not parse tone"; //? default value
 
-        final RegExp transRegExp = RegExp(
-          r"Transcription:\s*(.*?)(\s*ToneCategory:|$)",
-        );
-        final RegExp toneRegExp = RegExp(r"ToneCategory:\s*(\w+)");
-        final RegExpMatch? transMatch = transRegExp.firstMatch(rawResponseText);
-        if (transMatch != null && transMatch.group(1) != null) {
-          transcription = transMatch.group(1)!.trim();
+        // ? start basic parsing
+        // String transcription =
+        //     "Could not parse transcription"; //? default value
+        // String tone = "Could not parse tone"; //? default value
+
+        // final RegExp transRegExp = RegExp(
+        //   r"Transcription:\s*(.*?)(\s*ToneCategory:|$)",
+        // );
+        // final RegExp toneRegExp = RegExp(r"ToneCategory:\s*(\w+)");
+        // final RegExpMatch? transMatch = transRegExp.firstMatch(rawResponseText);
+        // if (transMatch != null && transMatch.group(1) != null) {
+        //   transcription = transMatch.group(1)!.trim();
+        // }
+
+        // final RegExpMatch? toneMatch = toneRegExp.firstMatch(rawResponseText);
+
+        // if (toneMatch != null && toneMatch.group(1) != null) {
+        //   tone = toneMatch.group(1)!.trim();
+        // }
+        // // ? end basic parsing
+
+        String eventType = "UNKNOWN";
+        String transcription = "N/A";
+        String details = "";
+
+        //? split by lines and parse
+        final List<String> lines = rawResponseText.split('\n');
+        for (String line in lines) {
+          if (line.startsWith("EVENT_TYPE:")) {
+            eventType = line.substring("EVENT_TYPE:".length).trim();
+          } else if (line.startsWith("TRANSCRIPTION:")) {
+            transcription = line.substring("TRANSCRIPTION:".length).trim();
+          } else if (line.startsWith("DETAILS:")) {
+            details = line.substring("DETAILS:".length).trim();
+          }
         }
-
-        final RegExpMatch? toneMatch = toneRegExp.firstMatch(rawResponseText);
-
-        if (toneMatch != null && toneMatch.group(1) != null) {
-          tone = toneMatch.group(1)!.trim();
-        }
-        // ? end basic parsing
 
         if (mounted) {
           setState(() {
+            //? eventType for vibration logic,
+            //?  transcription to display (if not "N/A")
+            //? details for additional info or display
+            // _transcribedText = transcription;
             _transcribedText = transcription;
-            _analysisCategory = tone;
+            // (transcription == "N/A")
+            //     ? details
+            //     : transcription; //? with  details if no transcription
+            // _analysisCategory = tone;
+            _analysisCategory = eventType; //? holds SPEECH_ or SOUND_ category
+            _eventDetails = details;
             _isProcessingAI = false;
           });
+          // print(
+          //   "Processed: Transcription='$_transcribedText', Tone='$_analysisCategory'",
+          // );
           print(
-            "Processed: Transcription='$_transcribedText', Tone='$_analysisCategory'",
+            "Processed: EventType='$eventType', Transcription='$transcription', Details='$details'",
           );
 
           // TODO LATER: Based on _analysisCategory, send command to ESP32
-          // e.g., if (_analysisCategory == "URGENT_STATEMENT") {
+          //      // e.g., if (_analysisCategory == "URGENT_STATEMENT") {
+          //    //   context.read<CustomBluetoothService>().sendCommand("VIB_URGENT");
+          //  // }
+          // send a command to ESP32 based on eventType
+          // if (eventType == "SOUND_CAR_HORN") {
+          //   context.read<CustomBluetoothService>().sendCommand("VIB_CAR_HORN"); // Define this command
+          // } else if (eventType == "SPEECH_URGENT_IMPORTANT") {
           //   context.read<CustomBluetoothService>().sendCommand("VIB_URGENT");
-          // }
+          // } // etc.
         }
       } else {
         if (mounted) {
@@ -393,12 +466,21 @@ class _HearAIScreenState extends State<HearAIScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "Tone Category: $_analysisCategory",
+                        "Sound Category: $_analysisCategory",
                         style: const TextStyle(
                           fontSize: 14,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
+                      //? display details if available and not "N/A"
+                      if (_eventDetails.isNotEmpty && _eventDetails != "N/A")
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            "Details: $_eventDetails",
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
                     ],
                   ),
                 ),
