@@ -59,6 +59,8 @@ class _HearAIScreenState extends State<HearAIScreen> {
     }
     final GenerativeModel model = GenerativeModel(
       model: "gemini-2.0-flash-lite",
+      // model: "gemini-2.0-flash",
+      // model: "gemini-2.5-flash-preview-04-17",
       apiKey: apiKey,
     );
 
@@ -74,32 +76,38 @@ class _HearAIScreenState extends State<HearAIScreen> {
         "SPEECH_ANGRY_STRESSED",
         "SPEECH_URGENT_IMPORTANT",
         "SPEECH_INSTRUCTION",
-        // "SPEECH_SAD",
+        "SPEECH_SAD",
         "SPEECH_UNCLEAR",
         //? sounds
-        "SOUND_CAR_HORN",
-        "SOUND_SIREN",
         "SOUND_ALARM",
+        // "SOUND_SIREN", //? this shit always take the spot
+        // "SOUND_CAR_HORN",
+        "SOUND_VEHICLE_HORN",
         // "SOUND_ALARM_FIRE",
         // "SOUND_ALARM_SMOKE",
         "SOUND_DOORBELL_KNOCK",
-        "SOUND_DOG_BARK",
+        "SOUND_PHONE_RINGING",
+        "SOUND_CROWD_NOISE",
+        "SOUND_PERSON_COUGH_SNEEZE",
+        "SOUND_ANIMAL_SOUND",
         "SOUND_LOUD_IMPACT",
+        "SOUND_EXPLOSION",
         "SOUND_BABY_CRYING",
+        "SOUND_MUSIC",
         //? fallbacks
-        "SOUND_GENERAL_LOUD", "AMBIENT_NOISE_ONLY",
+        "SOUND_GENERAL_LOUD", "AMBIENT_NOISE",
       ].join(", ");
 
       final TextPart promptPart = TextPart(
         "Analyze the provided audio. "
         "1. If clear human speech is present, transcribe it. Also determine its dominant tone/intent. "
-        "2. Independently, listen for any of the following specific environmental sounds if they are prominent: CAR_HORN, SIREN, ALARM, DOORBELL_KNOCK, DOG_BARK, LOUD_IMPACT, BABY_CRYING."
+        "2. Independently, listen for any of the following specific environmental sounds if they are prominent:ALARM,VEHICLE_HORN ,DOORBELL_KNOCK,PHONE_RINGING,CROWD_NOISE,PERSON_COUGH_SNEEZE ,ANIMAL_SOUND, LOUD_IMPACT, EXPLOSION,BABY_CRYING,MUSIC ,GENERAL_LOUD, AMBIENT_NOISE"
         "3. Determine the single most significant event or type of speech from the audio. "
         "4. Classify this primary event into ONE of these categories: $soundCategories. "
         "Output your response STRICTLY in the following format, ensuring each field is on a new line: "
         "EVENT_TYPE: [THE CHOSEN CATEGORY FROM THE LIST ABOVE] "
         "TRANSCRIPTION: [The transcribed speech if EVENT_TYPE starts with 'SPEECH_', otherwise 'N/A'] "
-        "DETAILS: [If speech, provide a concise description of the speaker's tone, intent, or emotion (e.g., 'questioning', 'urgent', 'happy', 'annoyed'). If an environmental sound, provide any further context or nuance if discernible (e.g., 'distant siren', 'intermittent barking', 'loud continuous alarm'); if no further specific context, output 'N/A'. If AMBIENT_NOISE_ONLY, describe the nature of the ambient noise (e.g., 'quiet room', 'wind noise', 'traffic rumble'). If the primary event is UNCLEAR, provide a brief reason if possible (e.g., 'muffled sound', 'overlapping sounds'), otherwise 'N/A'.]",
+        "DETAILS: [If speech, provide a concise description of the speaker's tone, intent, or emotion (e.g., 'questioning', 'urgent', 'happy', 'annoyed'). If an environmental sound, provide any further context or nuance if discernible (e.g., 'distant siren', 'intermittent barking', 'loud continuous alarm'); if no further specific context, output 'N/A'. If AMBIENT_NOISE, describe the nature of the ambient noise (e.g., 'quiet room', 'wind noise', 'traffic rumble'). If the primary event is UNCLEAR, provide a brief reason if possible (e.g., 'muffled sound', 'overlapping sounds'), otherwise 'N/A'.]",
       );
       // ? OLD "DETAILS: [If speech, the specific tone/intent words like 'urgent question' or 'happy statement'. If an environmental sound, the name of the sound like 'CAR_HORN' or 'LOUD_IMPACT'. If AMBIENT_NOISE_ONLY, 'Low ambient noise' or similar.]",
 
