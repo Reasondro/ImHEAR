@@ -67,8 +67,6 @@ class _HearAIScreenState extends State<HearAIScreen> {
         mimeType,
         Uint8List.fromList(_recordedAudioBytes!),
       );
-      // const String categories =
-      //     "NEUTRAL, URGENT_QUESTION, URGENT_STATEMENT, HAPPY_EXCLAMATION, GENERAL_QUESTION, ANNOYED_STATEMENT";
 
       final String soundCategories = [
         // ? speech
@@ -92,15 +90,6 @@ class _HearAIScreenState extends State<HearAIScreen> {
         "SOUND_GENERAL_LOUD", "AMBIENT_NOISE_ONLY",
       ].join(", ");
 
-      // final TextPart promptPart = TextPart(
-      //   "Transcribe the following audio. "
-      //   "Then, analyze the speaker's likely intent and emotional tone. "
-      //   "Classify the overall tone into ONE of these categories: $categories. "
-      //   "Format your response EXACTLY like this: "
-      //   "Transcription: [The transcribed text here] "
-      //   "ToneCategory: [ONE_OF_THE_CATEGORIES_ABOVE]",
-      // );
-
       final TextPart promptPart = TextPart(
         "Analyze the provided audio. "
         "1. If clear human speech is present, transcribe it. Also determine its dominant tone/intent. "
@@ -122,28 +111,6 @@ class _HearAIScreenState extends State<HearAIScreen> {
 
       if (response.text != null) {
         String rawResponseText = response.text!;
-
-        // ? start basic parsing
-        // String transcription =
-        //     "Could not parse transcription"; //? default value
-        // String tone = "Could not parse tone"; //? default value
-
-        // final RegExp transRegExp = RegExp(
-        //   r"Transcription:\s*(.*?)(\s*ToneCategory:|$)",
-        // );
-        // final RegExp toneRegExp = RegExp(r"ToneCategory:\s*(\w+)");
-        // final RegExpMatch? transMatch = transRegExp.firstMatch(rawResponseText);
-        // if (transMatch != null && transMatch.group(1) != null) {
-        //   transcription = transMatch.group(1)!.trim();
-        // }
-
-        // final RegExpMatch? toneMatch = toneRegExp.firstMatch(rawResponseText);
-
-        // if (toneMatch != null && toneMatch.group(1) != null) {
-        //   tone = toneMatch.group(1)!.trim();
-        // }
-        // // ? end basic parsing
-
         String eventType = "UNKNOWN";
         String transcription = "N/A";
         String details = "";
@@ -165,19 +132,13 @@ class _HearAIScreenState extends State<HearAIScreen> {
             //? eventType for vibration logic,
             //?  transcription to display (if not "N/A")
             //? details for additional info or display
-            // _transcribedText = transcription;
             _transcribedText = transcription;
-            // (transcription == "N/A")
-            //     ? details
-            //     : transcription; //? with  details if no transcription
-            // _analysisCategory = tone;
+
             _analysisCategory = eventType; //? holds SPEECH_ or SOUND_ category
             _eventDetails = details;
             _isProcessingAI = false;
           });
-          // print(
-          //   "Processed: Transcription='$_transcribedText', Tone='$_analysisCategory'",
-          // );
+
           print(
             "Processed: EventType='$eventType', Transcription='$transcription', Details='$details'",
           );
@@ -235,7 +196,9 @@ class _HearAIScreenState extends State<HearAIScreen> {
     if (_isRecording) return;
     bool hasPermission = await _requestMicrophonePermission();
     if (!hasPermission) {
-      context.customShowErrorSnackBar("Microphone permission is required.");
+      if (mounted) {
+        context.customShowErrorSnackBar("Microphone permission is required.");
+      }
       return;
     }
     try {
@@ -318,187 +281,190 @@ class _HearAIScreenState extends State<HearAIScreen> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        // child: SingleChildScrollView(
-        child:
-        // ListView(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const SizedBox(height: 150),
-            if (_isRecording)
-              TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.8, end: 1.2),
-                duration: const Duration(milliseconds: 700),
-                curve: Curves.easeInOut, // Added a curve
-                builder: (context, scale, child) {
-                  return Transform.scale(scale: scale, child: child);
-                },
-                child: const Column(
+        child: SingleChildScrollView(
+          child:
+          // ListView(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(height: 150),
+              if (_isRecording)
+                TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.8, end: 1.2),
+                  duration: const Duration(milliseconds: 700),
+                  curve: Curves.easeInOut, // Added a curve
+                  builder: (context, scale, child) {
+                    return Transform.scale(scale: scale, child: child);
+                  },
+                  child: const Column(
+                    children: [
+                      Icon(Icons.mic, color: Colors.red, size: 64.0),
+                      SizedBox(height: 8),
+                      Text(
+                        "Recording...",
+                        style: TextStyle(fontSize: 18, color: Colors.red),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                const Column(
                   children: [
-                    Icon(Icons.mic, color: Colors.red, size: 64.0),
+                    Icon(Icons.mic_none, color: Colors.grey, size: 64.0),
                     SizedBox(height: 8),
                     Text(
-                      "Recording...",
-                      style: TextStyle(fontSize: 18, color: Colors.red),
+                      "Tap to start recording",
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   ],
                 ),
-              )
-            else
-              const Column(
-                children: [
-                  Icon(Icons.mic_none, color: Colors.grey, size: 64.0),
-                  SizedBox(height: 8),
-                  Text(
-                    "Tap to start recording",
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      _isRecording
+                          ? Colors.redAccent
+                          : Theme.of(context).primaryColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 15,
                   ),
-                ],
-              ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _isRecording
-                        ? Colors.redAccent
-                        : Theme.of(context).primaryColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 15,
+                  textStyle: const TextStyle(fontSize: 16),
                 ),
-                textStyle: const TextStyle(fontSize: 16),
-              ),
-              onPressed: () {
-                if (_isRecording) {
-                  stopRecordingAndGetFile();
-                } else {
-                  startRecording();
-                }
-              },
-              child: Text(
-                _isRecording ? "Stop Recording" : "Start Recording",
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // ? process with Gemini AI
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.bittersweet,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 15,
-                ),
-                textStyle: const TextStyle(fontSize: 16),
-              ),
-              onPressed:
-                  (_isRecording ||
-                          _isProcessingAI ||
-                          _recordedAudioBytes == null)
-                      ? null //?  disabled if recording, processing, or no audio bytes
-                      : _processAudioWithGemini,
-              child:
-                  _isProcessingAI
-                      ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.columbiaBlue,
-                          ),
-                        ),
-                      )
-                      : const Text(
-                        "Process with HearAI",
-                        style: TextStyle(color: Colors.white),
-                      ),
-            ),
-            const SizedBox(height: 20),
-
-            //? display audio path and bytes (for debugging/info)
-            if (_audioPath != null && !_isRecording)
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0, bottom: 5.0),
+                onPressed: () {
+                  if (_isRecording) {
+                    stopRecordingAndGetFile();
+                  } else {
+                    startRecording();
+                  }
+                },
                 child: Text(
-                  "Last recording path (temp):\n$_audioPath",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  _isRecording ? "Stop Recording" : "Start Recording",
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
-            if (_recordedAudioBytes != null &&
-                !_isRecording &&
-                !_isProcessingAI)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: Text(
-                  "Audio Bytes Ready: ${_recordedAudioBytes!.length} bytes",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 10, color: Colors.blueGrey),
-                ),
-              ),
-
-            //? display AI Response
-            if (_transcribedText.isNotEmpty && !_isProcessingAI) ...[
-              const SizedBox(height: 10),
-              Card(
-                //? added Card for better visual separation
-                elevation: 2.0,
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "HearAI Analysis:",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Transcription: $_transcribedText",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Sound Category: $_analysisCategory",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      //? display details if available and not "N/A"
-                      if (_eventDetails.isNotEmpty && _eventDetails != "N/A")
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Text(
-                            "Details: $_eventDetails",
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ] else if (_isProcessingAI) ...[
-              //? default  message while processing
               const SizedBox(height: 20),
-              const Text(
-                "HearAI is thinking...",
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey,
+
+              // ? process with Gemini AI
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.bittersweet,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 15,
+                  ),
+                  textStyle: const TextStyle(fontSize: 16),
                 ),
+                onPressed:
+                    (_isRecording ||
+                            _isProcessingAI ||
+                            _recordedAudioBytes == null)
+                        ? null //?  disabled if recording, processing, or no audio bytes
+                        : _processAudioWithGemini,
+                child:
+                    _isProcessingAI
+                        ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.columbiaBlue,
+                            ),
+                          ),
+                        )
+                        : const Text(
+                          "Process with HearAI",
+                          style: TextStyle(color: Colors.white),
+                        ),
               ),
+              const SizedBox(height: 20),
+
+              //? display audio path and bytes (for debugging/info)
+              if (_audioPath != null && !_isRecording)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 5.0),
+                  child: Text(
+                    "Last recording path (temp):\n$_audioPath",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  ),
+                ),
+              if (_recordedAudioBytes != null &&
+                  !_isRecording &&
+                  !_isProcessingAI)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Text(
+                    "Audio Bytes Ready: ${_recordedAudioBytes!.length} bytes",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
+                ),
+
+              //? display AI Response
+              if (_transcribedText.isNotEmpty && !_isProcessingAI) ...[
+                const SizedBox(height: 10),
+                Card(
+                  //? added Card for better visual separation
+                  elevation: 2.0,
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "HearAI Analysis:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Transcription: $_transcribedText",
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Sound Category: $_analysisCategory",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        //? display details if available and not "N/A"
+                        if (_eventDetails.isNotEmpty && _eventDetails != "N/A")
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              "Details: $_eventDetails",
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ] else if (_isProcessingAI) ...[
+                //? default  message while processing
+                const SizedBox(height: 20),
+                const Text(
+                  "HearAI is thinking...",
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-        // ),
       ),
     );
   }
