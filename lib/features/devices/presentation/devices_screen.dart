@@ -240,7 +240,9 @@ class _DevicesScreenState extends State<DevicesScreen> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-      child: Column(
+      child:
+      // ListView(
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
