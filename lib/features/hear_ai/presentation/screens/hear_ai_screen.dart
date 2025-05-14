@@ -52,12 +52,11 @@ class HearAiScreen extends StatelessWidget {
           bool showProcessButton = false;
 
           if (state is HearAiInitial) {
-            centerContent = _buildIdleUI(context, "Tap to start listening");
+            centerContent = _buildIdleUI("Tap to start listening");
             // ? in initial, initialize might still be running, or permission needed
             //? button action will re-trigger permission check if needed via cubit
           } else if (state is HearAiPermissionNeeded) {
             centerContent = _buildIdleUI(
-              context,
               state.message,
               icon: Icons.mic_off_outlined,
             );
@@ -74,7 +73,7 @@ class HearAiScreen extends StatelessWidget {
                             .requestMicrophonePermission();
             buttonColor = AppColors.rawSienna;
           } else if (state is HearAiReadyToRecord) {
-            centerContent = _buildIdleUI(context, "Tap to start recording");
+            centerContent = _buildIdleUI("Tap to start recording");
           } else if (state is HearAiRecording) {
             centerContent = _buildRecordingUI();
             buttonText = "Stop Recording";
@@ -119,6 +118,26 @@ class HearAiScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: const TextSpan(
+                        style: TextStyle(
+                          color: AppColors.haiti,
+                          fontSize: 64,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          TextSpan(text: "Hear"),
+                          TextSpan(
+                            text: "AI",
+                            style: TextStyle(
+                              color: AppColors.bittersweet,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 100),
                     centerContent,
                     const SizedBox(height: 30),
@@ -151,32 +170,9 @@ class HearAiScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIdleUI(
-    BuildContext descendedContext,
-    String message, {
-    IconData icon = Icons.mic_none,
-  }) {
+  Widget _buildIdleUI(String message, {IconData icon = Icons.mic_none}) {
     return Column(
       children: [
-        RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: Theme.of(descendedContext).textTheme.headlineLarge?.copyWith(
-              color: AppColors.haiti,
-              fontWeight: FontWeight.w600,
-            ),
-            children: const [
-              TextSpan(text: "Hear"),
-              TextSpan(
-                text: "AI",
-                style: TextStyle(
-                  color: AppColors.bittersweet,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
         const SizedBox(height: 50),
         Icon(icon, color: Colors.grey, size: 64.0),
         const SizedBox(height: 8),
@@ -214,7 +210,6 @@ class HearAiScreen extends StatelessWidget {
     return Column(
       children: [
         Lottie.asset(
-          // Or a CircularProgressIndicator
           height: 64, // Adjust size
           "assets/images/ai_processing.json",
           errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
