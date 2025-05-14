@@ -111,59 +111,66 @@ class HearAiScreen extends StatelessWidget {
             centerContent = const Text("Unknown State"); //? should not happen
           }
 
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView(
-                children: <Widget>[
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      style: TextStyle(
-                        color: AppColors.haiti,
-                        fontSize: 64,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      children: [
-                        TextSpan(text: "Hear"),
-                        TextSpan(
-                          text: "AI",
-                          style: TextStyle(
-                            color: AppColors.bittersweet,
-                            fontWeight: FontWeight.bold,
-                          ),
+          return
+          //  Center(
+          //   child:
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 24.0,
+              bottom: 8.0,
+              left: 24.0,
+              right: 24.0,
+            ),
+            child: ListView(
+              children: <Widget>[
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: const TextSpan(
+                    style: TextStyle(
+                      color: AppColors.haiti,
+                      fontSize: 64,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    children: [
+                      TextSpan(text: "Hear"),
+                      TextSpan(
+                        text: "AI",
+                        style: TextStyle(
+                          color: AppColors.bittersweet,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
+                centerContent,
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    backgroundColor: buttonColor,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 15,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.white,
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  centerContent,
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      backgroundColor: buttonColor,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 15,
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.white,
-                      ),
-                    ),
-                    onPressed: buttonAction,
-                    child: Text(
-                      buttonText,
-                      style: const TextStyle(color: AppColors.white),
-                    ),
+                  onPressed: buttonAction,
+                  child: Text(
+                    buttonText,
+                    style: const TextStyle(color: AppColors.white),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
+          // );
         },
       ),
     );

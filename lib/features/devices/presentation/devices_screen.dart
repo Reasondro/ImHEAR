@@ -97,6 +97,160 @@ class _DevicesScreenState extends State<DevicesScreen> {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 24.0,
+        bottom: 8.0,
+        left: 24.0,
+        right: 24.0,
+      ),
+      child: ListView(
+        // Column(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: TextStyle(
+                color: AppColors.haiti,
+                fontSize: 64,
+                fontWeight: FontWeight.bold,
+              ),
+              children: [
+                TextSpan(text: "My "),
+                TextSpan(
+                  text: "Device",
+                  style: TextStyle(
+                    color: AppColors.bittersweet,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 30),
+
+          //? device Image
+          Image.asset(
+            'assets/images/smartwatch_placeholder.png',
+            height: 200,
+            errorBuilder:
+                (ctx, err, st) => const Icon(
+                  Icons.watch,
+                  size: 150,
+                  color: AppColors.lavender,
+                ),
+          ),
+          const SizedBox(height: 20),
+
+          //? device Name
+          Text(
+            _pairedDevice?.platformName.isNotEmpty == true
+                ? _pairedDevice!.platformName
+                : "ImHEAR Band", //? show actual name if paired/connected
+            style: textTheme.titleLarge?.copyWith(
+              color: AppColors.haiti,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          //? connection status text
+          ValueListenableBuilder<bool>(
+            valueListenable: _bluetoothService.isConnected,
+            builder: (context, isConnectedValue, child) {
+              return Text(
+                isConnectedValue ? "Connected" : "Not Connected",
+                style: textTheme.titleMedium?.copyWith(
+                  color:
+                      isConnectedValue
+                          ? Colors.greenAccent
+                          : AppColors.paleCarmine,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 50),
+          //? action buttons
+          SizedBox(
+            width: double.infinity,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _bluetoothService.isConnected,
+              builder: (context, isConnectedValue, child) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    if (isConnectedValue) {
+                      await _bluetoothService.disconnect();
+                      //? optionally clear _pairedDevice or keep for quick reconnect
+                      // setState(() => _pairedDevice = null);
+                    } else {
+                      if (_pairedDevice != null) {
+                        await _bluetoothService.connectToDevice(_pairedDevice!);
+                      } else {
+                        //? no paired device, prompt to scan via "Switch Devices"
+                        context.customShowErrorSnackBar(
+                          "No device selected. Please use 'Switch Devices' to scan.",
+                        );
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        isConnectedValue
+                            ? AppColors.deluge.withAlpha(179)
+                            : AppColors.bittersweet,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    isConnectedValue
+                        ? "Disconnect"
+                        : (_pairedDevice != null
+                            ? "Connect to ${_pairedDevice!.platformName}"
+                            : "Connect"),
+                    style: textTheme.titleMedium?.copyWith(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: _requestAndStartScan, //? triggers the modal &  scan
+              style: OutlinedButton.styleFrom(
+                backgroundColor: AppColors.deluge,
+                side: BorderSide.none,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                "Switch Devices",
+                style: textTheme.titleMedium?.copyWith(
+                  color: AppColors.lavender,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
   void _showDeviceScanModal(BuildContext parentContext) {
     //? Use parentContext to access providers if needed within the modal
     _bluetoothService.startScan(); //? start scan when modal opens
@@ -232,155 +386,5 @@ class _DevicesScreenState extends State<DevicesScreen> {
       _bluetoothService
           .stopScan(); //? ensure scan stops when modal is dismissed
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-      child:
-      // ListView(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: textTheme.headlineLarge?.copyWith(
-                color: AppColors.haiti,
-                fontWeight: FontWeight.w600,
-              ),
-              children: const [
-                TextSpan(text: "My "),
-                TextSpan(
-                  text: "Device",
-                  style: TextStyle(
-                    color: AppColors.bittersweet,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 30),
-
-          //? device Image
-          Image.asset(
-            'assets/images/smartwatch_placeholder.png',
-            height: 200,
-            errorBuilder:
-                (ctx, err, st) => const Icon(
-                  Icons.watch,
-                  size: 150,
-                  color: AppColors.lavender,
-                ),
-          ),
-          const SizedBox(height: 20),
-
-          //? device Name
-          Text(
-            _pairedDevice?.platformName.isNotEmpty == true
-                ? _pairedDevice!.platformName
-                : "ImHEAR Band", //? show actual name if paired/connected
-            style: textTheme.titleLarge?.copyWith(
-              color: AppColors.haiti,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          //? connection status text
-          ValueListenableBuilder<bool>(
-            valueListenable: _bluetoothService.isConnected,
-            builder: (context, isConnectedValue, child) {
-              return Text(
-                isConnectedValue ? "Connected" : "Not Connected",
-                style: textTheme.titleMedium?.copyWith(
-                  color:
-                      isConnectedValue
-                          ? Colors.greenAccent
-                          : AppColors.paleCarmine,
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 50),
-          //? action buttons
-          SizedBox(
-            width: double.infinity,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _bluetoothService.isConnected,
-              builder: (context, isConnectedValue, child) {
-                return ElevatedButton(
-                  onPressed: () async {
-                    if (isConnectedValue) {
-                      await _bluetoothService.disconnect();
-                      //? optionally clear _pairedDevice or keep for quick reconnect
-                      // setState(() => _pairedDevice = null);
-                    } else {
-                      if (_pairedDevice != null) {
-                        await _bluetoothService.connectToDevice(_pairedDevice!);
-                      } else {
-                        //? no paired device, prompt to scan via "Switch Devices"
-                        context.customShowErrorSnackBar(
-                          "No device selected. Please use 'Switch Devices' to scan.",
-                        );
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isConnectedValue
-                            ? AppColors.deluge.withAlpha(179)
-                            : AppColors.bittersweet,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    isConnectedValue
-                        ? "Disconnect"
-                        : (_pairedDevice != null
-                            ? "Connect to ${_pairedDevice!.platformName}"
-                            : "Connect"),
-                    style: textTheme.titleMedium?.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: _requestAndStartScan, //? triggers the modal &  scan
-              style: OutlinedButton.styleFrom(
-                backgroundColor: AppColors.deluge,
-                side: BorderSide.none,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                "Switch Devices",
-                style: textTheme.titleMedium?.copyWith(
-                  color: AppColors.lavender,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
   }
 }
