@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -20,6 +21,14 @@ class HearAiCubit extends Cubit<HearAiState> {
     // model: "gemini-2.5-flash-preview-04-17",
     apiKey: dotenv.env["GEMINI_API_KEY"]!,
   );
+
+  // ? state variables for contionus mode
+  bool _isContinuousListeningActive = false;
+  Timer? _continuousListenTimer; //? mamnage periodic recording
+
+  // ? configurable duration
+  final Duration _continuousChunkDuration = const Duration(seconds: 5);
+
   HearAiCubit() : super(HearAiInitial()) {
     initializeAndCheckPermission();
   }
@@ -28,7 +37,11 @@ class HearAiCubit extends Cubit<HearAiState> {
     bool hasPermission = await Permission.microphone.isGranted;
 
     if (!hasPermission) {
-      emit(const HearAiPermissionNeeded(message: "message"));
+      emit(
+        const HearAiPermissionNeeded(
+          message: "Microphone permission is required to start listening.",
+        ),
+      );
     } else {
       emit(HearAiReadyToRecord());
     }
@@ -65,9 +78,9 @@ class HearAiCubit extends Cubit<HearAiState> {
         return; //? if still not ready
       }
     }
-    if (state is HearAiRecording) {
-      return;
-    }
+    // if (state is HearAiRecording) {
+    //   return;
+    // } //? remove for continujous
 
     try {
       final Directory tempDir = await getTemporaryDirectory();
@@ -79,17 +92,26 @@ class HearAiCubit extends Cubit<HearAiState> {
         path: _currentRecordingPath!,
       );
 
+      if (isClosed) {
+        return;
+      }
       emit(HearAiRecording());
       print("HearAiCubit: Recording started to $_currentRecordingPath");
     } catch (e) {
+      if (isClosed) {
+        return;
+      }
       emit(HearAIError("Failed to start recording: $e"));
       print("HearAiCubit: Error starting recording - $e");
     }
   }
 
   Future<void> stopAndProcessRecording() async {
+    bool wasRecordingForContinuous =
+        _isContinuousListeningActive && (state is HearAiRecording);
     if (state is! HearAiRecording) //? not recording
     {
+      print("HearAICubit: stopAndProcess called but not in recording state.");
       return;
     }
 
@@ -103,6 +125,10 @@ class HearAiCubit extends Cubit<HearAiState> {
           final Uint8List fileBytes = await audioFile.readAsBytes();
           await audioFile.delete(); //? cleanu temp
           print("HearAiCubit: Audio file read (${fileBytes.length} bytes)");
+
+          if (isClosed) {
+            return;
+          }
           emit(HearAiProcessing());
           await _processAudioWithGemini(fileBytes);
         } else {
@@ -112,20 +138,32 @@ class HearAiCubit extends Cubit<HearAiState> {
         throw Exception("Stopping recording did not return a file path.");
       }
     } catch (e) {
+      if (isClosed) {
+        return;
+      }
       emit(
         HearAIError("HearAiCubit: Erorr stopping/processing recording - $e"),
       );
       print("HearAICubit: Error stopping/processing recording - $e");
 
-      // ? optional, revert to ready to record again
-      if (await Permission.microphone.isGranted) {
-        emit(HearAiReadyToRecord());
-      } else {
-        emit(
-          const HearAiPermissionNeeded(
-            message: "Microphone permission might be needed",
-          ),
-        );
+      // ? if in continuous mode, the loop will try to restart
+      // ? if not in continuous mode, reverting to Ready or PermissionNeeded makes sense(?)
+      // ? loop itself in _triggerNextContinuousChunk will reevaluate permissions before starting next recording
+      // ? soooo.. this specific fallback here might only be relevant for MANUAL stopAndProcess calls.
+      if (!_isContinuousListeningActive) {
+        //? only do this if not in continuous mode
+        // ? optional, revert to ready to record again
+        if (await Permission.microphone.isGranted) {
+          if (isClosed) return;
+          emit(HearAiReadyToRecord());
+        } else {
+          if (isClosed) return;
+          emit(
+            const HearAiPermissionNeeded(
+              message: "Microphone permission might be needed",
+            ),
+          );
+        }
       }
     }
   }
@@ -137,7 +175,10 @@ class HearAiCubit extends Cubit<HearAiState> {
       final DataPart audioDataPart = DataPart(mimeType, audioBytes);
       final String soundCategories = [
         // ? speech
-        "SPEECH_NEUTRAL", "SPEECH_QUESTION", "SPEECH_HAPPY_EXCITED",
+        "SPEECH_NEUTRAL",
+        "SPEECH_QUESTION",
+        "SPEECH_HAPPY_EXCITED",
+        "SPEECH_ROMANTIC",
         "SPEECH_ANGRY_STRESSED",
         "SPEECH_URGENT_IMPORTANT",
         "SPEECH_INSTRUCTION",
@@ -219,6 +260,115 @@ class HearAiCubit extends Cubit<HearAiState> {
         emit(HearAIError("AI processing failed: $e"));
       }
     }
+  }
+
+  Future<void> startContinuousListening() async {
+    if (_isContinuousListeningActive) {
+      return; //? already active
+    }
+
+    if (state is HearAiPermissionNeeded &&
+        !(await Permission.microphone.isGranted)) {
+      await requestMicrophonePermission();
+      if (state is! HearAiReadyToRecord && state is! HearAiRecording) {
+        print("HearAICubit: Permission not granted for contionus listening");
+        return;
+      }
+    }
+    if (state is HearAiRecording || state is HearAiProcessing) {
+      print(
+        "HearAICubit: Cannot start continuous listening while already recording or processing",
+      );
+      return;
+    }
+    print("HearAICubit: Starting continuous listening...");
+
+    _isContinuousListeningActive = true;
+
+    // ? could emit a state to indicate contionus mode here, if needed by ui
+    //? for now / testing, just use the regular record mode
+
+    emit(HearAiReadyToRecord());
+    // _triggerNextContiunousChunk();
+  }
+
+  Future<void> stopContinuousListening() async {
+    if (!_isContinuousListeningActive) {
+      return; //? already not active
+    }
+    print("HearAICubit: Stopping continuous listening...");
+    _isContinuousListeningActive = false;
+    _continuousListenTimer?.cancel(); //? cancel any pending timer
+
+    if (state is HearAiRecording) {
+      try {
+        await _audioRecorder.stop();
+        print(
+          "HearAICubit: Stopped ongoing recording due to continuous mode stop.",
+        );
+      } catch (e) {
+        print(
+          "HearAICubit: Error stopping recorder during continuous stop: $e",
+        );
+      }
+    }
+
+    // ? go back to ready / initial state
+    if (await Permission.microphone.isGranted) {
+      emit(HearAiReadyToRecord());
+    } else {
+      emit(
+        const HearAiPermissionNeeded(message: "Microphone permission needed."),
+      );
+    }
+  }
+
+  void _triggerNextContiunousChunk() async {
+    if (!_isContinuousListeningActive || isClosed) {
+      return; //? stop if mode alreayd deactivate or cubit is closed
+    }
+
+    //? start recording
+    await startRecording();
+
+    //? if start recoding failed or permission issue, emiet error / different state
+
+    if (state is! HearAiRecording) {
+      _isContinuousListeningActive = false; //? stop the loop instantl
+      print(
+        "HearAicubit: Halting continuous loop as recording could not start",
+      );
+      return;
+    }
+
+    //? set timer for chunk duration
+    _continuousListenTimer?.cancel(); //? cancel any existing timer
+    _continuousListenTimer = Timer(_continuousChunkDuration, () async {
+      if (!_isContinuousListeningActive ||
+          isClosed ||
+          state is! HearAiRecording) {
+        // ? basically double checking, in case mode was stopped during the delay or state chagne
+        print(
+          "HearAICubit: Continuous mode stopped or state changed during timer wait.",
+        );
+        return;
+      }
+      // ? stop and process the recording (will emit HearAiProcessing then Sucess/Error)
+      print("HearAICubit: Chunk duration ended, stopping and processing.");
+      await stopAndProcessRecording();
+
+      // ? if still continuous mode, trigger next chunk (recursive basically)
+      if (_isContinuousListeningActive && !isClosed) {
+        print(
+          "HearAICubit: Processing finished, triggering next continuous chunk.",
+        );
+        _triggerNextContiunousChunk();
+      } else {
+        print(
+          "HearAICubit: Continuous mode was stopped during/after processing, not looping.",
+        );
+      }
+    });
   }
 
   @override

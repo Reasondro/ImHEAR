@@ -46,25 +46,24 @@ class HearAiScreen extends StatelessWidget {
         builder: (context, state) {
           Widget centerContent;
           String buttonText = "Start Listening";
-          VoidCallback? buttonAction =
+          VoidCallback? tapAction =
               () => context.read<HearAiCubit>().startRecording();
-          Color buttonColor = AppColors.bittersweet;
+          // Color buttonColor = AppColors.bittersweet;
+          Color buttonColor = AppColors.haiti;
+          // Color buttonColor = AppColors.deluge;
           bool showProcessButton = false;
 
           if (state is HearAiInitial) {
-            centerContent = _buildIdleUI("Tap to start listening");
+            centerContent = _buildIdleUI("Tap to start listening", tapAction);
             // ? in initial, initialize might still be running, or permission needed
             //? button action will re-trigger permission check if needed via cubit
           } else if (state is HearAiPermissionNeeded) {
-            centerContent = _buildIdleUI(
-              state.message,
-              // icon: Icons.mic_off_outlined,
-            );
+            centerContent = _buildIdleUI(state.message, tapAction);
             buttonText =
                 state.isPermanentlyDenied
                     ? "Open Settings"
                     : "Grant Permission";
-            buttonAction =
+            tapAction =
                 state.isPermanentlyDenied
                     ? () => openAppSettings()
                     : () =>
@@ -73,35 +72,36 @@ class HearAiScreen extends StatelessWidget {
                             .requestMicrophonePermission();
             buttonColor = AppColors.rawSienna;
           } else if (state is HearAiReadyToRecord) {
-            centerContent = _buildIdleUI("Tap to start recording");
+            centerContent = _buildIdleUI("Tap to start recording", tapAction);
           } else if (state is HearAiRecording) {
             centerContent = _buildRecordingUI();
             buttonText = "Stop Recording";
             buttonColor = AppColors.paleCarmine;
-            buttonAction =
+            tapAction =
                 () => context.read<HearAiCubit>().stopAndProcessRecording();
           } else if (state is HearAiProcessing) {
             centerContent = _buildProcessingUI();
             buttonText = "Processing AI...";
-            buttonAction = null; //? disable button
+            tapAction = null; //? disable button
             showProcessButton = false; //? hide explicit process button
           } else if (state is HearAiSuccess) {
             centerContent = _buildSuccessUI(
               state.transcription,
               state.eventType,
               state.details,
+              tapAction,
             );
             //? after success => ready to record again
             // ? if  want a explicit "Process Again" for the same audio, that's a different flow.
             // ?  assumes recording a new chunk.
-            buttonAction =
+            tapAction =
                 () =>
                     context
                         .read<HearAiCubit>()
                         .startRecording(); //? ready for new recording
           } else if (state is HearAIError) {
             centerContent = _buildErrorUI(state.message);
-            buttonAction =
+            tapAction =
                 () =>
                     context
                         .read<HearAiCubit>()
@@ -111,10 +111,7 @@ class HearAiScreen extends StatelessWidget {
             centerContent = const Text("Unknown State"); //? should not happen
           }
 
-          return
-          //  Center(
-          //   child:
-          Padding(
+          return Padding(
             padding: const EdgeInsets.only(
               top: 24.0,
               bottom: 8.0,
@@ -163,10 +160,15 @@ class HearAiScreen extends StatelessWidget {
                       color: AppColors.white,
                     ),
                   ),
-                  onPressed: buttonAction,
+                  onPressed: tapAction,
                   child: Text(
                     buttonText,
-                    style: const TextStyle(color: AppColors.white),
+                    style: const TextStyle(
+                      // color: AppColors.bittersweet,
+                      // color: AppColors.lavender,
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -178,13 +180,16 @@ class HearAiScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIdleUI(String message) {
+  Widget _buildIdleUI(String message, void Function()? onTap) {
     return Column(
       children: [
-        Lottie.asset(
-          height: 250,
-          "assets/images/ai_processing.json",
-          errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+        GestureDetector(
+          onTap: onTap,
+          child: Lottie.asset(
+            height: 250,
+            "assets/images/ai_processing.json",
+            errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -239,17 +244,22 @@ class HearAiScreen extends StatelessWidget {
     String transcription,
     String eventType,
     String details,
+    void Function()? onTap,
   ) {
     return Column(
       children: [
-        Lottie.asset(
-          height: 250,
-          "assets/images/ai_processing.json",
-          errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+        GestureDetector(
+          onTap: onTap,
+          child: Lottie.asset(
+            height: 250,
+            "assets/images/ai_processing.json",
+            errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+          ),
         ),
         const SizedBox(height: 8),
         SizedBox(
           width: double.infinity,
+          // width: 200,
           child: Card(
             color: AppColors.haiti,
             elevation: 2.0,
@@ -272,7 +282,6 @@ class HearAiScreen extends StatelessWidget {
                     "Transcription: $transcription",
                     style: const TextStyle(
                       fontSize: 16,
-                      // color: Color.fromARGB(255, 187, 187, 253),
                       color: AppColors.lavender,
                     ),
                   ),
