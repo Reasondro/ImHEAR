@@ -117,7 +117,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
             text: const TextSpan(
               style: TextStyle(
                 color: AppColors.haiti,
-                fontSize: 64,
+                fontSize: 48,
                 fontWeight: FontWeight.bold,
               ),
               children: [

@@ -44,7 +44,7 @@ class SelectRoleScreen extends StatelessWidget {
             RoleSelectionCard(
               roleName: "Mimi's Friend", //? or "User with Disability"
               roleDescription:
-                  "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
+                  "For individuals seeking assistance & connection. Communicate effectively and get the support you need.",
 
               imageAssetPath: 'assets/images/Mascot - 5.png',
               onTap: () {
@@ -58,7 +58,7 @@ class SelectRoleScreen extends StatelessWidget {
             RoleSelectionCard(
               roleName: "Mimi's Admin",
               roleDescription:
-                  "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
+                  "Manage organization's presence. Create and oversee dedicated subspaces for seamless communication.",
               imageAssetPath: 'assets/images/Mascot - 3.png',
               onTap: () {
                 GoRouter.of(
@@ -71,7 +71,7 @@ class SelectRoleScreen extends StatelessWidget {
             RoleSelectionCard(
               roleName: "Mimi's Helper", //? or "Employee"
               roleDescription:
-                  "Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum ",
+                  "Provide direct support and assistance to users within your organization's dedicated subspaces.",
 
               imageAssetPath: 'assets/images/Mascot - 4.png',
               onTap: () {

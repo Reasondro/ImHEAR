@@ -128,8 +128,9 @@ class HearAiScreen extends StatelessWidget {
                   text: const TextSpan(
                     style: TextStyle(
                       color: AppColors.haiti,
-                      fontSize: 64,
+                      fontSize: 48,
                       fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal,
                     ),
                     children: [
                       TextSpan(text: "Hear"),
@@ -138,6 +139,7 @@ class HearAiScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.bittersweet,
                           fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ],

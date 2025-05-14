@@ -33,7 +33,7 @@ class RoleSelectionCard extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
-                spacing: 14,
+                spacing: 6,
                 // mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -47,6 +47,7 @@ class RoleSelectionCard extends StatelessWidget {
                   ),
                   // SizedBox(height: 12),
                   Text(
+                    textAlign: TextAlign.justify,
                     roleDescription,
                     style: textTheme.bodyMedium?.copyWith(
                       color: AppColors.white,
