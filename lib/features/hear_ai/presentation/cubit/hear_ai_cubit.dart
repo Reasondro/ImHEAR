@@ -289,7 +289,7 @@ class HearAiCubit extends Cubit<HearAiState> {
     //? for now / testing, just use the regular record mode
 
     emit(HearAiReadyToRecord());
-    // _triggerNextContiunousChunk();
+    _triggerNextContiunousChunk();
   }
 
   Future<void> stopContinuousListening() async {
