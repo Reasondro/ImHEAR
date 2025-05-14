@@ -11,7 +11,7 @@ import 'package:komunika/features/auth/presentation/screens/sign_up_screen.dart'
 import 'package:komunika/features/chat/presentation/screens/chat_screen.dart';
 // import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
-import 'package:komunika/features/hear_ai/presentation/hear_ai_screen.dart';
+import 'package:komunika/features/hear_ai/presentation/screens/hear_ai_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
 import 'package:komunika/features/dashboard/presentation/screens/official_dashboard_screen.dart';
 import 'package:komunika/features/dashboard/presentation/screens/org_admin_dashboard_screen.dart';
@@ -203,7 +203,7 @@ class RoutingService {
               GoRoute(
                 name: Routes.hearAIScreen,
                 path: Routes.hearAIScreen,
-                builder: (context, state) => const HearAIScreen(),
+                builder: (context, state) => const HearAiScreen(),
               ),
             ],
           ),

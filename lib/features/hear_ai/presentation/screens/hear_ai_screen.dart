@@ -1,0 +1,297 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:komunika/app/themes/app_colors.dart';
+// import 'dart:io';
+// import 'dart:typed_data';
+import 'package:komunika/core/extensions/snackbar_extension.dart';
+import 'package:komunika/core/services/custom_bluetooth_service.dart';
+import 'package:komunika/features/hear_ai/presentation/cubit/hear_ai_cubit.dart';
+import 'package:lottie/lottie.dart';
+// import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+// import 'package:record/record.dart';
+
+class HearAiScreen extends StatelessWidget {
+  const HearAiScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => HearAiCubit(),
+      child: BlocConsumer<HearAiCubit, HearAiState>(
+        listener: (context, state) {
+          if (state is HearAIError) {
+            context.customShowErrorSnackBar(state.message);
+          }
+          //? add listeners, e.g., trigger BLE command on HearAiSuccess
+          if (state is HearAiSuccess) {
+            print(
+              "AI Success in UI: ${state.eventType} - ${state.transcription}",
+            );
+            // TODO: Based on state.eventType, send command to ESP32
+            //? maybe like this:
+            final bleService = context.read<CustomBluetoothService>();
+            if (bleService.isConnected.value) {
+              if (state.eventType == "SOUND_ALARM") {
+                bleService.sendCommand("VIB_ALARM");
+              } else if (state.eventType == "SPEECH_URGENT_IMPORTANT") {
+                bleService.sendCommand("VIB_URGENT");
+              }
+            } else {
+              print("ImHEAR Band not connected");
+            }
+          }
+        },
+        builder: (context, state) {
+          Widget centerContent;
+          String buttonText = "Start Listening";
+          VoidCallback? buttonAction =
+              () => context.read<HearAiCubit>().startRecording();
+          Color buttonColor = AppColors.haiti;
+          bool showProcessButton = false;
+
+          if (state is HearAiInitial) {
+            centerContent = _buildIdleUI(context, "Tap to start listening");
+            // ? in initial, initialize might still be running, or permission needed
+            //? button action will re-trigger permission check if needed via cubit
+          } else if (state is HearAiPermissionNeeded) {
+            centerContent = _buildIdleUI(
+              context,
+              state.message,
+              icon: Icons.mic_off_outlined,
+            );
+            buttonText =
+                state.isPermanentlyDenied
+                    ? "Open Settings"
+                    : "Grant Permission";
+            buttonAction =
+                state.isPermanentlyDenied
+                    ? () => openAppSettings()
+                    : () =>
+                        context
+                            .read<HearAiCubit>()
+                            .requestMicrophonePermission();
+            buttonColor = AppColors.rawSienna;
+          } else if (state is HearAiReadyToRecord) {
+            centerContent = _buildIdleUI(context, "Tap to start recording");
+          } else if (state is HearAiRecording) {
+            centerContent = _buildRecordingUI();
+            buttonText = "Stop Recording";
+            buttonColor = AppColors.paleCarmine;
+            buttonAction =
+                () => context.read<HearAiCubit>().stopAndProcessRecording();
+          } else if (state is HearAiProcessing) {
+            centerContent = _buildProcessingUI();
+            buttonText = "Processing AI...";
+            buttonAction = null; //? disable button
+            showProcessButton = false; //? hide explicit process button
+          } else if (state is HearAiSuccess) {
+            centerContent = _buildSuccessUI(
+              state.transcription,
+              state.eventType,
+              state.details,
+            );
+            //? after success => ready to record again
+            // ? if  want a explicit "Process Again" for the same audio, that's a different flow.
+            // ?  assumes recording a new chunk.
+            buttonAction =
+                () =>
+                    context
+                        .read<HearAiCubit>()
+                        .startRecording(); //? ready for new recording
+          } else if (state is HearAIError) {
+            centerContent = _buildErrorUI(state.message);
+            buttonAction =
+                () =>
+                    context
+                        .read<HearAiCubit>()
+                        .initializeAndCheckPermission(); //? retry initialization if error
+            buttonText = "Retry Permission/Init";
+          } else {
+            centerContent = const Text("Unknown State"); //? should not happen
+          }
+
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const SizedBox(height: 100),
+                    centerContent,
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: buttonColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 15,
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      onPressed: buttonAction,
+                      child: Text(
+                        buttonText,
+                        style: const TextStyle(color: AppColors.white),
+                      ),
+                    ),
+                    const SizedBox(height: 150),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildIdleUI(
+    BuildContext descendedContext,
+    String message, {
+    IconData icon = Icons.mic_none,
+  }) {
+    return Column(
+      children: [
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: Theme.of(descendedContext).textTheme.headlineLarge?.copyWith(
+              color: AppColors.haiti,
+              fontWeight: FontWeight.w600,
+            ),
+            children: const [
+              TextSpan(text: "Hear"),
+              TextSpan(
+                text: "AI",
+                style: TextStyle(
+                  color: AppColors.bittersweet,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 50),
+        Icon(icon, color: Colors.grey, size: 64.0),
+        const SizedBox(height: 8),
+        Text(
+          message,
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecordingUI() {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.8, end: 1.2),
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeInOut,
+      builder: (context, scale, child) {
+        return Transform.scale(scale: scale, child: child);
+      },
+      child: const Column(
+        children: [
+          Icon(Icons.mic, color: AppColors.bittersweet, size: 64.0),
+          SizedBox(height: 8),
+          Text(
+            "Recording...",
+            style: TextStyle(fontSize: 18, color: AppColors.bittersweet),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProcessingUI() {
+    return Column(
+      children: [
+        Lottie.asset(
+          // Or a CircularProgressIndicator
+          height: 64, // Adjust size
+          "assets/images/ai_processing.json",
+          errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          "HearAI is thinking...",
+          style: TextStyle(
+            fontSize: 18,
+            color: AppColors.deluge,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSuccessUI(
+    String transcription,
+    String eventType,
+    String details,
+  ) {
+    return Card(
+      elevation: 2.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "HearAI Analysis:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: AppColors.haiti,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Transcription: $transcription",
+              style: const TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Sound Category: $eventType",
+              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+            ),
+            if (details.isNotEmpty && details != "N/A")
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  "Details: $details",
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorUI(String message) {
+    return Column(
+      children: [
+        const Icon(
+          Icons.error_outline,
+          color: AppColors.paleCarmine,
+          size: 64.0,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          message,
+          style: const TextStyle(fontSize: 18, color: AppColors.paleCarmine),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}

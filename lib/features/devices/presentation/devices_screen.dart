@@ -249,7 +249,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: textTheme.headlineMedium?.copyWith(
+              style: textTheme.headlineLarge?.copyWith(
                 color: AppColors.haiti,
                 fontWeight: FontWeight.w600,
               ),

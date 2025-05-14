@@ -80,7 +80,7 @@ class _AppState extends State<App> {
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          title: 'ImHear',
+          title: 'ImHEAR',
           theme: imHearLightTheme,
           routerConfig: widget.router,
         ),

@@ -9,14 +9,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 
-class HearAIScreen extends StatefulWidget {
-  const HearAIScreen({super.key});
+class HearAiScreenBackup extends StatefulWidget {
+  const HearAiScreenBackup({super.key});
 
   @override
-  State<HearAIScreen> createState() => _HearAIScreenState();
+  State<HearAiScreenBackup> createState() => _HearAiScreenBackupState();
 }
 
-class _HearAIScreenState extends State<HearAIScreen> {
+class _HearAiScreenBackupState extends State<HearAiScreenBackup> {
   final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
   String? _audioPath;
