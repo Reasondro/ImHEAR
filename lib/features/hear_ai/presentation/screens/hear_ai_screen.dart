@@ -48,7 +48,7 @@ class HearAiScreen extends StatelessWidget {
           String buttonText = "Start Listening";
           VoidCallback? buttonAction =
               () => context.read<HearAiCubit>().startRecording();
-          Color buttonColor = AppColors.haiti;
+          Color buttonColor = AppColors.bittersweet;
           bool showProcessButton = false;
 
           if (state is HearAiInitial) {
@@ -58,7 +58,7 @@ class HearAiScreen extends StatelessWidget {
           } else if (state is HearAiPermissionNeeded) {
             centerContent = _buildIdleUI(
               state.message,
-              icon: Icons.mic_off_outlined,
+              // icon: Icons.mic_off_outlined,
             );
             buttonText =
                 state.isPermanentlyDenied
@@ -114,54 +114,53 @@ class HearAiScreen extends StatelessWidget {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: const TextSpan(
-                        style: TextStyle(
-                          color: AppColors.haiti,
-                          fontSize: 64,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        children: [
-                          TextSpan(text: "Hear"),
-                          TextSpan(
-                            text: "AI",
-                            style: TextStyle(
-                              color: AppColors.bittersweet,
-                              fontWeight: FontWeight.bold,
-                            ),
+              child: ListView(
+                children: <Widget>[
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: const TextSpan(
+                      style: TextStyle(
+                        color: AppColors.haiti,
+                        fontSize: 64,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      children: [
+                        TextSpan(text: "Hear"),
+                        TextSpan(
+                          text: "AI",
+                          style: TextStyle(
+                            color: AppColors.bittersweet,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  centerContent,
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      backgroundColor: buttonColor,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 15,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.white,
                       ),
                     ),
-                    const SizedBox(height: 100),
-                    centerContent,
-                    const SizedBox(height: 30),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 15,
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.white,
-                        ),
-                      ),
-                      onPressed: buttonAction,
-                      child: Text(
-                        buttonText,
-                        style: const TextStyle(color: AppColors.white),
-                      ),
+                    onPressed: buttonAction,
+                    child: Text(
+                      buttonText,
+                      style: const TextStyle(color: AppColors.white),
                     ),
-                    const SizedBox(height: 150),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );
@@ -170,11 +169,14 @@ class HearAiScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIdleUI(String message, {IconData icon = Icons.mic_none}) {
+  Widget _buildIdleUI(String message) {
     return Column(
       children: [
-        const SizedBox(height: 50),
-        Icon(icon, color: Colors.grey, size: 64.0),
+        Lottie.asset(
+          height: 250,
+          "assets/images/ai_processing.json",
+          errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+        ),
         const SizedBox(height: 8),
         Text(
           message,
@@ -186,23 +188,20 @@ class HearAiScreen extends StatelessWidget {
   }
 
   Widget _buildRecordingUI() {
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0.8, end: 1.2),
-      duration: const Duration(milliseconds: 700),
-      curve: Curves.easeInOut,
-      builder: (context, scale, child) {
-        return Transform.scale(scale: scale, child: child);
-      },
-      child: const Column(
-        children: [
-          Icon(Icons.mic, color: AppColors.bittersweet, size: 64.0),
-          SizedBox(height: 8),
-          Text(
-            "Recording...",
-            style: TextStyle(fontSize: 18, color: AppColors.bittersweet),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Lottie.asset(
+          height: 250,
+          "assets/images/ai_processing-2.json",
+          errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
+        ),
+        const SizedBox(height: 8),
+
+        const Text(
+          "Recording...",
+          style: TextStyle(fontSize: 18, color: AppColors.bittersweet),
+        ),
+      ],
     );
   }
 
@@ -210,8 +209,8 @@ class HearAiScreen extends StatelessWidget {
     return Column(
       children: [
         Lottie.asset(
-          height: 64, // Adjust size
-          "assets/images/ai_processing.json",
+          height: 250,
+          "assets/images/ai_processing-2.json",
           errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
         ),
         const SizedBox(height: 8),
@@ -232,43 +231,69 @@ class HearAiScreen extends StatelessWidget {
     String eventType,
     String details,
   ) {
-    return Card(
-      elevation: 2.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "HearAI Analysis:",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: AppColors.haiti,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Transcription: $transcription",
-              style: const TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Sound Category: $eventType",
-              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-            ),
-            if (details.isNotEmpty && details != "N/A")
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Text(
-                  "Details: $details",
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-          ],
+    return Column(
+      children: [
+        Lottie.asset(
+          height: 250,
+          "assets/images/ai_processing.json",
+          errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
         ),
-      ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: Card(
+            color: AppColors.haiti,
+            elevation: 2.0,
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "HearAI Analysis:",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.bittersweet,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Transcription: $transcription",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      // color: Color.fromARGB(255, 187, 187, 253),
+                      color: AppColors.lavender,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Sound Category: $eventType",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.lavender,
+
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  if (details.isNotEmpty && details != "N/A")
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        "Details: $details",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.columbiaBlue,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

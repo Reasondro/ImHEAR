@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           left: 20.0,
           right: 20,
           bottom: 0,
-          top: 50.0,
+          top: 60.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,14 +118,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             // ? hello usernanme
             RichText(
               text: TextSpan(
-                style: textTheme.headlineSmall?.copyWith(
+                style: textTheme.headlineLarge?.copyWith(
                   color: AppColors.haiti,
                 ),
                 children: <TextSpan>[
                   const TextSpan(text: "Hello, "),
                   TextSpan(
                     text: "$username!",
-                    style: textTheme.headlineSmall?.copyWith(
+                    style: textTheme.headlineLarge?.copyWith(
                       color: AppColors.bittersweet,
                       fontWeight: FontWeight.bold,
                     ),
