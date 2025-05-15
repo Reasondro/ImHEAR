@@ -55,11 +55,13 @@ class _HearAiScreenState extends State<HearAiScreen> {
           onPressed =
               () => context.read<HearAiCubit>().stopContinuousListening();
           buttonColor = Colors.orangeAccent;
+          showButton = false;
         } else {
           buttonText = "Start Continuous Listening";
           onPressed =
               () => context.read<HearAiCubit>().startContinuousListening();
           buttonColor = AppColors.deluge;
+          showButton = false;
         }
       } else {
         if (state is HearAiRecording) {
@@ -67,9 +69,11 @@ class _HearAiScreenState extends State<HearAiScreen> {
           onPressed =
               () => context.read<HearAiCubit>().stopAndProcessRecording();
           buttonColor = Colors.redAccent;
+          showButton = false;
         } else {
           buttonText = "Start Manual Recording";
           onPressed = () => context.read<HearAiCubit>().startRecording();
+          showButton = false;
         }
       }
     }
@@ -142,19 +146,18 @@ class _HearAiScreenState extends State<HearAiScreen> {
                     ? () =>
                         context
                             .read<HearAiCubit>()
-                            .stopContinuousListening() // In continuous, stop fully
+                            .stopContinuousListening() // ? In continuous, stop fully
                     : () =>
                         context
                             .read<HearAiCubit>()
-                            .stopAndProcessRecording(), // In manual, stop & process
+                            .stopAndProcessRecording(), // ? In manual, stop & process
           );
         } else if (state is HearAiProcessing) {
           topContent = const HearAiProcessingUi();
         } else if (state is HearAiSuccess) {
-          // Display list of results in continuous mode, or latest if manual & history has 1
           topContent = HearAiSuccessUi(
             // resultsHistory: state.resultsHistory,
-            latestResult: state.latestResult,
+            // latestResult: state.latestResult,
             onStartNextRecording:
                 () => context.read<HearAiCubit>().startRecording(),
             isContinuousMode: _isContinuousModeEnabled,
@@ -231,6 +234,47 @@ class _HearAiScreenState extends State<HearAiScreen> {
               const SizedBox(height: 20),
 
               // ? persistent history list
+              // Row(
+              //   children: [
+              //     const Icon(Icons.history, color: AppColors.haiti),
+              //     const SizedBox(width: 8),
+              //     Text(
+              //       "Listening History",
+              //       style: Theme.of(
+              //         context,
+              //       ).textTheme.headlineSmall?.copyWith(color: AppColors.haiti),
+              //     ),
+              //   ],
+              // ),
+              Card(
+                color: const Color.fromARGB(255, 180, 231, 255),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide.none,
+                ),
+                margin: const EdgeInsets.only(bottom: 6),
+                child: const ListTile(
+                  leading: Icon(
+                    Icons.track_changes_outlined,
+                    color: AppColors.haiti,
+                  ),
+
+                  title: Text(
+                    'Listening Results',
+                    style: TextStyle(
+                      color: AppColors.haiti,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                ),
+              ),
+              const Divider(color: AppColors.haiti),
+
               Expanded(
                 child:
                     history.isEmpty
@@ -309,5 +353,18 @@ class _HearAiScreenState extends State<HearAiScreen> {
         );
       },
     );
+  }
+
+  IconData _iconForEvent(String eventType) {
+    switch (eventType) {
+      case "SOUND_ALARM":
+        return Icons.alarm;
+      case "SOUND_VEHICLE_HORN":
+        return Icons.directions_car;
+      case "SPEECH_URGENT_IMPORTANT":
+        return Icons.priority_high;
+      default:
+        return Icons.audiotrack;
+    }
   }
 }
