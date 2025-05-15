@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 import 'package:komunika/core/extensions/snackbar_extension.dart';
 import 'package:komunika/core/services/custom_bluetooth_service.dart';
@@ -116,11 +117,11 @@ class _HearAiScreenState extends State<HearAiScreen> {
         final List<HearAiResult> history =
             context.watch<HearAiCubit>().resultsHistory;
 
-        Widget content;
-        final actionButtonConfig = _getActionButtonConfig(context, state);
+        Widget topContent;
+        final cfg = _getActionButtonConfig(context, state);
 
         if (state is HearAiInitial || state is HearAiReadyToRecord) {
-          content = HearAiIdleUi(
+          topContent = HearAiIdleUi(
             onTap:
                 _isContinuousModeEnabled
                     ? () =>
@@ -129,13 +130,13 @@ class _HearAiScreenState extends State<HearAiScreen> {
             permissionNeeded: false,
           );
         } else if (state is HearAiPermissionNeeded) {
-          content = HearAiIdleUi(
-            onTap: actionButtonConfig["action"],
+          topContent = HearAiIdleUi(
+            onTap: cfg["action"],
             permissionNeeded: true,
-            buttonText: actionButtonConfig["text"],
+            buttonText: cfg["text"],
           );
         } else if (state is HearAiRecording) {
-          content = HearAiRecordingUi(
+          topContent = HearAiRecordingUi(
             onTap:
                 _isContinuousModeEnabled
                     ? () =>
@@ -148,23 +149,23 @@ class _HearAiScreenState extends State<HearAiScreen> {
                             .stopAndProcessRecording(), // In manual, stop & process
           );
         } else if (state is HearAiProcessing) {
-          content = const HearAiProcessingUi();
+          topContent = const HearAiProcessingUi();
         } else if (state is HearAiSuccess) {
           // Display list of results in continuous mode, or latest if manual & history has 1
-          content = HearAiSuccessUi(
-            resultsHistory: state.resultsHistory,
+          topContent = HearAiSuccessUi(
+            // resultsHistory: state.resultsHistory,
+            latestResult: state.latestResult,
             onStartNextRecording:
                 () => context.read<HearAiCubit>().startRecording(),
             isContinuousMode: _isContinuousModeEnabled,
           );
         } else if (state is HearAiError) {
-          content = HearAiErrorUi(
+          topContent = HearAiErrorUi(
             message: state.message,
-            onTap:
-                actionButtonConfig["action"], // Will be "Retry Permission/Init"
+            onTap: cfg["action"], // Will be "Retry Permission/Init"
           );
         } else {
-          content = const Text("Unknown State");
+          topContent = const Text("Unknown State");
         }
 
         return Padding(
@@ -196,18 +197,17 @@ class _HearAiScreenState extends State<HearAiScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              content,
-
-              if (actionButtonConfig["show"] &&
+              topContent,
+              if (cfg["show"] &&
                   state
-                      is! HearAiPermissionNeeded) // Hide button if permission is needed
+                      is! HearAiPermissionNeeded) // ? hide button if permission is needed
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: actionButtonConfig["color"],
+                        backgroundColor: cfg["color"],
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 15,
@@ -220,14 +220,90 @@ class _HearAiScreenState extends State<HearAiScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: actionButtonConfig["action"],
+                      onPressed: cfg["action"],
                       child: Text(
-                        actionButtonConfig["text"],
+                        cfg["text"],
                         style: const TextStyle(color: AppColors.white),
                       ),
                     ),
                   ),
                 ),
+              const SizedBox(height: 20),
+
+              // ? persistent history list
+              Expanded(
+                child:
+                    history.isEmpty
+                        ? const Center(
+                          child: Text(
+                            "No results yet.",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                        : ListView.builder(
+                          itemCount: history.length,
+                          itemBuilder: (ctx, i) {
+                            final r = history[i];
+                            return Card(
+                              color: AppColors.haiti,
+                              elevation: 2,
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            r.eventType,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: AppColors.bittersweet,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat(
+                                            "HH:mm:ss",
+                                          ).format(r.timestamp),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.lavender.withAlpha(
+                                              180,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    const SizedBox(height: 8),
+                                    if (r.transcription != "N/A" &&
+                                        r.transcription.isNotEmpty)
+                                      Text(
+                                        "Transcription: ${r.transcription}",
+                                        style: const TextStyle(
+                                          color: AppColors.lavender,
+                                        ),
+                                      ),
+                                    if (r.details.isNotEmpty &&
+                                        r.details != "N/A")
+                                      Text(
+                                        "Details: ${r.details}",
+                                        style: const TextStyle(
+                                          color: AppColors.columbiaBlue,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+              ),
             ],
           ),
         );

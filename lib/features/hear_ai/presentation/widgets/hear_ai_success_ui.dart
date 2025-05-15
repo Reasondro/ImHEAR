@@ -5,12 +5,14 @@ import 'package:komunika/features/hear_ai/domain/entities/hear_ai_result.dart';
 import 'package:komunika/features/hear_ai/presentation/widgets/hear_ai_idle_ui.dart';
 
 class HearAiSuccessUi extends StatelessWidget {
-  final List<HearAiResult> resultsHistory;
+  // final List<HearAiResult> resultsHistory;
+  final HearAiResult latestResult;
   final VoidCallback onStartNextRecording;
   final bool isContinuousMode;
 
   const HearAiSuccessUi({
-    required this.resultsHistory,
+    // required this.resultsHistory,
+    required this.latestResult,
     required this.onStartNextRecording,
     required this.isContinuousMode,
     super.key,
@@ -18,88 +20,61 @@ class HearAiSuccessUi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (resultsHistory.isEmpty) {
-      return Column(
-        children: [
-          HearAiIdleUi(
-            // Re-use idle UI for "tap to record" if history is empty
-            onTap: onStartNextRecording,
-            permissionNeeded:
-                false, // Assuming permission is already handled to reach this state
-            // buttonText: "Start Listening",
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "No results yet in this session.",
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
-      );
-    }
-    return Expanded(
-      child: ListView.builder(
-        itemCount: resultsHistory.length,
-        itemBuilder: (context, index) {
-          final HearAiResult result = resultsHistory[index];
-          return Card(
-            color: AppColors.haiti,
-            elevation: 2.0,
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          result.eventType,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: AppColors.bittersweet,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        DateFormat(
-                          "HH:mm:ss",
-                        ).format(result.timestamp.toLocal()),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.lavender.withAlpha(179),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  if (result.transcription != "N/A" &&
-                      result.transcription.isNotEmpty) ...[
-                    Text(
-                      "Transcription: ${result.transcription}",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.lavender,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                  ],
-                  if (result.details.isNotEmpty && result.details != "N/A")
-                    Text(
-                      "Details: ${result.details}",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.columbiaBlue,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
+    return Column(
+      children: [
+        HearAiIdleUi(
+          onTap: onStartNextRecording,
+          permissionNeeded: false,
+          // ? override the buttonText here
+        ),
+        const SizedBox(height: 7),
+        // Card(
+        //   color: AppColors.haiti,
+        //   elevation: 2,
+        //   margin: const EdgeInsets.symmetric(vertical: 4),
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(12),
+        //     child: Column(
+        //       crossAxisAlignment: CrossAxisAlignment.stretch,
+        //       children: [
+        //         Row(
+        //           children: [
+        //             Expanded(
+        //               child: Text(
+        //                 latestResult.eventType,
+        //                 style: const TextStyle(
+        //                   fontWeight: FontWeight.bold,
+        //                   fontSize: 18,
+        //                   color: AppColors.bittersweet,
+        //                 ),
+        //               ),
+        //             ),
+        //             Text(
+        //               DateFormat("HH:mm:ss").format(latestResult.timestamp),
+        //               style: TextStyle(
+        //                 fontSize: 12,
+        //                 color: AppColors.lavender.withAlpha(180),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //         const SizedBox(height: 8),
+        //         if (latestResult.transcription != "N/A")
+        //           Text(
+        //             "Transcription: ${latestResult.transcription}",
+        //             style: const TextStyle(color: AppColors.lavender),
+        //           ),
+        //         if (latestResult.details.isNotEmpty &&
+        //             latestResult.details != "N/A")
+        //           Text(
+        //             "Details: ${latestResult.details}",
+        //             style: const TextStyle(color: AppColors.columbiaBlue),
+        //           ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+      ],
     );
   }
 }
