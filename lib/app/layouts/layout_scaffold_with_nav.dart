@@ -12,8 +12,8 @@ class LayoutScaffoldWithNav extends StatelessWidget {
       // appBar: AppBar(title: Text("LayoutScaffold")),
       // resizeToAvoidBottomInset: false,
       body:
-          //  SafeArea(child:
-          navigationShell,
+      //  SafeArea(child:
+      SafeArea(child: navigationShell),
       // )
       bottomNavigationBar: NavigationBar(
         destinations:
