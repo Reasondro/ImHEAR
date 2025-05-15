@@ -237,7 +237,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                 ),
               ),
               child: Text(
-                "Switch Devices",
+                "Scan Devices",
                 style: textTheme.titleMedium?.copyWith(
                   color: AppColors.lavender,
                   fontWeight: FontWeight.bold,
@@ -312,10 +312,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                             ),
                           );
                         }
-                        // if (results.isEmpty &&
-                        //     _bluetoothService.isScanning.value) {
-                        //   return const Center(child: Text("Scanning..."));
-                        // }
+
                         if (isScanning && scanResults.isEmpty) {
                           return const Center(child: Text("Scanning..."));
                         }

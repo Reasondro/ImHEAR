@@ -30,7 +30,7 @@ class HearAiIdleUi extends StatelessWidget {
         if (!permissionNeeded)
           // ? if permission not needed than these below are the widgets
           const Text(
-            "Tap to start recording",
+            "Tap to start listening",
             style: TextStyle(fontSize: 18, color: Colors.grey),
             textAlign: TextAlign.center,
           ),

@@ -20,13 +20,13 @@ class HearAiRecordingUi extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         const Text(
-          "Tap to stop recording",
+          "Tap to stop listening",
           style: TextStyle(fontSize: 18, color: AppColors.bittersweet),
         ),
         const SizedBox(height: 8),
 
         const Text(
-          "Recording...",
+          "Listening...",
           style: TextStyle(fontSize: 18, color: Colors.grey),
         ),
       ],

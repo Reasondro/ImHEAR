@@ -150,9 +150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ? const Center(child: CircularProgressIndicator()) //? or error
         : Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 20.0,
+            padding: const EdgeInsets.only(
+              // top: 12.0,
+              top: 0.0,
+              bottom: 8.0,
+              left: 24.0,
+              right: 24.0,
             ),
             child: Form(
               key: _formKey,

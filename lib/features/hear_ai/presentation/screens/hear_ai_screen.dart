@@ -102,15 +102,17 @@ class _HearAiScreenState extends State<HearAiScreen> {
           final CustomBluetoothService bleService =
               context.read<CustomBluetoothService>();
           if (bleService.isConnected.value) {
-            // Example: Customize command based on eventType
-            String command = "VIB_NEUTRAL"; // Default command
-            if (state.latestResult.eventType == "SOUND_ALARM")
-              command = "VIB_ALARM";
-            else if (state.latestResult.eventType == "SPEECH_URGENT_IMPORTANT")
-              command = "VIB_URGENT";
-            else if (state.latestResult.eventType == "SOUND_VEHICLE_HORN")
-              command = "VIB_CAR_HORN";
-            // Add more mappings here
+            // ?customize command based on eventType
+            String command = "VIB"; // Default command
+            // if (state.latestResult.eventType == "SOUND_ALARM") {
+            //   command = "VIB_ALARM";
+            // } else if (state.latestResult.eventType ==
+            //     "SPEECH_URGENT_IMPORTANT") {
+            //   command = "VIB_URGENT";
+            // } else if (state.latestResult.eventType == "SOUND_VEHICLE_HORN") {
+            //   command = "VIB_CAR_HORN";
+            // }
+            // ? add more mappings here
             bleService.sendCommand(command);
           } else {
             print("ImHEAR Band not connected, can't send vibration.");
@@ -234,18 +236,6 @@ class _HearAiScreenState extends State<HearAiScreen> {
               const SizedBox(height: 20),
 
               // ? persistent history list
-              // Row(
-              //   children: [
-              //     const Icon(Icons.history, color: AppColors.haiti),
-              //     const SizedBox(width: 8),
-              //     Text(
-              //       "Listening History",
-              //       style: Theme.of(
-              //         context,
-              //       ).textTheme.headlineSmall?.copyWith(color: AppColors.haiti),
-              //     ),
-              //   ],
-              // ),
               Card(
                 color: const Color.fromARGB(255, 180, 231, 255),
                 elevation: 2,

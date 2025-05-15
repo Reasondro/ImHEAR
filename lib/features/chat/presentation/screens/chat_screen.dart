@@ -7,7 +7,6 @@ import 'package:komunika/core/services/custom_bluetooth_service.dart';
 import 'package:komunika/features/chat/domain/entities/message.dart';
 import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
 import 'package:komunika/features/chat/presentation/cubit/chat_cubit.dart';
-// import 'package:komunika/features/chat/presentation/widgets/build_tab_selector.dart';
 import 'package:komunika/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -29,7 +28,6 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
-  // int _lastMessageCount = 0; //? only use for debugging
   bool _showMicIcon = true;
 
   // ? state for tabs
@@ -74,8 +72,6 @@ class _ChatScreenState extends State<ChatScreen> {
       // ? use the descendantContext to find the ChatCubit
       descendantContext.read<ChatCubit>().sendMessage(text);
       _textController.clear();
-      // // ? use the descendantContext for FocusScope as well
-      // FocusScope.of(descendantContext).unfocus();
     }
   }
 
@@ -363,10 +359,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 right: 8.0,
                 top: 4.0,
                 bottom: 8,
-                // MediaQuery.of(descendantContextForInput).viewInsets.bottom >
-                //         0
-                //     ? 8.0
-                //     : 8.0,
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,

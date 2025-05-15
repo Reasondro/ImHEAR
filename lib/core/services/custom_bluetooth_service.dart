@@ -374,41 +374,43 @@ class CustomBluetoothService {
 
     try {
       // Get current Unix timestamp (seconds since epoch)
-      int epochSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      // int epochSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
       // ? milisecondds
       //       // Get current Unix timestamp (milliseconds since epoch)
-      // int epochMilliseconds = DateTime.now().millisecondsSinceEpoch;
+      int epochMilliseconds = DateTime.now().millisecondsSinceEpoch;
 
       // Create a ByteData buffer.
       // 1 byte for prefix, 4 bytes for the epochSeconds (int32).
       // Adjust size and type (e.g., setUint64 for milliseconds) if your ESP32 expects something different.
-      ByteData byteData = ByteData(5);
-      byteData.setUint8(0, DATE_SYNC_COMMAND_PREFIX); // Set the prefix byte
+      // ByteData byteData = ByteData(5);
+      // byteData.setUint8(0, DATE_SYNC_COMMAND_PREFIX); // Set the prefix byte
 
       // ? milisecondds
-      // ByteData byteData = ByteData(9); // 1 (prefix) + 8 (milliseconds) = 9 bytes
-      // byteData.setUint8(0, DATE_SYNC_COMMAND_PREFIX); // Set the prefix byte
+      ByteData byteData = ByteData(
+        9,
+      ); // 1 (prefix) + 8 (milliseconds) = 9 bytes
+      byteData.setUint8(0, DATE_SYNC_COMMAND_PREFIX); // Set the prefix byte
 
       // Set the epoch time. Assuming ESP32 expects Little Endian.
       // Change to Endian.big if your ESP32 expects Big Endian.
-      byteData.setUint32(1, epochSeconds, Endian.little);
+      // byteData.setUint32(1, epochSeconds, Endian.little);
 
       // ? milisecondds
-      // // Set the epoch time in milliseconds. Assuming ESP32 expects Little Endian.
-      // // Change to Endian.big if your ESP32 expects Big Endian.
-      // byteData.setUint64(1, epochMilliseconds, Endian.little);
+      // Set the epoch time in milliseconds. Assuming ESP32 expects Little Endian.
+      // Change to Endian.big if your ESP32 expects Big Endian.
+      byteData.setUint64(1, epochMilliseconds, Endian.little);
 
       List<int> bytesToSend = byteData.buffer.asUint8List();
 
-      print(
-        "Date Sync: Sending epoch $epochSeconds as bytes: $bytesToSend (Prefix: $DATE_SYNC_COMMAND_PREFIX)",
-      );
+      // print(
+      //   "Date Sync: Sending epoch $epochSeconds as bytes: $bytesToSend (Prefix: $DATE_SYNC_COMMAND_PREFIX)",
+      // );
 
       // ? milisecondds
-      //       print(
-      //   "Date Sync: Sending epoch milliseconds $epochMilliseconds as bytes: $bytesToSend (Prefix: $DATE_SYNC_COMMAND_PREFIX)",
-      // );
+      print(
+        "Date Sync: Sending epoch milliseconds $epochMilliseconds as bytes: $bytesToSend (Prefix: $DATE_SYNC_COMMAND_PREFIX)",
+      );
       // Use write without response for simple commands, or false for acknowledged write
       await _targetCharacteristic!.write(bytesToSend, withoutResponse: false);
       print("Date Sync: Command sent successfully.");

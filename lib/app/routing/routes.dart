@@ -23,7 +23,7 @@ class Routes {
 
   // ? home screen
   static const String deafUserHome = "/home";
-  static const String officialHome = "/official-dashboard";
+  static const String officialDashboard = "/official-dashboard";
   static const String orgAdminHome = "/org-admin-dashboard";
 
   // ? chat screen (base)
@@ -44,4 +44,7 @@ class Routes {
 
   // ? profile screen
   static const String profileScreen = "/profile"; //? profile screen
+
+  static const String officialProfileScreen =
+      "/official-profile"; //? profile screen
 }

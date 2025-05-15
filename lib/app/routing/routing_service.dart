@@ -68,7 +68,7 @@ class RoutingService {
 
       // final List<String> authenticatedBaseRoutes = [
       //   Routes.deafUserHome,
-      //   Routes.officialHome,
+      //   Routes.officialDashboard,
       //   Routes.orgAdminHome,
       //   Routes.devicesScreen,
       //   Routes.profileScreen,
@@ -97,7 +97,7 @@ class RoutingService {
             case UserRole.deaf_user:
               return Routes.deafUserHome;
             case UserRole.official:
-              return Routes.officialHome;
+              return Routes.officialDashboard;
             case UserRole.org_admin:
               return Routes.orgAdminHome;
             // default:
@@ -233,11 +233,73 @@ class RoutingService {
           ),
         ],
       ),
-      GoRoute(
-        name: Routes.officialHome,
-        path: Routes.officialHome,
-        builder: (context, state) => const OfficialDashboardScreen(),
+
+      // ? officials starts
+      StatefulShellRoute.indexedStack(
+        builder:
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) => LayoutScaffoldWithNav(navigationShell: navigationShell),
+        branches: <StatefulShellBranch>[
+          // ? branch 1 : ofifcial dashboard
+          StatefulShellBranch(
+            // navigatorKey: _shellNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                name: Routes.officialDashboard,
+                path: Routes.officialDashboard,
+                builder: (context, state) => const OfficialDashboardScreen(),
+                // builder: (context, state) => const DeafUserDashboardScreen(), // ? for testing
+                routes: <RouteBase>[
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    name: Routes.deafUserChatScreen,
+                    path: "${Routes.chatScreen}/:roomId/:subSpaceName",
+                    // path: "${Routes.chatScreen}/:subSpaceName/:roomId",
+                    builder: (context, state) {
+                      final int? roomId = int.tryParse(
+                        state.pathParameters["roomId"] ?? "",
+                      );
+                      final String? officialName = state.extra as String?;
+                      final String subSpaceName =
+                          state.pathParameters["subSpaceName"] ?? "Chat";
+                      if (roomId == null) {
+                        return const Scaffold(
+                          body: Center(
+                            child: Text("Error: Room ID missing or invalid."),
+                          ),
+                        );
+                      } else {
+                        return ChatScreen(
+                          roomId: roomId,
+                          subSpaceName: subSpaceName,
+                          officialName: officialName,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          // ? branch 2 : official user profile
+          StatefulShellBranch(
+            // navigatorKey: _shellNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                name: Routes.officialProfileScreen,
+                path: Routes.officialProfileScreen,
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
+
+      // ? officials ends
       GoRoute(
         name: Routes.orgAdminHome,
         path: Routes.orgAdminHome,
