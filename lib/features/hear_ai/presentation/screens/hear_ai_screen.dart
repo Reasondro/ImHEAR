@@ -26,69 +26,52 @@ class _HearAiScreenState extends State<HearAiScreen> {
     BuildContext context,
     HearAiState state,
   ) {
-    String buttonText = "Start Listening";
-    VoidCallback? onPressed =
-        () => context.read<HearAiCubit>().startRecording(); //? mode default
+    String buttonText;
+    VoidCallback? onPressed;
     Color buttonColor = AppColors.haiti;
     bool showButton = true;
 
-    if (_isContinuousModeEnabled) {
-      if (state is HearAiPermissionNeeded) {
-        buttonText =
-            state.isPermanentlyDenied ? "Open Settings" : "Grant Permission";
-        onPressed =
-            state.isPermanentlyDenied
-                ? () => openAppSettings()
-                : () =>
-                    context.read<HearAiCubit>().requestMicrophonePermission();
-        buttonColor = Colors.orangeAccent;
-        showButton = false;
-      } else if (state is HearAiRecording || state is HearAiProcessing) {
-        buttonText = "Stop Continuous Listening";
-        onPressed = () => context.read<HearAiCubit>().stopContinuousListening();
-        buttonColor = Colors.orangeAccent;
-      } else if (state is HearAiReadyToRecord ||
-          state is HearAiInitial ||
-          state is HearAiSuccess ||
-          state is HearAiError) {
-        buttonText = "Start Continuous Listening";
-        onPressed =
-            () => context.read<HearAiCubit>().startContinuousListening();
-        buttonColor =
-            AppColors.deluge; // A color to indicate continuous mode is ready
-      } else if (state is HearAiProcessing) {
-        buttonText = "Processing...";
-        onPressed = null; // Disable while processing
-        showButton = false; // Hide button, show processing UI instead
-      }
+    // Handle permission-related states
+    if (state is HearAiPermissionNeeded) {
+      buttonText =
+          state.isPermanentlyDenied ? "Open Settings" : "Grant Permission";
+      onPressed =
+          state.isPermanentlyDenied
+              ? () => openAppSettings()
+              : () => context.read<HearAiCubit>().requestMicrophonePermission();
+      buttonColor = Colors.orangeAccent;
+      showButton = false; // Hide main button, handled by HearAiIdleUi
+    } else if (state is HearAiProcessing) {
+      buttonText = "Processing...";
+      onPressed = null; // Disable button while processing
+      showButton = false; // Hide button, show processing UI instead
     } else {
-      // Manual Mode
-      if (state is HearAiPermissionNeeded) {
-        buttonText =
-            state.isPermanentlyDenied ? "Open Settings" : "Grant Permission";
-        onPressed =
-            state.isPermanentlyDenied
-                ? () => openAppSettings()
-                : () =>
-                    context.read<HearAiCubit>().requestMicrophonePermission();
-        buttonColor = Colors.orangeAccent;
-        showButton = false;
-      } else if (state is HearAiReadyToRecord ||
-          state is HearAiInitial ||
-          state is HearAiSuccess ||
-          state is HearAiError) {
-        buttonText = "Start Manual Recording";
-        onPressed = () => context.read<HearAiCubit>().startRecording();
-      } else if (state is HearAiRecording) {
-        buttonText = "Stop Manual Recording";
-        onPressed = () => context.read<HearAiCubit>().stopAndProcessRecording();
-        buttonColor = Colors.redAccent;
-      } else if (state is HearAiProcessing) {
-        buttonText = "Processing...";
-        onPressed = null; // Disable while processing
-        showButton = false; // Hide button, show processing UI instead
+      // Handle recording and ready states
+      if (_isContinuousModeEnabled) {
+        if (state is HearAiRecording) {
+          buttonText = "Stop Continuous Listening";
+          onPressed =
+              () => context.read<HearAiCubit>().stopContinuousListening();
+          buttonColor = Colors.orangeAccent;
+        } else {
+          buttonText = "Start Continuous Listening";
+          onPressed =
+              () => context.read<HearAiCubit>().startContinuousListening();
+          buttonColor = AppColors.deluge;
+        }
+      } else {
+        if (state is HearAiRecording) {
+          buttonText = "Stop Manual Recording";
+          onPressed =
+              () => context.read<HearAiCubit>().stopAndProcessRecording();
+          buttonColor = Colors.redAccent;
+        } else {
+          buttonText = "Start Manual Recording";
+          onPressed = () => context.read<HearAiCubit>().startRecording();
+        }
       }
     }
+
     return {
       "text": buttonText,
       "action": onPressed,
@@ -102,7 +85,6 @@ class _HearAiScreenState extends State<HearAiScreen> {
     return BlocConsumer<HearAiCubit, HearAiState>(
       listener: (context, state) {
         if (state is HearAiError) {
-          // Avoid showing snackbar if it's a permission needed state, as UI handles it
           if (state is! HearAiPermissionNeeded) {
             context.customShowErrorSnackBar(state.message);
           }
@@ -211,43 +193,37 @@ class _HearAiScreenState extends State<HearAiScreen> {
               ),
               const SizedBox(height: 20),
               centerContent,
-              // Main Action Button (conditionally shown)
-              // if (actionButtonConfig["show"] &&
-              //     !(state is HearAiPermissionNeeded &&
-              //         _isContinuousModeEnabled) && // Don't show main button if continuous but needs permission
-              //     !(state is HearAiSuccess &&
-              //         _isContinuousModeEnabled &&
-              //         state
-              //             .resultsHistory
-              //             .isNotEmpty) // Don't show if continuous and showing results list
-              //     )
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: actionButtonConfig["color"],
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 15,
+
+              if (actionButtonConfig["show"] &&
+                  state
+                      is! HearAiPermissionNeeded) // Hide button if permission is needed
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: actionButtonConfig["color"],
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 15,
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.white,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.white,
+                      onPressed: actionButtonConfig["action"],
+                      child: Text(
+                        actionButtonConfig["text"],
+                        style: const TextStyle(color: AppColors.white),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: actionButtonConfig["action"],
-                    child: Text(
-                      actionButtonConfig["text"],
-                      style: const TextStyle(color: AppColors.white),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         );
