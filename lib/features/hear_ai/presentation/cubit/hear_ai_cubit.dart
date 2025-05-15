@@ -30,6 +30,9 @@ class HearAiCubit extends Cubit<HearAiState> {
   // ? configurable duration
   final Duration _continuousChunkDuration = const Duration(seconds: 5);
 
+  // ? list to store results for continuous mode
+  List<HearAiResult> _currentResultsHistory = [];
+
   HearAiCubit() : super(HearAiInitial()) {
     initializeAndCheckPermission();
   }
@@ -102,14 +105,12 @@ class HearAiCubit extends Cubit<HearAiState> {
       if (isClosed) {
         return;
       }
-      emit(HearAIError("Failed to start recording: $e"));
+      emit(HearAiError("Failed to start recording: $e"));
       print("HearAiCubit: Error starting recording - $e");
     }
   }
 
   Future<void> stopAndProcessRecording() async {
-    bool wasRecordingForContinuous =
-        _isContinuousListeningActive && (state is HearAiRecording);
     if (state is! HearAiRecording) //? not recording
     {
       print("HearAICubit: stopAndProcess called but not in recording state.");
@@ -143,7 +144,7 @@ class HearAiCubit extends Cubit<HearAiState> {
         return;
       }
       emit(
-        HearAIError("HearAiCubit: Erorr stopping/processing recording - $e"),
+        HearAiError("HearAiCubit: Erorr stopping/processing recording - $e"),
       );
       print("HearAICubit: Error stopping/processing recording - $e");
 
@@ -200,6 +201,7 @@ class HearAiCubit extends Cubit<HearAiState> {
         "SOUND_LOUD_IMPACT",
         "SOUND_EXPLOSION",
         "SOUND_BABY_CRYING",
+        "SOUND_PERSON_SCREAMING",
         "SOUND_MUSIC",
         //? fallbacks
         "SOUND_GENERAL_LOUD", "AMBIENT_NOISE",
@@ -208,7 +210,7 @@ class HearAiCubit extends Cubit<HearAiState> {
       final TextPart promptPart = TextPart(
         "Analyze the provided audio. "
         "1. If clear human speech is present, transcribe it. Also determine its dominant tone/intent. "
-        "2. Independently, listen for any of the following specific environmental sounds if they are prominent:ALARM,VEHICLE_HORN ,DOORBELL_KNOCK,PHONE_RINGING,CROWD_NOISE,PERSON_COUGH_SNEEZE ,ANIMAL_SOUND, LOUD_IMPACT, EXPLOSION,BABY_CRYING,MUSIC ,GENERAL_LOUD, AMBIENT_NOISE"
+        "2. Independently, listen for any of the following specific environmental sounds if they are prominent:ALARM,VEHICLE_HORN ,DOORBELL_KNOCK,PHONE_RINGING,CROWD_NOISE,PERSON_COUGH_SNEEZE ,ANIMAL_SOUND, LOUD_IMPACT, EXPLOSION,BABY_CRYING,PERSON_SCREAMING,MUSIC ,GENERAL_LOUD, AMBIENT_NOISE"
         "3. Determine the single most significant event or type of speech from the audio. "
         "4. Classify this primary event into ONE of these categories: $soundCategories. "
         "Output your response STRICTLY in the following format, ensuring each field is on a new line: "
@@ -245,20 +247,40 @@ class HearAiCubit extends Cubit<HearAiState> {
         print(
           "HearAICubit: Processed - EventType='$eventType', Transcription='$transcription', Details='$details'",
         );
-        emit(
-          HearAiSuccess(
-            transcription: transcription,
-            eventType: eventType,
-            details: details,
-          ),
+        final HearAiResult newResult = HearAiResult(
+          transcription: transcription,
+          eventType: eventType,
+          details: details,
+          timestamp: DateTime.now(),
         );
+
+        if (_isContinuousListeningActive) {
+          _currentResultsHistory.insert(
+            0,
+            newResult,
+          ); //? add to top (kinda like stack)
+          emit(
+            HearAiSuccess(
+              resultsHistory: _currentResultsHistory,
+              latestResult: newResult,
+            ),
+          );
+        } else {
+          _currentResultsHistory = [newResult];
+          emit(
+            HearAiSuccess(
+              resultsHistory: _currentResultsHistory,
+              latestResult: newResult,
+            ),
+          );
+        }
       } else {
         throw Exception("No response text from AI");
       }
     } catch (e) {
       print("HearAiCubit: Error processing with gemini - $e");
       if (!isClosed) {
-        emit(HearAIError("AI processing failed: $e"));
+        emit(HearAiError("AI processing failed: $e"));
       }
     }
   }
@@ -283,12 +305,14 @@ class HearAiCubit extends Cubit<HearAiState> {
       return;
     }
     print("HearAICubit: Starting continuous listening...");
-
     _isContinuousListeningActive = true;
+    _currentResultsHistory = []; //? clear last history
 
     // ? could emit a state to indicate contionus mode here, if needed by ui
     //? for now / testing, just use the regular record mode
-
+    if (isClosed) {
+      return;
+    }
     emit(HearAiReadyToRecord());
     _triggerNextContiunousChunk();
   }
@@ -321,6 +345,21 @@ class HearAiCubit extends Cubit<HearAiState> {
       emit(
         const HearAiPermissionNeeded(message: "Microphone permission needed."),
       );
+    }
+  }
+
+  //? method called when userf explicitly clears results or switches mode
+  void clearResultsHistory() {
+    _currentResultsHistory = [];
+
+    if (!isClosed) {
+      //? transition to an appropriate state, perhaps based on _isContinuousListeningActive (?)
+      if (_isContinuousListeningActive) {
+        // emit(HearAiSuccess(resultsHistory: const [], latestResult: null));
+        // If still in continuous mode but clearing, maybe just re-emit with empty list (or not needed)
+      } else {
+        if (!isClosed) emit(HearAiReadyToRecord());
+      }
     }
   }
 

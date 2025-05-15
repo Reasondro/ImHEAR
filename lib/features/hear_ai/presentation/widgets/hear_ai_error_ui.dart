@@ -37,8 +37,6 @@ class HearAiErrorUi extends StatelessWidget {
           child: const Text(
             "Retry Permission/Init",
             style: TextStyle(
-              // color: AppColors.bittersweet,
-              // color: AppColors.lavender,
               color: AppColors.white,
               fontWeight: FontWeight.bold,
             ),
