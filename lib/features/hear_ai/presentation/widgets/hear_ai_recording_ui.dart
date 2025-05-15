@@ -14,7 +14,7 @@ class HearAiRecordingUi extends StatelessWidget {
           onTap: onTap,
           child: Lottie.asset(
             height: 250,
-            "assets/images/ai_processing-2.json",
+            "assets/images/ai_processing.json",
             errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
           ),
         ),

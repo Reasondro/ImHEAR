@@ -27,7 +27,8 @@ class HearAiScreen extends StatelessWidget {
           );
           // TODO: Based on state.eventType, send command to ESP32
           //? maybe like this:
-          final bleService = context.read<CustomBluetoothService>();
+          final CustomBluetoothService bleService =
+              context.read<CustomBluetoothService>();
           if (bleService.isConnected.value) {
             if (state.eventType == "SOUND_ALARM") {
               bleService.sendCommand("VIB_ALARM");

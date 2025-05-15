@@ -22,7 +22,7 @@ class HearAiIdleUi extends StatelessWidget {
           onTap: onTap,
           child: Lottie.asset(
             height: 250,
-            "assets/images/ai_processing.json",
+            "assets/images/ai_idle.json",
             errorBuilder: (ctx, err, st) => const CircularProgressIndicator(),
           ),
         ),
