@@ -34,6 +34,8 @@ class HearAiCubit extends Cubit<HearAiState> {
   // ? list to store results for continuous mode
   List<HearAiResult> _currentResultsHistory = [];
 
+  List<HearAiResult> get resultsHistory => _currentResultsHistory;
+
   HearAiCubit() : super(HearAiInitial()) {
     initializeAndCheckPermission();
   }

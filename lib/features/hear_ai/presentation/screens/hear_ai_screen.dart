@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 import 'package:komunika/core/extensions/snackbar_extension.dart';
 import 'package:komunika/core/services/custom_bluetooth_service.dart';
+import 'package:komunika/features/hear_ai/domain/entities/hear_ai_result.dart';
 import 'package:komunika/features/hear_ai/presentation/cubit/hear_ai_cubit.dart';
 import 'package:komunika/features/hear_ai/presentation/widgets/hear_ai_error_ui.dart';
 import 'package:komunika/features/hear_ai/presentation/widgets/hear_ai_idle_ui.dart';
@@ -112,11 +113,14 @@ class _HearAiScreenState extends State<HearAiScreen> {
         }
       },
       builder: (context, state) {
-        Widget centerContent;
+        final List<HearAiResult> history =
+            context.watch<HearAiCubit>().resultsHistory;
+
+        Widget content;
         final actionButtonConfig = _getActionButtonConfig(context, state);
 
         if (state is HearAiInitial || state is HearAiReadyToRecord) {
-          centerContent = HearAiIdleUi(
+          content = HearAiIdleUi(
             onTap:
                 _isContinuousModeEnabled
                     ? () =>
@@ -125,13 +129,13 @@ class _HearAiScreenState extends State<HearAiScreen> {
             permissionNeeded: false,
           );
         } else if (state is HearAiPermissionNeeded) {
-          centerContent = HearAiIdleUi(
+          content = HearAiIdleUi(
             onTap: actionButtonConfig["action"],
             permissionNeeded: true,
             buttonText: actionButtonConfig["text"],
           );
         } else if (state is HearAiRecording) {
-          centerContent = HearAiRecordingUi(
+          content = HearAiRecordingUi(
             onTap:
                 _isContinuousModeEnabled
                     ? () =>
@@ -144,23 +148,23 @@ class _HearAiScreenState extends State<HearAiScreen> {
                             .stopAndProcessRecording(), // In manual, stop & process
           );
         } else if (state is HearAiProcessing) {
-          centerContent = const HearAiProcessingUi();
+          content = const HearAiProcessingUi();
         } else if (state is HearAiSuccess) {
           // Display list of results in continuous mode, or latest if manual & history has 1
-          centerContent = HearAiSuccessUi(
+          content = HearAiSuccessUi(
             resultsHistory: state.resultsHistory,
             onStartNextRecording:
                 () => context.read<HearAiCubit>().startRecording(),
             isContinuousMode: _isContinuousModeEnabled,
           );
         } else if (state is HearAiError) {
-          centerContent = HearAiErrorUi(
+          content = HearAiErrorUi(
             message: state.message,
             onTap:
                 actionButtonConfig["action"], // Will be "Retry Permission/Init"
           );
         } else {
-          centerContent = const Text("Unknown State");
+          content = const Text("Unknown State");
         }
 
         return Padding(
@@ -192,7 +196,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              centerContent,
+              content,
 
               if (actionButtonConfig["show"] &&
                   state
