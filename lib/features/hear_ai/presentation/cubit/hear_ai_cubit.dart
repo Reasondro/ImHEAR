@@ -356,8 +356,12 @@ class HearAiCubit extends Cubit<HearAiState> {
     if (!isClosed) {
       //? transition to an appropriate state, perhaps based on _isContinuousListeningActive (?)
       if (_isContinuousListeningActive) {
-        // emit(HearAiSuccess(resultsHistory: const [], latestResult: null));
-        // If still in continuous mode but clearing, maybe just re-emit with empty list (or not needed)
+        emit(
+          HearAiSuccess(
+            resultsHistory: _currentResultsHistory,
+            latestResult: _currentResultsHistory.first,
+          ),
+        );
       } else {
         if (!isClosed) emit(HearAiReadyToRecord());
       }

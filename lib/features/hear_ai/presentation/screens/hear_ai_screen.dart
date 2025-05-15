@@ -21,8 +21,7 @@ class HearAiScreen extends StatefulWidget {
 class _HearAiScreenState extends State<HearAiScreen> {
   bool _isContinuousModeEnabled = false;
 
-  // This function figures out the main action button's text and callback
-  // based on the current Cubit state AND the _isContinuousModeEnabled toggle.
+  // ? function figures out the main action button's text and callback
   Map<String, dynamic> _getActionButtonConfig(
     BuildContext context,
     HearAiState state,
@@ -30,7 +29,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
     String buttonText = "Start Listening";
     VoidCallback? onPressed =
         () => context.read<HearAiCubit>().startRecording(); //? mode default
-    Color buttonColor = Theme.of(context).primaryColor;
+    Color buttonColor = AppColors.haiti;
     bool showButton = true;
 
     if (_isContinuousModeEnabled) {
@@ -105,7 +104,6 @@ class _HearAiScreenState extends State<HearAiScreen> {
         if (state is HearAiError) {
           // Avoid showing snackbar if it's a permission needed state, as UI handles it
           if (state is! HearAiPermissionNeeded) {
-            // Check if it's not a permission state
             context.customShowErrorSnackBar(state.message);
           }
         }
@@ -214,42 +212,42 @@ class _HearAiScreenState extends State<HearAiScreen> {
               const SizedBox(height: 20),
               centerContent,
               // Main Action Button (conditionally shown)
-              if (actionButtonConfig["show"] &&
-                  !(state is HearAiPermissionNeeded &&
-                      _isContinuousModeEnabled) && // Don't show main button if continuous but needs permission
-                  !(state is HearAiSuccess &&
-                      _isContinuousModeEnabled &&
-                      state
-                          .resultsHistory
-                          .isNotEmpty) // Don't show if continuous and showing results list
-                  )
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: actionButtonConfig["color"],
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 15,
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.white,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+              // if (actionButtonConfig["show"] &&
+              //     !(state is HearAiPermissionNeeded &&
+              //         _isContinuousModeEnabled) && // Don't show main button if continuous but needs permission
+              //     !(state is HearAiSuccess &&
+              //         _isContinuousModeEnabled &&
+              //         state
+              //             .resultsHistory
+              //             .isNotEmpty) // Don't show if continuous and showing results list
+              //     )
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: actionButtonConfig["color"],
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 15,
                       ),
-                      onPressed: actionButtonConfig["action"],
-                      child: Text(
-                        actionButtonConfig["text"],
-                        style: const TextStyle(color: AppColors.white),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.white,
                       ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: actionButtonConfig["action"],
+                    child: Text(
+                      actionButtonConfig["text"],
+                      style: const TextStyle(color: AppColors.white),
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         );
