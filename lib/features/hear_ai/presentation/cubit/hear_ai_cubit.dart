@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:komunika/features/hear_ai/domain/entities/hear_ai_result.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
@@ -347,7 +348,7 @@ class HearAiCubit extends Cubit<HearAiState> {
       if (!_isContinuousListeningActive ||
           isClosed ||
           state is! HearAiRecording) {
-        // ? basically double checking, in case mode was stopped during the delay or state chagne
+        // ! basically double checking, in case mode was stopped during the delay or state chagne
         print(
           "HearAICubit: Continuous mode stopped or state changed during timer wait.",
         );

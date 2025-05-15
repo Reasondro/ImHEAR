@@ -11,6 +11,7 @@ import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 // import 'package:komunika/features/auth/presentation/screens/auth_wrapper.dart';
 import 'package:komunika/features/chat/data/repositories/supabase_chat_repository.dart';
 import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
+import 'package:komunika/features/hear_ai/presentation/cubit/hear_ai_cubit.dart';
 import 'package:komunika/features/nearby_officials/data/repositories/supabase_nearby_officials_repository.dart';
 import 'package:komunika/features/nearby_officials/domain/repositories/nearby_officials_repository.dart';
 import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
@@ -83,6 +84,7 @@ class _AppState extends State<App> {
                       context.read<NearbyOfficialsRepository>(),
                 ),
           ),
+          BlocProvider<HearAiCubit>(create: (context) => HearAiCubit()),
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,

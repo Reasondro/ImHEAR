@@ -33,6 +33,8 @@ final class HearAiSuccess extends HearAiState {
   final String eventType;
   final String details;
 
+  // final HearAiResult result;
+
   const HearAiSuccess({
     required this.transcription,
     required this.eventType,
