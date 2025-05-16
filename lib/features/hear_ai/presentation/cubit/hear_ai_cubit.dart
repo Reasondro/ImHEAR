@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:komunika/features/hear_ai/domain/entities/hear_ai_result.dart';
-import 'package:komunika/features/hear_ai/presentation/widgets/hear_ai_processing_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
@@ -19,8 +18,8 @@ class HearAiCubit extends Cubit<HearAiState> {
   String? _currentRecordingPath;
   final GenerativeModel _model = GenerativeModel(
     model: "gemini-2.0-flash-lite",
-    // model: "gemini-2.0-flash",
-    // model: "gemini-2.5-flash-preview-04-17",
+    // model: "gemini-2.0-flash", //? testing other models
+    // model: "gemini-2.5-flash-preview-04-17", //? testing other models
     apiKey: dotenv.env["GEMINI_API_KEY"]!,
   );
 
@@ -103,33 +102,33 @@ class HearAiCubit extends Cubit<HearAiState> {
         return;
       }
       emit(HearAiRecording());
-      print("HearAiCubit: Recording started to $_currentRecordingPath");
+      // print("HearAiCubit: Recording started to $_currentRecordingPath");
     } catch (e) {
       if (isClosed) {
         return;
       }
       emit(HearAiError("Failed to start recording: $e"));
-      print("HearAiCubit: Error starting recording - $e");
+      // print("HearAiCubit: Error starting recording - $e");
     }
   }
 
   Future<void> stopAndProcessRecording() async {
     if (state is! HearAiRecording) //? not recording
     {
-      print("HearAICubit: stopAndProcess called but not in recording state.");
+      // print("HearAICubit: stopAndProcess called but not in recording state.");
       return;
     }
 
     try {
       final String? path = await _audioRecorder.stop();
-      print("HearAiCubit: Recording stopped. File at $path");
+      // print("HearAiCubit: Recording stopped. File at $path");
 
       if (path != null) {
         final File audioFile = File(path);
         if (await audioFile.exists()) {
           final Uint8List fileBytes = await audioFile.readAsBytes();
           await audioFile.delete(); //? cleanu temp
-          print("HearAiCubit: Audio file read (${fileBytes.length} bytes)");
+          // print("HearAiCubit: Audio file read (${fileBytes.length} bytes)");
 
           if (isClosed) {
             return;
@@ -149,7 +148,7 @@ class HearAiCubit extends Cubit<HearAiState> {
       emit(
         HearAiError("HearAiCubit: Erorr stopping/processing recording - $e"),
       );
-      print("HearAICubit: Error stopping/processing recording - $e");
+      // print("HearAICubit: Error stopping/processing recording - $e");
 
       // ? if in continuous mode, the loop will try to restart
       // ? if not in continuous mode, reverting to Ready or PermissionNeeded makes sense(?)
@@ -244,9 +243,9 @@ class HearAiCubit extends Cubit<HearAiState> {
             details = line.substring("DETAILS:".length).trim();
           }
         }
-        print(
-          "HearAICubit: Processed - EventType='$eventType', Transcription='$transcription', Details='$details'",
-        );
+        // print(
+        //   "HearAICubit: Processed - EventType='$eventType', Transcription='$transcription', Details='$details'",
+        // );
         final HearAiResult newResult = HearAiResult(
           transcription: transcription,
           eventType: eventType,
@@ -278,7 +277,7 @@ class HearAiCubit extends Cubit<HearAiState> {
         throw Exception("No response text from AI");
       }
     } catch (e) {
-      print("HearAiCubit: Error processing with gemini - $e");
+      // print("HearAiCubit: Error processing with gemini - $e");
       if (!isClosed) {
         emit(HearAiError("AI processing failed: $e"));
       }
@@ -294,17 +293,17 @@ class HearAiCubit extends Cubit<HearAiState> {
         !(await Permission.microphone.isGranted)) {
       await requestMicrophonePermission();
       if (state is! HearAiReadyToRecord && state is! HearAiRecording) {
-        print("HearAICubit: Permission not granted for contionus listening");
+        // print("HearAICubit: Permission not granted for contionus listening");
         return;
       }
     }
     if (state is HearAiRecording || state is HearAiProcessing) {
-      print(
-        "HearAICubit: Cannot start continuous listening while already recording or processing",
-      );
+      // print(
+      //   "HearAICubit: Cannot start continuous listening while already recording or processing",
+      // );
       return;
     }
-    print("HearAICubit: Starting continuous listening...");
+    // print("HearAICubit: Starting continuous listening...");
     _isContinuousListeningActive = true;
     _currentResultsHistory = []; //? clear last history
 
@@ -321,20 +320,20 @@ class HearAiCubit extends Cubit<HearAiState> {
     if (!_isContinuousListeningActive) {
       return; //? already not active
     }
-    print("HearAICubit: Stopping continuous listening...");
+    // print("HearAICubit: Stopping continuous listening...");
     _isContinuousListeningActive = false;
     _continuousListenTimer?.cancel(); //? cancel any pending timer
 
     if (state is HearAiRecording) {
       try {
         await _audioRecorder.stop();
-        print(
-          "HearAICubit: Stopped ongoing recording due to continuous mode stop.",
-        );
+        // print(
+        //   "HearAICubit: Stopped ongoing recording due to continuous mode stop.",
+        // );
       } catch (e) {
-        print(
-          "HearAICubit: Error stopping recorder during continuous stop: $e",
-        );
+        // print(
+        //   "HearAICubit: Error stopping recorder during continuous stop: $e",
+        // );
       }
     }
 
@@ -379,9 +378,9 @@ class HearAiCubit extends Cubit<HearAiState> {
 
     if (state is! HearAiRecording) {
       _isContinuousListeningActive = false; //? stop the loop instantl
-      print(
-        "HearAicubit: Halting continuous loop as recording could not start",
-      );
+      // print(
+      //   "HearAicubit: Halting continuous loop as recording could not start",
+      // );
       return;
     }
 
@@ -392,25 +391,25 @@ class HearAiCubit extends Cubit<HearAiState> {
           isClosed ||
           state is! HearAiRecording) {
         // ! basically double checking, in case mode was stopped during the delay or state chagne
-        print(
-          "HearAICubit: Continuous mode stopped or state changed during timer wait.",
-        );
+        // print(
+        //   "HearAICubit: Continuous mode stopped or state changed during timer wait.",
+        // );
         return;
       }
       // ? stop and process the recording (will emit HearAiProcessing then Sucess/Error)
-      print("HearAICubit: Chunk duration ended, stopping and processing.");
+      // print("HearAICubit: Chunk duration ended, stopping and processing.");
       await stopAndProcessRecording();
 
       // ? if still continuous mode, trigger next chunk (recursive basically)
       if (_isContinuousListeningActive && !isClosed) {
-        print(
-          "HearAICubit: Processing finished, triggering next continuous chunk.",
-        );
+        // print(
+        //   "HearAICubit: Processing finished, triggering next continuous chunk.",
+        // );
         _triggerNextContiunousChunk();
       } else {
-        print(
-          "HearAICubit: Continuous mode was stopped during/after processing, not looping.",
-        );
+        // print(
+        //   "HearAICubit: Continuous mode was stopped during/after processing, not looping.",
+        // );
       }
     });
   }
@@ -418,7 +417,7 @@ class HearAiCubit extends Cubit<HearAiState> {
   @override
   Future<void> close() {
     _audioRecorder.dispose();
-    print("HearAiCubit disposed, audio recorder disposed.");
+    // print("HearAiCubit disposed, audio recorder disposed.");
     return super.close();
   }
 }

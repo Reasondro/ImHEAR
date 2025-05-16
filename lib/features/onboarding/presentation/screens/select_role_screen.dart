@@ -22,7 +22,7 @@ class SelectRoleScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.white),
           onPressed: () {
             GoRouter.of(context).pop();
-            print("Back button pressed");
+            // print("Back button pressed");
           },
         ),
       ),
@@ -51,7 +51,7 @@ class SelectRoleScreen extends StatelessWidget {
                 GoRouter.of(
                   context,
                 ).goNamed(Routes.signUpScreen, extra: UserRole.deaf_user);
-                print("Selected Disabled User");
+                // print("Selected Disabled User");
               },
             ),
             const SizedBox(height: 20),
@@ -64,7 +64,7 @@ class SelectRoleScreen extends StatelessWidget {
                 GoRouter.of(
                   context,
                 ).goNamed(Routes.signUpScreen, extra: UserRole.org_admin);
-                print("Selected Organization Admin");
+                // print("Selected Organization Admin");
               },
             ),
             const SizedBox(height: 20),
@@ -78,7 +78,7 @@ class SelectRoleScreen extends StatelessWidget {
                 GoRouter.of(
                   context,
                 ).goNamed(Routes.signUpScreen, extra: UserRole.official);
-                print("Selected Official Staff");
+                // print("Selected Official Staff");
               },
             ),
             const Spacer(), //?  pushes content to top if Column height is more than content

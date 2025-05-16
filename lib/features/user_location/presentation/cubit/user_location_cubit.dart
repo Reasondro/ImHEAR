@@ -37,7 +37,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
   Future<void> startTracking() async {
     //? prevent starting if already tracking or loading
     if (state is UserLocationTracking || state is UserLocationLoading) {
-      print("UserLocationCubit has already been tracking");
+      // print("UserLocationCubit has already been tracking");
       return;
     }
 
@@ -92,15 +92,15 @@ class UserLocationCubit extends Cubit<UserLocationState> {
         (Position pos) {
           if (!isClosed) {
             //? check if cubit is still active
-            print(
-              "Location Emitted: Lat(Y): ${pos.latitude}, Lon(X): ${pos.longitude}",
-            );
+            // print(
+            //   "Location Emitted: Lat(Y): ${pos.latitude}, Lon(X): ${pos.longitude}",
+            // );
             emit(UserLocationTracking(position: pos));
           }
         },
         onError: (error) {
           //? handle potential errors from the stream (e.g., GPS signal loss)
-          print("Location Stream Error: $error");
+          // print("Location Stream Error: $error");
           if (!isClosed) {
             emit(UserLocationError(message: "Error getting location: $error"));
             //? Optionally try restarting tracking after an error? Depends on desired behavior.
@@ -111,21 +111,21 @@ class UserLocationCubit extends Cubit<UserLocationState> {
           //? stream closed unexpectedly?
           if (!isClosed && state is UserLocationTracking) {
             //? If we were tracking and the stream just stops, maybe emit initial?
-            print("Location stream done.");
+            // print("Location stream done.");
             emit(UserLocationInitial()); // Or another appropriate state
           }
         },
         cancelOnError: false, //? keep listening even after an error if desired
       );
 
-      print("User location tracking started.");
+      // print("User location tracking started.");
     } catch (e) {
-      print("Error starting location tracking: $e");
+      // print("Error starting location tracking: $e");
       if (!isClosed) {
         //? handle errors during setup (e.g., platform exceptions)
         if (e is PermissionRequestInProgressException) {
           emit(
-            UserLocationError(
+            const UserLocationError(
               message: "Permission request already in progress.",
             ),
           );
@@ -156,7 +156,7 @@ class UserLocationCubit extends Cubit<UserLocationState> {
     if (state is! UserLocationInitial) {
       emit(UserLocationInitial());
     }
-    print("User location tracking stopped.");
+    // print("User location tracking stopped.");
   }
 
   @override

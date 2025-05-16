@@ -170,7 +170,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     onChanged: (UserRole? newValue) {
                       setState(() {
                         _selectedRole = newValue ?? UserRole.deaf_user;
-                        print(_selectedRole.name);
+                        // print(_selectedRole.name);
                       });
                     },
                   ),

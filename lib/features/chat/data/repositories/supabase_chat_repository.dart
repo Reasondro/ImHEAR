@@ -24,7 +24,7 @@ class SupabaseChatRepository implements ChatRepository {
       }
       return response as int; // ? cast the result to int
     } on PostgrestException catch (e) {
-      print("Supabase Error getOrCreateChatRoom RPC: ${e.message}");
+      // print("Supabase Error getOrCreateChatRoom RPC: ${e.message}");
       //? check if the error message came from RAISE EXCEPTION (role check) (via the database rpc function)
       if (e.message.contains('Only deaf_user can create chat rooms')) {
         throw Exception(
@@ -35,7 +35,7 @@ class SupabaseChatRepository implements ChatRepository {
         "Database error (${e.code}): Failed to get/create chat room via RPC.",
       );
     } catch (e) {
-      print("Unexpected Error getOrCreateChatRoom RPC: $e");
+      // print("Unexpected Error getOrCreateChatRoom RPC: $e");
       throw Exception("Failed to get or create chat room via RPC: $e");
     }
   }
@@ -57,7 +57,7 @@ class SupabaseChatRepository implements ChatRepository {
       //? map this raw data to  Message entity
       return stream
           .map((List<Map<String, dynamic>> listOfMaps) {
-            print("List of maps: $listOfMaps");
+            // print("List of maps: $listOfMaps");
             // {"id" : 1}
             return listOfMaps
                 .map(
@@ -68,13 +68,13 @@ class SupabaseChatRepository implements ChatRepository {
           })
           .handleError((error) {
             //? handle errors occurring within the stream pipeline
-            print("Error in messages stream: $error");
+            // print("Error in messages stream: $error");
             //? depending on desired behavior, could emit empty list or rethrow
             //? rethrowing might terminate the stream in the Bloc/Cubit
             throw Exception("Error listening to messages: $error");
           });
     } catch (e) {
-      print("Error setting up messages stream: $e");
+      // print("Error setting up messages stream: $e");
       //? return an error stream immediately if setup fails
       return Stream.error(Exception("Failed to get messages stream: $e"));
     }
@@ -95,13 +95,13 @@ class SupabaseChatRepository implements ChatRepository {
         'content': content,
         //? 'created_at' defaults to now() in the database
       });
-      print("Message sent to room $roomId");
+      // print("Message sent to room $roomId");
     } on PostgrestException catch (e) {
       //? RLS might deny insert if user isn't a participant (tested via room access check)
-      print("Supabase Error sendMessage: ${e.message}");
+      // print("Supabase Error sendMessage: ${e.message}");
       throw Exception("Database error (${e.code}): Failed to send message.");
     } catch (e) {
-      print("Unexpected Error sendMessage: $e");
+      // print("Unexpected Error sendMessage: $e");
       throw Exception("Failed to send message: $e");
     }
   }

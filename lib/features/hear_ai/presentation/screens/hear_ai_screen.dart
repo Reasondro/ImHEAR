@@ -13,6 +13,7 @@ import 'package:komunika/features/hear_ai/presentation/widgets/hear_ai_recording
 import 'package:komunika/features/hear_ai/presentation/widgets/hear_ai_success_ui.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+// TODO fix the bug where toggling from normal to continuous mode makes the app stuck in processing
 class HearAiScreen extends StatefulWidget {
   const HearAiScreen({super.key});
 
@@ -24,6 +25,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
   bool _isContinuousModeEnabled = false;
 
   // ? function figures out the main action button's text and callback
+  // TODO : remove button widget entirely in this method as its not even used  / displayed
   Map<String, dynamic> _getActionButtonConfig(
     BuildContext context,
     HearAiState state,
@@ -33,7 +35,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
     Color buttonColor = AppColors.haiti;
     bool showButton = true;
 
-    // Handle permission-related states
+    // ? handle permission-related states
     if (state is HearAiPermissionNeeded) {
       buttonText =
           state.isPermanentlyDenied ? "Open Settings" : "Grant Permission";
@@ -42,13 +44,13 @@ class _HearAiScreenState extends State<HearAiScreen> {
               ? () => openAppSettings()
               : () => context.read<HearAiCubit>().requestMicrophonePermission();
       buttonColor = Colors.orangeAccent;
-      showButton = false; // Hide main button, handled by HearAiIdleUi
+      showButton = false;
     } else if (state is HearAiProcessing) {
       buttonText = "Processing...";
-      onPressed = null; // Disable button while processing
-      showButton = false; // Hide button, show processing UI instead
+      onPressed = null;
+      showButton = false; //
     } else {
-      // Handle recording and ready states
+      //? handle recording and ready states
       if (_isContinuousModeEnabled) {
         if (state is HearAiRecording) {
           buttonText = "Stop Continuous Listening";
@@ -98,26 +100,12 @@ class _HearAiScreenState extends State<HearAiScreen> {
           }
         }
         if (state is HearAiSuccess) {
-          print(
-            "AI Success in UI: ${state.latestResult.eventType} - ${state.latestResult.transcription}",
-          );
+          // print(
+          //   "AI Success in UI: ${state.latestResult.eventType} - ${state.latestResult.transcription}",
+          // );
           final CustomBluetoothService bleService =
               context.read<CustomBluetoothService>();
           if (bleService.isConnected.value) {
-            // ? customize command based on eventType
-            // String command = "VIB"; // Default command
-            // if (state.latestResult.eventType == "SOUND_ALARM") {
-            //   command = "VIB_ALARM";
-            // } else if (state.latestResult.eventType ==
-            //     "SPEECH_URGENT_IMPORTANT") {
-            //   command = "VIB_URGENT";
-            // } else if (state.latestResult.eventType == "SOUND_VEHICLE_HORN") {
-            //   command = "VIB_CAR_HORN";
-            // }
-
-            // ? add more mappings here
-            // bleService.sendCommand(command);
-
             List<int> command = [0x02, 0x01]; // ? default command data
 
             final List<String> normalSpeechCategories = [
@@ -155,6 +143,9 @@ class _HearAiScreenState extends State<HearAiScreen> {
               "SOUND_GENERAL_LOUD",
             ];
             final String eventType = state.latestResult.eventType;
+
+            // ? customize command based on eventType
+
             if (normalSpeechCategories.contains(eventType)) {
               command = [0x02, 0x01]; //? normal speech
             } else if (urgentSpeechCategories.contains(eventType)) {
@@ -164,9 +155,9 @@ class _HearAiScreenState extends State<HearAiScreen> {
             } else if (emergencySoundCategories.contains(eventType)) {
               command = [0x02, 0x04]; //? emergency Sound
             } else {
-              print(
-                "Unknown eventType: $eventType, sending default/neutral command.",
-              );
+              // print(
+              //   "Unknown eventType: $eventType, sending default/neutral command.",
+              // );
               command = [
                 0x02,
                 0x01,
@@ -174,7 +165,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
             }
             responseFromBluetooth = await bleService.sendCommandBytes(command);
           } else {
-            print("ImHEAR Band not connected, can't send vibration.");
+            // print("ImHEAR Band not connected, can't send vibration.");
             responseFromBluetooth = "Can't connect to device";
           }
         }
@@ -227,7 +218,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
         } else if (state is HearAiError) {
           topContent = HearAiErrorUi(
             message: state.message,
-            onTap: cfg["action"], // Will be "Retry Permission/Init"
+            onTap: cfg["action"], //? will be "Retry Permission/Init"
           );
         } else {
           topContent = const Text("Unknown State");
@@ -242,7 +233,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
           ),
           child: Column(
             children: <Widget>[
-              // Mode Toggle Switch
+              // ? Toggle  Switch (Continuous or not)
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -317,6 +308,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  // ? for testing bluetooth response
                   // subtitle: Text(
                   //   'Device response: $responseFromBluetooth',
                   //   style: const TextStyle(
@@ -410,18 +402,5 @@ class _HearAiScreenState extends State<HearAiScreen> {
         );
       },
     );
-  }
-
-  IconData _iconForEvent(String eventType) {
-    switch (eventType) {
-      case "SOUND_ALARM":
-        return Icons.alarm;
-      case "SOUND_VEHICLE_HORN":
-        return Icons.directions_car;
-      case "SPEECH_URGENT_IMPORTANT":
-        return Icons.priority_high;
-      default:
-        return Icons.audiotrack;
-    }
   }
 }

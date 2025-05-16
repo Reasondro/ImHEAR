@@ -113,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.white),
             onPressed: () {
               GoRouter.of(context).pop();
-              print("Back button pressed");
+              // print("Back button pressed");
             },
           ),
         ),
@@ -132,9 +132,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 final Message latestMessage =
                     state.messages.first; //? check this could be got it flip
                 if (latestMessage.senderId != currentUserId) {
-                  print(
-                    "New message received from official, triggering BLE command!",
-                  );
+                  // print(
+                  //   "New message received from official, triggering BLE command!",
+                  // );
                   try {
                     // ? make sure to provide/use CustomBluetoothService
                     //?  and the device is connected.
@@ -146,10 +146,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         "Vibrate",
                       ); //? "vibrate" for new message
                     } else {
-                      print("BLE: Not connected, can't send command.");
+                      // print("BLE: Not connected, can't send command.");
                     }
                   } catch (e) {
-                    print("Error sending BLE command: $e");
+                    // print("Error sending BLE command: $e");
                     // ? or show a less prentious error, e.g., a small toast
                     context.customShowSnackBar("Wristband not notified.");
                   }
@@ -436,8 +436,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       onPressed:
                           _showMicIcon
                               ? () {
-                                /* TODO: Mic action */
-                                print("Mic pressed");
+                                // TODO: Mic action
+                                // print("Mic pressed");
                               }
                               : () => _sendMessage(descendantContextForInput),
                       icon: Icon(

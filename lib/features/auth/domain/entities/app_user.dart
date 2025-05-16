@@ -1,5 +1,7 @@
 import 'package:komunika/features/auth/domain/entities/user_role.dart';
 
+// * represents the application's user model.
+//  *encapsulates all relevant information about a user.
 class AppUser {
   final String id;
   final String email;
@@ -107,8 +109,8 @@ class AppUser {
       );
     } catch (e) {
       //? log the error and the problematic JSON for debugging
-      print("Error parsing AppUser from JSON: $jsonUser");
-      print("Parsing Error: $e");
+      // print("Error parsing AppUser from JSON: $jsonUser");
+      // print("Parsing Error: $e");
       //? rethrow a more specific error or handle as needed
       throw Exception("Failed to parse AppUser data: $e");
     }

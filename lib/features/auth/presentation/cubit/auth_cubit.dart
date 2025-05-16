@@ -18,7 +18,7 @@ class AuthCubit extends Cubit<AuthStates> {
     //? subscribe to the auth state stream when Cubit is created
     _authStateSubscription = authRepository.authStateChanges.listen(
       (AppUser? user) {
-        print("AuthCubit received user from stream: ${user?.id}"); //? debug
+        // print("AuthCubit received user from stream: ${user?.id}"); //? debug
         if (user != null) {
           _currentUser = user;
           emit(AuthAuthenticated(user: user));
@@ -28,7 +28,7 @@ class AuthCubit extends Cubit<AuthStates> {
         }
       },
       onError: (error) {
-        print("AuthCubit stream error: $error"); //? debuug
+        // print("AuthCubit stream error: $error"); //? debuug
         //? emit an error state if the stream itself has an issue
         emit(AuthError(message: "Authentication stream error: $error"));
       },
@@ -37,22 +37,10 @@ class AuthCubit extends Cubit<AuthStates> {
 
   @override
   Future<void> close() {
-    print("AuthCubit closing, cancelling subsciption.");
+    // print("AuthCubit closing, cancelling subsciption.");
     _authStateSubscription.cancel();
     return super.close();
   }
-
-  // // ? check if user is authenticated
-  // void checkAuth() async {
-  //   final AppUser? user = await authRepository.getCurrentUser();
-
-  //   if (user != null) {
-  //     _currentUser = user;
-  //     emit(AuthAuthenticated(user: user));
-  //   } else {
-  //     emit(AuthUnauthenticated());
-  //   }
-  // }
 
   // ? get curr user
   AppUser? get currentUser => _currentUser;
@@ -115,7 +103,7 @@ class AuthCubit extends Cubit<AuthStates> {
         );
       }
       // print("User from auth_cubit $user");
-      print("SignUp called in Cubit, waiting for stream update...");
+      // print("SignUp called in Cubit, waiting for stream update...");
       // if (user != null) {
       //   _currentUser = user;
       //   emit(AuthAuthenticated(user: user));
@@ -123,7 +111,7 @@ class AuthCubit extends Cubit<AuthStates> {
       //   emit(AuthUnauthenticated());
       // }
     } on AuthException catch (e) {
-      print("Auth exception error from cubit during signup ");
+      // print("Auth exception error from cubit during signup ");
       emit(AuthError(message: "Signup error: ${e.message}"));
       // emit(AuthUnauthenticated());
     } catch (e) {
@@ -138,7 +126,7 @@ class AuthCubit extends Cubit<AuthStates> {
     try {
       await authRepository.signOut();
       emit(AuthUnauthenticated());
-      print("SignOut called in Cubit, waiting for stream update...");
+      // print("SignOut called in Cubit, waiting for stream update...");
     } catch (e) {
       emit(AuthError(message: "Failed to sign out ${e.toString()}"));
     }

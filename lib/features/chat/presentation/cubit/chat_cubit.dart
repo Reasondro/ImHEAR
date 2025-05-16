@@ -30,14 +30,14 @@ class ChatCubit extends Cubit<ChatState> {
         .listen(
           (messages) {
             if (!isClosed) {
-              print(
-                "ChatCubit: Recevied ${messages.length} messages for room $_roomId",
-              );
+              // print(
+              //   "ChatCubit: Recevied ${messages.length} messages for room $_roomId",
+              // );
               emit(ChatLoaded(messages: messages));
             }
           },
           onError: (error) {
-            print("ChatCubit stream error for room $_roomId: $error");
+            // print("ChatCubit stream error for room $_roomId: $error");
             if (!isClosed) {
               emit(
                 ChatError(
@@ -48,7 +48,9 @@ class ChatCubit extends Cubit<ChatState> {
           },
           onDone: () {
             if (!isClosed) {
-              emit(ChatError(message: "Message stream closed unexpectedly"));
+              emit(
+                const ChatError(message: "Message stream closed unexpectedly"),
+              );
             }
           },
         );
@@ -66,9 +68,9 @@ class ChatCubit extends Cubit<ChatState> {
         roomId: _roomId,
         content: trimmedContent,
       );
-      print("ChatCubit: Message sent for room $_roomId");
+      // print("ChatCubit: Message sent for room $_roomId");
     } catch (e) {
-      print("ChatCubit send message error for room $_roomId: $e");
+      // print("ChatCubit send message error for room $_roomId: $e");
 
       if (!isClosed) {
         emit(ChatError(message: "Failed to send message: ${e.toString()}"));
@@ -78,7 +80,7 @@ class ChatCubit extends Cubit<ChatState> {
 
   @override
   Future<void> close() {
-    print("ChatCubit closing subscription for room $_roomId");
+    // print("ChatCubit closing subscription for room $_roomId");
     _messageSubscription?.cancel();
     return super.close();
   }

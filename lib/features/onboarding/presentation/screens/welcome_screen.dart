@@ -57,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const Spacer(flex: 3),
 
-              // Get Started Button
+              // ?cget Started Button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.white,
@@ -73,7 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                 onPressed: () {
                   // TODO: Navigate to Select Role Screen or Sign Up Flow
                   GoRouter.of(context).goNamed(Routes.selectRoleScreen);
-                  print('Get Started Clicked!');
+                  // print('Get Started Clicked!');
                 },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -101,14 +101,12 @@ class WelcomeScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       GoRouter.of(context).goNamed(Routes.signInScreen);
-                      print('Sign In Clicked!');
+                      // print('Sign In Clicked!');
                     },
                     child: Text(
                       'Sign In',
                       style: textTheme.bodyMedium?.copyWith(
-                        color:
-                            AppColors
-                                .columbiaBlue, // Or a specific blue from Figma
+                        color: AppColors.columbiaBlue,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

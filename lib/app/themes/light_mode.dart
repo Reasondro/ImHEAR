@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 
+//* the color scheme for the light theme.
 final ColorScheme imHearLightColor = ColorScheme.fromSeed(
   seedColor: AppColors.haiti,
   brightness: Brightness.light,
 );
 
+// * the overall theme data for the light mode of the application.
 final ThemeData imHearLightTheme = ThemeData().copyWith(
   colorScheme: imHearLightColor,
-  // colorScheme: ColorScheme.light(),
   textTheme: GoogleFonts.outfitTextTheme(),
   appBarTheme: const AppBarTheme(
-    // toolbarHeight: 75,
     toolbarHeight: 65,
     backgroundColor: AppColors.haiti,
     foregroundColor: AppColors.white,
@@ -30,10 +30,9 @@ final ThemeData imHearLightTheme = ThemeData().copyWith(
       (Set<WidgetState> states) =>
           states.contains(WidgetState.selected)
               ? const TextStyle(color: AppColors.bittersweet)
-              // : const TextStyle(color: AppColors.haiti),
               : const TextStyle(color: AppColors.white),
     ),
   ),
 
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: AppColors.white,
 );

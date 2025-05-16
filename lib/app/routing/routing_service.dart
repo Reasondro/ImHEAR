@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/layouts/layout_scaffold_with_nav.dart';
@@ -9,7 +8,6 @@ import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:komunika/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:komunika/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:komunika/features/chat/presentation/screens/chat_screen.dart';
-// import 'package:komunika/features/dashboard/presentation/screens/deaf_user_dashboard_screen.dart';
 import 'package:komunika/features/devices/presentation/devices_screen.dart';
 import 'package:komunika/features/hear_ai/presentation/screens/hear_ai_screen.dart';
 import 'package:komunika/features/home/presentation/screens/home_screen.dart';
@@ -19,12 +17,12 @@ import 'package:komunika/features/onboarding/presentation/screens/select_role_sc
 import 'package:komunika/features/profile/presentation/profile_screen.dart';
 import 'package:komunika/features/onboarding/presentation/screens/welcome_screen.dart';
 
+// * currently this routing service optimized for the disabled/deaf user only
+// * officials / admin will be develop in the future, but currently they have limited routes
+
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: "root",
 );
-// final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
-//   debugLabel: "shell",
-// );
 
 // ? helper class to use a stream with gorotuer refreshlistenable
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -53,7 +51,6 @@ class RoutingService {
     // initialLocation: Routes.homeScreen, //? in production might be use home screen instead
     initialLocation: Routes.welcomeScreen,
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
-    // extraCodec: const UserRoleCodec(),
     redirect: (BuildContext context, GoRouterState state) {
       final AuthStates currentAuthState = authCubit.state;
       final bool isAuthenticated = currentAuthState is AuthAuthenticated;
@@ -66,22 +63,13 @@ class RoutingService {
         "/welcome/${Routes.signInScreen}",
       ];
 
-      // final List<String> authenticatedBaseRoutes = [
-      //   Routes.deafUserHome,
-      //   Routes.officialDashboard,
-      //   Routes.orgAdminHome,
-      //   Routes.devicesScreen,
-      //   Routes.profileScreen,
-      //   //? Add more base paths for authenticated areas if needed (like /settings)
-      // ];
-
-      // ? not authenticated
+      // ? Not authenticated
       if (!isAuthenticated) {
         if (!unauthenticatedRoutes.contains(location) &&
             !location.startsWith("/error")) {
-          print(
-            "Redirecting to WelcomeScreen: Not authenticated and trying to access $location",
-          );
+          // print(
+          //   "Redirecting to WelcomeScreen: Not authenticated and trying to access $location",
+          // );
           return Routes.welcomeScreen;
         }
       }
@@ -90,9 +78,9 @@ class RoutingService {
         // ? if user are on an unauthenticated route, redirect them to their role-specific home
         if (unauthenticatedRoutes.contains(location)) {
           final UserRole userRole = currentAuthState.user.role;
-          print(
-            "Redirecting to role-specific home: Authenticated and on $location",
-          );
+          // print(
+          //   "Redirecting to role-specific home: Authenticated and on $location",
+          // );
           switch (userRole) {
             case UserRole.deaf_user:
               return Routes.deafUserHome;
@@ -105,7 +93,7 @@ class RoutingService {
           }
         }
       }
-      print("No redirection needed for location: $location");
+      // print("No redirection needed for location: $location");
       return null;
     },
     routes: [
@@ -156,19 +144,18 @@ class RoutingService {
         branches: <StatefulShellBranch>[
           // ? branch 1 : Deaf user home
           StatefulShellBranch(
-            // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 name: Routes.deafUserHome,
                 path: Routes.deafUserHome,
-                builder: (context, state) => const HomeScreen(),
-                // builder: (context, state) => const DeafUserDashboardScreen(), // ? for testing
+                builder:
+                    (context, state) =>
+                        const HomeScreen(), //? redirecting to home screen
                 routes: <RouteBase>[
                   GoRoute(
                     parentNavigatorKey: _rootNavigatorKey,
                     name: Routes.deafUserChatScreen,
                     path: "${Routes.chatScreen}/:roomId/:subSpaceName",
-                    // path: "${Routes.chatScreen}/:subSpaceName/:roomId",
                     builder: (context, state) {
                       final int? roomId = int.tryParse(
                         state.pathParameters["roomId"] ?? "",
@@ -196,9 +183,8 @@ class RoutingService {
             ],
           ),
 
-          // ? branch 2 : Deaf user hearai scan
+          // ? branch 2 : Deaf user HearAI scan
           StatefulShellBranch(
-            // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 name: Routes.hearAIScreen,
@@ -210,7 +196,6 @@ class RoutingService {
 
           // ? branch 3 : Deaf user devices
           StatefulShellBranch(
-            // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 name: Routes.devicesScreen,
@@ -222,7 +207,6 @@ class RoutingService {
 
           // ? branch 4 : Deaf user profile
           StatefulShellBranch(
-            // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 name: Routes.profileScreen,
@@ -234,7 +218,8 @@ class RoutingService {
         ],
       ),
 
-      // ? officials starts
+      // TODO : Implement the app for official users
+      // ? routes for Authenticated official users
       StatefulShellRoute.indexedStack(
         builder:
             (
@@ -243,7 +228,7 @@ class RoutingService {
               StatefulNavigationShell navigationShell,
             ) => LayoutScaffoldWithNav(navigationShell: navigationShell),
         branches: <StatefulShellBranch>[
-          // ? branch 1 : ofifcial dashboard
+          // ? branch 1 : ofifcial user dashboard
           StatefulShellBranch(
             // navigatorKey: _shellNavigatorKey,
             routes: <RouteBase>[
@@ -251,36 +236,6 @@ class RoutingService {
                 name: Routes.officialDashboard,
                 path: Routes.officialDashboard,
                 builder: (context, state) => const OfficialDashboardScreen(),
-                // builder: (context, state) => const DeafUserDashboardScreen(), // ? for testing
-                // routes: <RouteBase>[
-                //   GoRoute(
-                //     parentNavigatorKey: _rootNavigatorKey,
-                //     name: Routes.deafUserChatScreen,
-                //     path: "${Routes.chatScreen}/:roomId/:subSpaceName",
-                //     // path: "${Routes.chatScreen}/:subSpaceName/:roomId",
-                //     builder: (context, state) {
-                //       final int? roomId = int.tryParse(
-                //         state.pathParameters["roomId"] ?? "",
-                //       );
-                //       final String? officialName = state.extra as String?;
-                //       final String subSpaceName =
-                //           state.pathParameters["subSpaceName"] ?? "Chat";
-                //       if (roomId == null) {
-                //         return const Scaffold(
-                //           body: Center(
-                //             child: Text("Error: Room ID missing or invalid."),
-                //           ),
-                //         );
-                //       } else {
-                //         return ChatScreen(
-                //           roomId: roomId,
-                //           subSpaceName: subSpaceName,
-                //           officialName: officialName,
-                //         );
-                //       }
-                //     },
-                //   ),
-                // ],
               ),
             ],
           ),
@@ -299,7 +254,8 @@ class RoutingService {
         ],
       ),
 
-      // ? officials ends
+      // TODO : Implement the app for org admin users
+      // ? routes for Authenticated org admin user
       GoRoute(
         name: Routes.orgAdminHome,
         path: Routes.orgAdminHome,

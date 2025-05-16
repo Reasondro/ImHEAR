@@ -1,3 +1,6 @@
+//* centralized place for all route paths (simultaneoulsy the route name too) used in the application.
+//* helps in managing navigation paths and avoids string literals scattered throughout the codebase.
+
 class Routes {
   Routes._();
   //? welcome screen
@@ -6,20 +9,11 @@ class Routes {
   // ? select role screen (base)
   static const String selectRoleScreen = "select-role";
 
-  // // ? select role screen (the actual path)
-  // static const String nestedSelectRoleScreen =
-  //     "$welcomeScreen/$selectRoleScreen";
-
   // ? sign in screen (base)
   static const String signInScreen = "sign-in";
-  // // ? sign in screen (the actual path)
-  // static const String nestedSignInScreen = "$welcomeScreen/$signInScreen";
 
   // ? sign up screen (base)
   static const String signUpScreen = "sign-up";
-  // // ? sign up screen (the actual path)
-  // static const String nestedSignUpScreen =
-  //     "$nestedSelectRoleScreen/$signUpScreen";
 
   // ? home screen
   static const String deafUserHome = "/home";
@@ -29,10 +23,6 @@ class Routes {
   // ? chat screen (base)
   static const String chatScreen = "chat";
   static const String deafUserChatScreen = "deaf-user-chat";
-
-  // // ? chat screen (the actual path)
-  // static const String nestedChatScreen =
-  //     "$homeScreen/$chatScreen"; //? after the deaf user clicked the available sub-spaces
 
   // ? hearAI screen
   static const String hearAIScreen =
@@ -47,4 +37,7 @@ class Routes {
 
   static const String officialProfileScreen =
       "/official-profile"; //? profile screen
+
+  static const String orgAdminProfileScreen =
+      "/org-admin-profile"; //? profile screen
 }

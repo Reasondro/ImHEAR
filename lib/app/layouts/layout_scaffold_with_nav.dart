@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/layouts/destinations.dart';
 
+//* defines the main scaffold structure for screens that use bottom navigation.
+//* this widget class is used as the builder for a `StatefulShellRoute.indexedStack` (in routing_service)
+//* in GoRouter, allowing different navigation branches (tabs) to maintain their state.
+
 class LayoutScaffoldWithNav extends StatelessWidget {
   const LayoutScaffoldWithNav({super.key, required this.navigationShell});
 

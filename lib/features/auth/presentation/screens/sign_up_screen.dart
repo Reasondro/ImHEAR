@@ -120,10 +120,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   icon: Icons.person_outline,
                 ),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty)
+                  if (value == null || value.trim().isEmpty) {
                     return "Please enter a username";
-                  if (value.trim().length < 3)
+                  }
+                  if (value.trim().length < 3) {
                     return "Username must be at least 3 characters";
+                  }
                   return null;
                 },
               ),
@@ -139,8 +141,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   icon: Icons.badge_outlined,
                 ),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty)
+                  if (value == null || value.trim().isEmpty) {
                     return 'Please enter your full name';
+                  }
                   return null;
                 },
               ),
@@ -228,10 +231,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 obscureText: _obscureConfirmPassword,
                 validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return "Please confirm your password";
-                  if (value != _passwordController.text)
+                  }
+                  if (value != _passwordController.text) {
                     return "Passwords do not match";
+                  }
                   return null;
                 },
               ),
@@ -276,7 +281,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   GestureDetector(
                     onTap: () {
                       GoRouter.of(context).goNamed(Routes.signInScreen);
-                      print('Navigate to Sign In');
+                      // print('Navigate to Sign In');
                     },
                     child: const Text(
                       'Sign In',
@@ -322,7 +327,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               )
               : null,
       filled: true,
-      fillColor: AppColors.white.withAlpha(122), // Darker input bg
+      fillColor: AppColors.white.withAlpha(122),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,

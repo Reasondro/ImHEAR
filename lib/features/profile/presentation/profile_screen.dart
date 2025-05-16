@@ -60,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // final String newFullName = _fullNameController.text.trim();
       // final String newEmail = _emailController.text.trim(); //! hope this doesn't go in prototyping--> hard to implement
 
-      print("Save Changes Clicked!");
+      // print("Save Changes Clicked!");
       context.customShowSnackBar("Profile update functionality padding.");
     }
   }
@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ? null
                 : IconButton(
                   onPressed: () {
-                    print(enabled);
+                    // print(enabled);
                     setState(() {
                       enabled = true;
                     });
@@ -189,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   TextButton(
                     onPressed: () {
                       // TODO: implmeent change profile picture
-                      print("Change Profile Picture clicked");
+                      // print("Change Profile Picture clicked");
                     },
                     child: Text(
                       "Change Profile Picture",

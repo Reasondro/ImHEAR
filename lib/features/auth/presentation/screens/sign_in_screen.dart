@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/routing/routes.dart';
 import 'package:komunika/app/themes/app_colors.dart';
+import 'package:komunika/core/extensions/snackbar_extension.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -69,21 +70,14 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Sign In', // Title from Figma
+                'Sign In',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   color: AppColors.haiti,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.left,
               ),
-              // const SizedBox(height: 10),
-              // Text(
-              //   'Welcome back', // Subtitle suggestion
-              //   style: theme.textTheme.titleMedium?.copyWith(
-              //     color: AppColors.haiti,
-              //   ),
-              //   textAlign: TextAlign.left,
-              // ),
+
               const SizedBox(height: 20),
 
               //?  email Field
@@ -170,12 +164,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     onTap: () {
                       // GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
                       GoRouter.of(context).goNamed(Routes.selectRoleScreen);
-                      print('Navigate to Select Role');
+                      // print('Navigate to Select Role');
                     },
                     child: const Text(
-                      'Sign Up', // From Figma
+                      'Sign Up',
                       style: TextStyle(
-                        color: AppColors.bittersweet, // Match Figma link color
+                        color: AppColors.bittersweet,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -216,7 +210,7 @@ class _SignInScreenState extends State<SignInScreen> {
               )
               : null,
       filled: true,
-      fillColor: AppColors.white.withAlpha(122), // Darker input bg
+      fillColor: AppColors.white.withAlpha(122),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,

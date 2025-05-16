@@ -1,19 +1,17 @@
 // ignore_for_file: constant_identifier_names
-
 import 'dart:async';
-import 'dart:convert'; // For utf8.encode
+import 'dart:convert'; //? for utf8.encode
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-// import 'package:device_info_plus/device_info_plus.dart';
 
-// Define your ESP32's specific UUIDs here
+// ? defining our ESP32's specific UUIDs
 const String SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
 const String CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
 const String TARGET_DEVICE_NAME =
-    "ESP32-C3-BLE"; // Use the name from your ESP32 code
+    "ESP32-C3-BLE"; // ? the name from the ESP32 sketch code code
 const int DATE_SYNC_COMMAND_PREFIX = 0x01;
 
 class CustomBluetoothService {
@@ -22,16 +20,15 @@ class CustomBluetoothService {
   StreamSubscription<BluetoothConnectionState>? _connectionStateSubscription;
   StreamSubscription<List<ScanResult>>? _scanSubscription;
 
-  BluetoothDevice? get connectedDevice => _targetDevice; // <<< ADD THIS GETTER
+  BluetoothDevice? get connectedDevice => _targetDevice;
 
-  // Use ValueNotifier for simple state exposure to UI
+  // ? ValueNotifier for simple state exposure to UI
   ValueNotifier<bool> isConnected = ValueNotifier(false);
   ValueNotifier<List<ScanResult>> scanResults = ValueNotifier([]);
   ValueNotifier<bool> isScanning = ValueNotifier(false);
 
   // ? Permission handler
 
-  // Example of requesting permissions (e.g., call this before starting scan)
   Future<bool> _requestBlePermissions() async {
     List<Permission> permissionsToRequest = [
       //? primarily for Android 12+ but permission_handler
@@ -45,8 +42,6 @@ class CustomBluetoothService {
       permissionsToRequest.add(Permission.locationWhenInUse);
       isLocationPermissionRequired = true;
     } else if (Platform.isIOS) {
-      // For iOS, Permission.bluetooth corresponds to the Info.plist entries
-      // NSBluetoothPeripheralUsageDescription or NSBluetoothAlwaysUsageDescription
       permissionsToRequest.add(Permission.bluetooth);
       permissionsToRequest.add(Permission.locationWhenInUse);
       isLocationPermissionRequired = true;
@@ -58,132 +53,116 @@ class CustomBluetoothService {
     PermissionStatus? scanStatus = statuses[Permission.bluetoothScan];
     PermissionStatus? connectStatus = statuses[Permission.bluetoothConnect];
     PermissionStatus? locationStatus =
-        statuses[Permission.locationWhenInUse]; // Will be null if not requested
+        statuses[Permission
+            .locationWhenInUse]; //?  will be null if not requested
     PermissionStatus? iosBluetoothStatus =
-        statuses[Permission.bluetooth]; // Will be null if not iOS
+        statuses[Permission.bluetooth]; //? will be null if not iOS
 
     if (Platform.isAndroid) {
       if (scanStatus != PermissionStatus.granted) {
-        print("Android: Bluetooth Scan permission denied");
-        // Handle denial
+        // print("Android: Bluetooth Scan permission denied");
+        //? handle denial, currently just return
         return false;
       }
       if (connectStatus != PermissionStatus.granted) {
-        print("Android: Bluetooth Connect permission denied");
-        // ? handle denial
+        // print("Android: Bluetooth Connect permission denied");
+        //? handle denial, currently just return
         return false;
       }
       if (locationStatus != PermissionStatus.granted) {
-        print(
-          "Android: Location permission denied. BLE scanning might not work as expected or at all.",
-        );
-        //? handle denial
+        // print(
+        //   "Android: Location permission denied. BLE scanning might not work as expected or at all.",
+        // );
+        //? handle denial, currently just return
         return false;
       }
       if (isLocationPermissionRequired) {
         ServiceStatus locationServiceStatus =
             await Permission.locationWhenInUse.serviceStatus;
         if (!locationServiceStatus.isEnabled) {
-          print(
-            "Android: Location permission is granted, but Location Services are disabled. Please enable them.",
-          );
-          // Optionally, you can try to open settings // await openAppSettings();
-          return false; // Critical for scanning
+          // print(
+          //   "Android: Location permission is granted, but Location Services are disabled. Please enable them.",
+          // );
+          //?  optionally can try to open settings // await openAppSettings();
+          return false; //? Critical for scanning
         }
       }
     } else if (Platform.isIOS) {
-      // if (iosBluetoothStatus != PermissionStatus.granted) {
-      //   print("iOS: Bluetooth permission denied");
-      //   //?  handle denial - inform the user they need to enable Bluetooth
-      //   //?v in settings for the app.
-      //   // TODO add ui to tell them to turn on bluetooth
-      //   return false;
-      // }
-      // if (locationStatus != PermissionStatus.granted) {
-      //   print("iOS: Location permission denied.");
-      //   //? handle denial
-      //   return false;
-      // }
-      // ! DIBAWAH FIX DARI AI MAKE SURE INI GA ERROR
       if (iosBluetoothStatus != PermissionStatus.granted) {
-        print("iOS: Bluetooth permission denied");
+        // print("iOS: Bluetooth permission denied");
         return false;
       }
       if (isLocationPermissionRequired &&
           locationStatus != PermissionStatus.granted) {
-        print("iOS: Location permission denied.");
+        // print("iOS: Location permission denied.");
         return false;
       }
-      // After permission, check if Location Service is enabled
+      //? after permission --> check if Location Service is enabled
       if (isLocationPermissionRequired &&
           locationStatus == PermissionStatus.granted) {
         ServiceStatus locationServiceStatus =
             await Permission.locationWhenInUse.serviceStatus;
         if (!locationServiceStatus.isEnabled) {
-          print(
-            "iOS: Location permission is granted, but Location Services are disabled. Please enable them.",
-          );
-          // Optionally, you can try to open settings await openAppSettings();
-          return false; // If critical for your iOS use case
+          // print(
+          //   "iOS: Location permission is granted, but Location Services are disabled. Please enable them.",
+          // );
+          //?  optionally can try to open settings // await openAppSettings();
+          return false;
         }
       }
     }
-    // if (!kIsWeb && Platform.isAndroid) {
-    //   await FlutterBluePlus.turnOn();
-    // }
+
     if (!kIsWeb && Platform.isAndroid) {
-      // First, check if Bluetooth adapter is already on
+      //?  check if Bluetooth adapter is already on
       bool isBluetoothOn =
           await FlutterBluePlus.adapterState.first == BluetoothAdapterState.on;
       if (!isBluetoothOn) {
-        print("Android: Bluetooth is off, attempting to turn it on.");
+        // print("Android: Bluetooth is off, attempting to turn it on.");
         await FlutterBluePlus.turnOn();
-        // Re-check after attempting to turn on
+        // ? re-check after attempting to turn on
         isBluetoothOn =
             await FlutterBluePlus.adapterState.first ==
             BluetoothAdapterState.on;
         if (!isBluetoothOn) {
-          print("Android: Failed to turn on Bluetooth or user denied.");
-          return false; // Bluetooth is critical
+          // print("Android: Failed to turn on Bluetooth or user denied.");
+          return false; //? A MUST --> Bluetooth is critical
         }
       }
     }
-    print("Required BLE permissions seem to be granted or handled.");
+    // print("Required BLE permissions seem to be granted or handled.");
     return true;
   }
 
   // --- Scanning ---
   Future<bool> startScan() async {
-    // TODO: Request Bluetooth/Location permissions first using permission_handler
-
     bool permissionGranted = await _requestBlePermissions();
 
     if (!permissionGranted) {
-      print("Permissions not granted. Aborting scan.");
+      // print("Permissions not granted. Aborting scan.");
       isScanning.value = false; //? ensure scanning state is resett
       // ? or notify the ui or user here
       return false;
     }
 
     if (FlutterBluePlus.isScanningNow) {
-      print("Already scanning");
+      // print("Already scanning");
       return true;
     }
-    print("Starting BLE Scan...");
+    // print("Starting BLE Scan...");
     isScanning.value = true;
-    scanResults.value = []; // Clear previous results
+    scanResults.value = []; //? clear previous results
 
     try {
       await FlutterBluePlus.startScan(
-        // withServices: [Guid(SERVICE_UUID)], // Filter by service UUID - more reliable
-        timeout: const Duration(seconds: 10), // Scan duration
+        // withServices: [Guid(SERVICE_UUID)], // ? optional, Filter by service UUID - more reliable
+        timeout: const Duration(seconds: 10), //? scan duration
         androidUsesFineLocation: true,
       );
 
       _scanSubscription = FlutterBluePlus.scanResults.listen(
         (results) {
-          // Filter results - look for your specific device name OR service UUID
-          // Using name is easier initially but less robust than UUID
+          // ? filter results - look for specific device name OR service UUID
+          // TODO: Using name is easier initially but less robust than UUID
           final List<ScanResult> filteredResults =
               results
                   .where(
@@ -194,76 +173,69 @@ class CustomBluetoothService {
                         ),
                   )
                   .toList();
-          scanResults.value = filteredResults; // Update notifier
-          print(
-            "Scan results: ${scanResults.value.length} devices found potentially matching.",
-          );
+          scanResults.value = filteredResults; //? update notifier
+          // print(
+          //   "Scan results: ${scanResults.value.length} devices found potentially matching.",
+          // );
         },
         onError: (e) {
-          print("Scan Error: $e");
+          // print("Scan Error: $e");
           stopScan();
         },
         onDone: () {
-          print("Scan results stream is done.");
+          // print("Scan results stream is done.");
           //? ensure our state is updated if it still thinks it's scanning
           if (isScanning.value) {
-            print(
-              "Stream done, explicitly calling stopScan to update UI state.",
-            );
+            // print(
+            //   "Stream done, explicitly calling stopScan to update UI state.",
+            // );
             stopScan();
           }
         },
       );
       //?  stop scan after timeout automatically by FlutterBluePlus usually,
-      // but ensure it stops if startScan is called again or on error.
+      // ? but ensure it stops if startScan is called again or on error.
       await Future.delayed(const Duration(seconds: 11));
-      stopScan(); // Ensure stop
+      stopScan(); //? ensure stop
       return true;
     } catch (e) {
-      print("Error starting scan: $e");
+      // print("Error starting scan: $e");
       isScanning.value = false;
       return false;
     }
   }
 
   void stopScan() {
-    // if (isScanning.value) {
-    //   print("Stopping scan");
-    //   FlutterBluePlus.stopScan();
-    //   isScanning.value = false;
-    //   _scanSubscription?.cancel();
-    //   _scanSubscription = null;
-    // }
     if (!FlutterBluePlus.isScanningNow && !isScanning.value) {
       //? avoid redundant calls or messages if already stopped
       return;
     }
-    print("Stopping BLE Scan...");
+    // print("Stopping BLE Scan...");
     FlutterBluePlus.stopScan();
     _scanSubscription?.cancel();
     _scanSubscription = null;
     isScanning.value = false;
   }
 
-  // --- Connection ---
+  // ?  Connection
   Future<bool> connectToDevice(BluetoothDevice device) async {
-    stopScan(); // Stop scanning before connecting
-    print("Connecting to ${device.platformName} (${device.remoteId})");
+    stopScan(); //? stop scanning before connecting
+    // print("Connecting to ${device.platformName} (${device.remoteId})");
 
     if (isConnected.value && _targetDevice?.remoteId == device.remoteId) {
-      print("Already connected to this device.");
+      // print("Already connected to this device.");
       return true;
     }
 
-    // Listen to connection state changes
+    // ? listen to connection state changes
     _connectionStateSubscription = device.connectionState.listen((
       BluetoothConnectionState state,
     ) async {
-      print("Connection State: $state");
+      // print("Connection State: $state");
       isConnected.value = (state == BluetoothConnectionState.connected);
       if (isConnected.value) {
         _targetDevice = device;
-        await _discoverServices(); // Discover services once connected
+        await _discoverServices(); //?  discover services once connected
       } else {
         _targetDevice = null;
         _targetCharacteristic = null;
@@ -272,23 +244,23 @@ class CustomBluetoothService {
 
     try {
       await device.connect(timeout: const Duration(seconds: 15));
-      // Connection state listener above handles success/failure implicitly
-      return isConnected.value; // Return current status after attempt
+      //? connection state listener above handles success/failure implicitly
+      return isConnected.value; //? return current status after attempt
     } catch (e) {
-      print("Error connecting to device: $e");
-      await disconnect(); // Ensure cleanup on error
+      // print("Error connecting to device: $e");
+      await disconnect(); //? ensure cleanup on error
       return false;
     }
   }
 
   Future<void> disconnect() async {
-    print("Disconnecting...");
+    // print("Disconnecting...");
     await _connectionStateSubscription?.cancel();
     _connectionStateSubscription = null;
     try {
       await _targetDevice?.disconnect();
     } catch (e) {
-      print("Error during disconnect: $e");
+      // print("Error during disconnect: $e");
     } finally {
       isConnected.value = false;
       _targetDevice = null;
@@ -296,96 +268,101 @@ class CustomBluetoothService {
     }
   }
 
-  // --- Services & Characteristics ---
+  //?  Services & Characteristics
   Future<void> _discoverServices() async {
     if (_targetDevice == null) return;
-    print("Discovering services...");
+    // print("Discovering services...");
     try {
       List<BluetoothService> services = await _targetDevice!.discoverServices();
-      print("Found ${services.length} services");
+      // print("Found ${services.length} services");
       for (BluetoothService service in services) {
-        print(" Service UUID: ${service.uuid.toString()}");
+        // print(" Service UUID: ${service.uuid.toString()}");
         if (service.uuid == Guid(SERVICE_UUID)) {
-          print("Found target service!");
+          // print("Found target service!");
           for (BluetoothCharacteristic characteristic
               in service.characteristics) {
-            print("  Characteristic UUID: ${characteristic.uuid.toString()}");
+            // print("  Characteristic UUID: ${characteristic.uuid.toString()}");
             if (characteristic.uuid == Guid(CHARACTERISTIC_UUID)) {
-              print("Found target characteristic!");
+              // print("Found target characteristic!");
               _targetCharacteristic = characteristic;
               //? send date sync command after characteristic is found
               await _sendDateTimeSyncCommand();
-              // Optional: Subscribe to notifications if needed later
+              //? optional: Subscribe to notifications if needed later
               // await _subscribeToNotifications();
-              return; // Found what we need
+              return; // ? found what we need
             }
           }
         }
       }
-      print("Target characteristic not found!");
+      // print("Target characteristic not found!");
     } catch (e) {
-      print("Error discovering services: $e");
+      // print("Error discovering services: $e");
     }
   }
 
-  // --- Writing Data ---
+  // ?  Writing Data
+
+  // ? this function currently returning String only for testing the UI
+  // ? in reality, it is not needed, returning to void is the corerct way
   Future<String> sendCommand(String command) async {
     String result;
     if (_targetCharacteristic == null || !isConnected.value) {
-      print("Not connected or characteristic not found.");
+      // print("Not connected or characteristic not found.");
       result = "Not connected or characteristic not found.";
       return result;
     }
 
     if (!_targetCharacteristic!.properties.write) {
-      print("Characteristic does not support writing.");
+      // print("Characteristic does not support writing.");
       result = "Characteristic does not support writing.";
       return result;
     }
 
     try {
-      // IMPORTANT: ESP32 code expects a string. Encode string to bytes (UTF-8).
+      //! IMPORTANT: ESP32 code expects a string. Encode string to bytes (UTF-8).
       List<int> bytesToSend = utf8.encode(command);
-      print("Sending command: '$command' as bytes: $bytesToSend");
+      // print("Sending command: '$command' as bytes: $bytesToSend");
       result = "Sending command: '$command' as bytes: $bytesToSend";
       // Use write without response for simple commands, or false for acknowledged write
       await _targetCharacteristic!.write(bytesToSend, withoutResponse: false);
-      print("Command sent successfully.");
+      // print("Command sent successfully.");
       result = "Command sent successfully.";
       return result;
     } catch (e) {
-      print("Error writing command: $e");
+      // print("Error writing command: $e");
 
       result = "Error writing command: $e";
       return result;
     }
   }
 
+  // ? this function currently returning String only for testing the UI
+  // ? in reality, it is not needed, returning to void is the corerct way
   Future<String> sendCommandBytes(List<int> bytesToSend) async {
     String result; //? for debugging
 
     if (_targetCharacteristic == null || !isConnected.value) {
-      print("sendCommandBytes: Not connected or characteristic not found.");
+      // print("sendCommandBytes: Not connected or characteristic not found.");
       result = "Not connected or characteristic not found.";
       return result;
     }
 
     if (!_targetCharacteristic!.properties.write) {
-      print("sendCommandBytes: Characteristic does not support writing.");
+      // print("sendCommandBytes: Characteristic does not support writing.");
       result = "Characteristic does not support writing.";
       return result;
     }
 
     try {
-      print("sendCommandBytes: Sending raw bytes: $bytesToSend");
+      // print("sendCommandBytes: Sending raw bytes: $bytesToSend");
       result = "Sending raw bytes: $bytesToSend";
 
       await _targetCharacteristic!.write(bytesToSend, withoutResponse: false);
-      print("sendCommandBytes: Bytes sent sucesfully");
+      // print("sendCommandBytes: Bytes sent sucesfully");
       result = "Bytes sent sucesfully";
       return result;
     } catch (e) {
-      print("Error writing command: $e");
+      // print("Error writing command: $e");
 
       result = "Error writing command: $e";
       return result;
@@ -394,12 +371,12 @@ class CustomBluetoothService {
 
   Future<void> _sendDateTimeSyncCommand() async {
     if (_targetCharacteristic == null || !isConnected.value) {
-      print("Date Sync: Not connected or characteristic not found.");
+      // print("Date Sync: Not connected or characteristic not found.");
       return;
     }
 
     if (!_targetCharacteristic!.properties.write) {
-      print("Date Sync: Characteristic does not support writing.");
+      // print("Date Sync: Characteristic does not support writing.");
       return;
     }
 
@@ -439,35 +416,35 @@ class CustomBluetoothService {
       // );
 
       // ? milisecondds
-      print(
-        "Date Sync: Sending epoch milliseconds $epochMilliseconds as bytes: $bytesToSend (Prefix: $DATE_SYNC_COMMAND_PREFIX)",
-      );
+      // print(
+      //   "Date Sync: Sending epoch milliseconds $epochMilliseconds as bytes: $bytesToSend (Prefix: $DATE_SYNC_COMMAND_PREFIX)",
+      // );
       // Use write without response for simple commands, or false for acknowledged write
       await _targetCharacteristic!.write(bytesToSend, withoutResponse: false);
-      print("Date Sync: Command sent successfully.");
+      // print("Date Sync: Command sent successfully.");
     } catch (e) {
-      print("Date Sync: Error writing command: $e");
+      // print("Date Sync: Error writing command: $e");
     }
   }
 
-  // --- Notifications (Optional Example) ---
+  //? Notifications
   Future<void> _subscribeToNotifications() async {
     if (_targetCharacteristic != null &&
         _targetCharacteristic!.properties.notify) {
       await _targetCharacteristic!.setNotifyValue(true);
       _targetCharacteristic!.onValueReceived.listen((value) {
-        // ESP32 sends string "Value: X" -> bytes
+        //? ESP32 sends string "Value: X" -> bytes
         String receivedString = utf8.decode(
           value,
-        ); // Decode bytes back to string
-        print("Notification Received: $receivedString");
+        ); //? decode bytes back to string
+        // print("Notification Received: $receivedString");
         // TODO: Handle received notification data
       });
-      print("Subscribed to notifications");
+      // print("Subscribed to notifications");
     }
   }
 
-  // Dispose method (call when service is no longer needed, e.g. in main app dispose)
+  //? dispose method (call when service is no longer needed, e.g. in main app dispose)
   void dispose() {
     stopScan();
     disconnect();

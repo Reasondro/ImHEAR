@@ -39,9 +39,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         //? check if tracking needs to be initiated
         if (userLocationState is UserLocationInitial ||
             userLocationState is UserLocationPermissionDenied) {
-          print(
-            "HomeScreen (initState post-frame): Attempting to start location tracking.",
-          );
+          // print(
+          //   "HomeScreen (initState post-frame): Attempting to start location tracking.",
+          // );
           context.read<UserLocationCubit>().startTracking();
         }
       }
@@ -60,9 +60,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed &&
         _isAttemptingToEnableLocationFromSettings) {
-      print(
-        "HomeScreen: App resumed, and was attempting to enable location from settings. Re-trying startTracking.",
-      );
+      // print(
+      //   "HomeScreen: App resumed, and was attempting to enable location from settings. Re-trying startTracking.",
+      // );
       //? reset the flag
       _isAttemptingToEnableLocationFromSettings = false;
       //? attempt to start tracking again
@@ -89,9 +89,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return BlocListener<UserLocationCubit, UserLocationState>(
       listener: (ctx, userLocationState) {
         if (userLocationState is UserLocationTracking) {
-          print(
-            "HomeScreen(Listener): Location updated, trigerring fetch nearby officials",
-          );
+          // print(
+          //   "HomeScreen(Listener): Location updated, trigerring fetch nearby officials",
+          // );
           ctx.read<NearbyOfficialsCubit>().findNearbyOfficials(
             position: userLocationState.position,
           );
@@ -99,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             userLocationState is UserLocationPermissionDenied ||
             userLocationState is UserLocationServiceDisabled ||
             userLocationState is UserLocationPermissionDeniedForever) {
-          print(
-            "HomeScreen(Listener): Location tracking stopped or unavailabl, clearing officials", //todo TEST THSI
-          );
+          // print(
+          //   "HomeScreen(Listener): Location tracking stopped or unavailabl, clearing officials", //todo TEST THSI
+          // );
           ctx.read<NearbyOfficialsCubit>().clearOfficials();
         }
       },
@@ -148,15 +148,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       () async {
                         _isAttemptingToEnableLocationFromSettings = true;
                         await Geolocator.openLocationSettings();
-                        print(
-                          "Just opened location settings, will attempt tracking on app resume.",
-                        );
+                        // print(
+                        //   "Just opened location settings, will attempt tracking on app resume.",
+                        // );
                       },
                       secondaryButtonText: "Retry Scan",
                       onSecondaryButtonPressed: () {
-                        print(
-                          "Retry Scan button pressed for disabled service.",
-                        );
+                        // print(
+                        //   "Retry Scan button pressed for disabled service.",
+                        // );
                         context.read<UserLocationCubit>().startTracking();
                       },
                     );
@@ -183,9 +183,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         // ? set the flag before opening settings - useful to recheck on resume
                         _isAttemptingToEnableLocationFromSettings = true;
                         await Geolocator.openAppSettings();
-                        print(
-                          "Just opened app settings, will attempt tracking on app resume if relevant.",
-                        );
+                        // print(
+                        //   "Just opened app settings, will attempt tracking on app resume if relevant.",
+                        // );
                       },
                     );
                   }
@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               onChanged: (value) {
                                 // TODO implement search/filter logic
 
-                                print("Search term: $value");
+                                // print("Search term: $value");
                               },
                             ),
                           ),
@@ -330,9 +330,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             child: IconButton(
                               onPressed: () {
                                 // TODO implmeent search action
-                                print(
-                                  "Search button pressed with: ${_searchController.text}",
-                                );
+                                // print(
+                                //   "Search button pressed with: ${_searchController.text}",
+                                // );
                                 FocusScope.of(context).unfocus();
                               },
                               icon: const Icon(

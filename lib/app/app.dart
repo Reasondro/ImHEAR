@@ -5,10 +5,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:komunika/app/themes/light_mode.dart';
 import 'package:komunika/core/services/custom_bluetooth_service.dart';
-// import 'package:komunika/features/auth/data/supabase_auth_repository.dart';
-// import 'package:komunika/features/auth/domain/repositories/auth_repository.dart';
 import 'package:komunika/features/auth/presentation/cubit/auth_cubit.dart';
-// import 'package:komunika/features/auth/presentation/screens/auth_wrapper.dart';
 import 'package:komunika/features/chat/data/repositories/supabase_chat_repository.dart';
 import 'package:komunika/features/chat/domain/repositories/chat_repository.dart';
 import 'package:komunika/features/hear_ai/presentation/cubit/hear_ai_cubit.dart';
@@ -17,6 +14,9 @@ import 'package:komunika/features/nearby_officials/domain/repositories/nearby_of
 import 'package:komunika/features/nearby_officials/presentation/cubit/nearby_officials_cubit.dart';
 import 'package:komunika/features/user_location/presentation/cubit/user_location_cubit.dart';
 
+//* root widget of the application.
+// * sets up the necessary providers (RepositoryProvider, BlocProvider)
+//*  and initializes the MaterialApp with GoRouter for navigation.
 class App extends StatefulWidget {
   const App({super.key, required this.router, required this.authCubit});
   final GoRouter router;
@@ -53,8 +53,6 @@ class _AppState extends State<App> {
         RepositoryProvider<NearbyOfficialsRepository>(
           create: (_) => SupabaseNearbyOfficialsRepository(),
         ),
-
-        // ? for  chat cubit in dashboard
         RepositoryProvider<ChatRepository>(
           create: (_) => SupabaseChatRepository(),
         ),
@@ -72,9 +70,9 @@ class _AppState extends State<App> {
           BlocProvider<AuthCubit>.value(value: widget.authCubit),
           BlocProvider<UserLocationCubit>(
             create: (context) => UserLocationCubit(),
-            //* optional: customize accuracy, distanceFilter, debounceDuration
-            //* accuracy: LocationAccuracy.best,
-            //* debounceDuration: const Duration(seconds: 2),
+            //? optional: customize accuracy, distanceFilter, debounceDuration
+            //? accuracy: LocationAccuracy.best,
+            //? debounceDuration: const Duration(seconds: 2),
           ),
 
           BlocProvider<NearbyOfficialsCubit>(

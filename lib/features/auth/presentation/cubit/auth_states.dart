@@ -1,5 +1,6 @@
 part of 'auth_cubit.dart';
 
+// * define all the possible states of Auth related stuffs
 final class AuthStates extends Equatable {
   const AuthStates();
 

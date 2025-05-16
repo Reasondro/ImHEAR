@@ -93,7 +93,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
           "Bluetooth permissions are required to scan for devices.",
         );
       }
-      print("Permissions not granted");
+      // print("Permissions not granted");
     }
   }
 
@@ -379,7 +379,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
         // );
       },
     ).whenComplete(() {
-      print("When complete block");
+      // print("When complete block");
       _bluetoothService
           .stopScan(); //? ensure scan stops when modal is dismissed
     });

@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+// * centralized place for all colors used in the application.
+
 class AppColors {
   AppColors._();
   //? haiti/dark blue color

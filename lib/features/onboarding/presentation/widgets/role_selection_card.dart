@@ -58,7 +58,6 @@ class RoleSelectionCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // TODO: Image placeholder - replace with actual Image.asset
             Image.asset(
               imageAssetPath,
               height: 120,

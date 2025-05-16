@@ -21,9 +21,9 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
     if (state is NearbyOfficialsLoading) {
       return;
     }
-    print(
-      "NearbyOfficialCubit: Fetching officials around Lat(Y): ${position.latitude}, Lon(X): ${position.longitude} with radius $radius",
-    );
+    // print(
+    //   "NearbyOfficialCubit: Fetching officials around Lat(Y): ${position.latitude}, Lon(X): ${position.longitude} with radius $radius",
+    // );
 
     emit(NearbyOfficialsLoading());
     try {
@@ -34,15 +34,15 @@ class NearbyOfficialsCubit extends Cubit<NearbyOfficialsState> {
             radius: radius,
           );
       if (!isClosed) {
-        print(
-          "NearbyOfficialsCubit: Sucesfully loaded ${nearbyOfficials.length} officials",
-        );
-        print("Nearby officials from repo: \n $nearbyOfficials");
+        // print(
+        //   "NearbyOfficialsCubit: Sucesfully loaded ${nearbyOfficials.length} officials",
+        // );
+        // print("Nearby officials from repo: \n $nearbyOfficials");
         emit(NearbyOfficialsLoaded(officials: nearbyOfficials));
       }
     } catch (e) {
       if (!isClosed) {
-        print("NearbyOfficialsCubit: Error fetching officials - $e");
+        // print("NearbyOfficialsCubit: Error fetching officials - $e");
         emit(NearbyOfficialsError(message: "NearbyOfficialsCubit error: $e"));
       }
     }

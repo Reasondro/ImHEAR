@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:komunika/app/themes/app_colors.dart';
 
+// * extends  BuildContext class to provide convenient methods for showing custom SnackBars.
 extension ContextExtension on BuildContext {
+  //? displays a custom general-purpose SnackBar.
   void customShowSnackBar(String message) {
     ScaffoldMessenger.of(this).clearSnackBars();
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(
-            // color: Theme.of(this).colorScheme.onPrimary,
-            color: AppColors.white,
-            fontSize: 15,
-          ),
+          style: const TextStyle(color: AppColors.white, fontSize: 15),
           textAlign: TextAlign.left,
         ),
         padding: const EdgeInsets.only(
@@ -23,7 +21,6 @@ extension ContextExtension on BuildContext {
         ),
         margin: const EdgeInsets.only(bottom: 10, left: 14, right: 14),
         behavior: SnackBarBehavior.floating,
-        // backgroundColor: Theme.of(this).colorScheme.primary,
         backgroundColor: AppColors.haiti,
         dismissDirection: DismissDirection.horizontal,
         shape: const RoundedRectangleBorder(
@@ -33,17 +30,14 @@ extension ContextExtension on BuildContext {
     );
   }
 
+  //? displays a custom error-purpose SnackBar.
   void customShowErrorSnackBar(String message) {
     ScaffoldMessenger.of(this).clearSnackBars();
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(
-            // color: Theme.of(this).colorScheme.onError,
-            color: AppColors.white,
-            fontSize: 15,
-          ),
+          style: const TextStyle(color: AppColors.white, fontSize: 15),
           textAlign: TextAlign.left,
         ),
         padding: const EdgeInsets.only(
@@ -54,7 +48,6 @@ extension ContextExtension on BuildContext {
         ),
         margin: const EdgeInsets.only(bottom: 10, left: 14, right: 14),
         behavior: SnackBarBehavior.floating,
-        // backgroundColor: Theme.of(this).colorScheme.error,
         backgroundColor: AppColors.paleCarmine,
         dismissDirection: DismissDirection.horizontal,
         shape: const RoundedRectangleBorder(

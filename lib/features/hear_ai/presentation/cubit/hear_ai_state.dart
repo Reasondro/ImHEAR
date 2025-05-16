@@ -29,23 +29,15 @@ final class HearAiRecording extends HearAiState {}
 final class HearAiProcessing extends HearAiState {}
 
 final class HearAiSuccess extends HearAiState {
-  // final String transcription;
-  // final String eventType;
-  // final String details;
-
   final List<HearAiResult> resultsHistory;
   final HearAiResult latestResult;
 
   const HearAiSuccess({
-    // required this.transcription,
-    // required this.eventType,
-    // required this.details,
     required this.resultsHistory,
     required this.latestResult,
   });
 
   @override
-  // List<Object> get props => [transcription, eventType, details];
   List<Object> get props => [resultsHistory, latestResult];
 }
 

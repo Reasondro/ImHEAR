@@ -68,8 +68,8 @@ class Message extends Equatable {
             ).toLocal(), // //!  THIS IS IMPORTANT  Parse and convert to local time
       );
     } catch (e) {
-      print("Error parsing message map: $map");
-      print("Parsing Error: $e");
+      // print("Error parsing message map: $map");
+      // print("Parsing Error: $e");
       // //!  THIS IS IMPORTANT  Rethrow a more informative error or handle differently
       throw Exception("Failed to parse message data: $e");
     }
