@@ -304,27 +304,27 @@ class _HearAiScreenState extends State<HearAiScreen> {
                   side: BorderSide.none,
                 ),
                 margin: const EdgeInsets.only(bottom: 6),
-                child: ListTile(
-                  leading: const Icon(
+                child: const ListTile(
+                  leading: Icon(
                     Icons.track_changes_outlined,
                     color: AppColors.haiti,
                   ),
 
-                  title: const Text(
+                  title: Text(
                     'Listening Results',
                     style: TextStyle(
                       color: AppColors.haiti,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: Text(
-                    'Device response: $responseFromBluetooth',
-                    style: const TextStyle(
-                      color: AppColors.bittersweet,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
+                  // subtitle: Text(
+                  //   'Device response: $responseFromBluetooth',
+                  //   style: const TextStyle(
+                  //     color: AppColors.bittersweet,
+                  //     fontWeight: FontWeight.w600,
+                  //   ),
+                  // ),
+                  contentPadding: EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 4,
                   ),
