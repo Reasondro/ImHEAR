@@ -55,128 +55,137 @@ class _SignInScreenState extends State<SignInScreen> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: 210,
-                alignment: Alignment.center,
-                child: Image.asset("assets/images/ImHEAR.png"),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Sign In',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: AppColors.haiti,
-                  fontWeight: FontWeight.bold,
+      body: BlocListener<AuthCubit, AuthStates>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            context.customShowErrorSnackBar(state.message);
+          }
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 210,
+                  alignment: Alignment.center,
+                  child: Image.asset("assets/images/ImHEAR.png"),
                 ),
-                textAlign: TextAlign.left,
-              ),
-
-              const SizedBox(height: 20),
-
-              //?  email Field
-              TextFormField(
-                controller: _emailController,
-                style: const TextStyle(color: AppColors.haiti),
-                decoration: _inputDecoration(
-                  labelText: "Email",
-                  hintText: "Enter your email",
-                  icon: Icons.email_outlined,
+                const SizedBox(height: 10),
+                Text(
+                  'Sign In',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: AppColors.haiti,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.left,
                 ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty || !value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
 
-              //?  password Field
-              TextFormField(
-                controller: _passwordController,
-                style: const TextStyle(color: AppColors.haiti),
-                decoration: _inputDecoration(
-                  labelText: "Password",
-                  hintText: "Enter your password",
-                  icon: Icons.lock_outline,
-                  isPassword: true,
+                const SizedBox(height: 20),
+
+                //?  email Field
+                TextFormField(
+                  controller: _emailController,
+                  style: const TextStyle(color: AppColors.haiti),
+                  decoration: _inputDecoration(
+                    labelText: "Email",
+                    hintText: "Enter your email",
+                    icon: Icons.email_outlined,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        !value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                //?  password Field
+                TextFormField(
+                  controller: _passwordController,
+                  style: const TextStyle(color: AppColors.haiti),
+                  decoration: _inputDecoration(
+                    labelText: "Password",
+                    hintText: "Enter your password",
+                    icon: Icons.lock_outline,
+                    isPassword: true,
+                    obscureText: _obscureText,
+                    onObscureToggle:
+                        () => setState(() {
+                          _obscureText = !_obscureText;
+                        }),
+                  ),
                   obscureText: _obscureText,
-                  onObscureToggle:
-                      () => setState(() {
-                        _obscureText = !_obscureText;
-                      }),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
                 ),
-                obscureText: _obscureText,
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 25),
+                const SizedBox(height: 25),
 
-              //?  submit Button
-              BlocBuilder<AuthCubit, AuthStates>(
-                builder: (context, state) {
-                  if (state is AuthLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                //?  submit Button
+                BlocBuilder<AuthCubit, AuthStates>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: AppColors.haiti,
+                        foregroundColor: AppColors.white,
                       ),
-                      backgroundColor: AppColors.haiti,
-                      foregroundColor: AppColors.white,
-                    ),
-                    child: const Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      child: const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
 
-              // ? toggle Sign Up
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Need an account? ',
-                    style: TextStyle(color: AppColors.haiti.withAlpha(179)),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      // GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
-                      GoRouter.of(context).goNamed(Routes.selectRoleScreen);
-                      // print('Navigate to Select Role');
-                    },
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: AppColors.bittersweet,
-                        fontWeight: FontWeight.bold,
+                // ? toggle Sign Up
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Need an account? ',
+                      style: TextStyle(color: AppColors.haiti.withAlpha(179)),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // GoRouter.of(context).push(Routes.nestedSelectRoleScreen);
+                        GoRouter.of(context).goNamed(Routes.selectRoleScreen);
+                        // print('Navigate to Select Role');
+                      },
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          color: AppColors.bittersweet,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
