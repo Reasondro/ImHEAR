@@ -11,7 +11,7 @@ The core mission is to bridge communication gaps by leveraging real-time locatio
 * **Role-Based Access:** Distinct interfaces and functionalities for:
     * **Mimi's Friend (Deaf Users):** Find nearby help, initiate chats, receive AI-assisted communication aids.
     * **Mimi's Helper (Official Staff):** Broadcast availability for specific "Sub Spaces" (service points), manage and respond to incoming chats from Deaf Users.
-    * **Mimi's Admin(Organization Admins):** Manage their organization's profile, define Sub Spaces, and (eventually) manage Official Staff accounts. (Admin UI for this is planned).
+    * **Mimi's Admin (Organization Admins):** Manage their organization's profile, define Sub Spaces, and (eventually) manage Official Staff accounts. (Admin UI for this is planned).
 * **Real-time Location & Nearby Service Discovery:**
     * Deaf users can see actively staffed Sub Spaces (service points) near their current location.
     * Officials broadcast their location and the Sub Space they are currently serving.
@@ -41,9 +41,9 @@ The core mission is to bridge communication gaps by leveraging real-time locatio
     * State Management: BLoC (specifically Cubit)
     * Routing: GoRouter
     * Key Packages:
-        * `flutter_bloc`
-        * `go_router`
-        * `supabase_flutter`
+        * `flutter_bloc` (for state management)
+        * `go_router` (for routing capabilities)
+        * `supabase_flutter` (for backend service capabilities)
         * `record` (for audio capture)
         * `google_generative_ai` (for Gemini API interaction)
         * `flutter_blue_plus` (for Bluetooth Low Energy)
