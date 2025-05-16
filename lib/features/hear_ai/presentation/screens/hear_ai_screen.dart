@@ -118,7 +118,7 @@ class _HearAiScreenState extends State<HearAiScreen> {
             // ? add more mappings here
             // bleService.sendCommand(command);
 
-            List<int> command = [0x0201]; // ? default command data
+            List<int> command = [0x02, 0x01]; // ? default command data
 
             final List<String> normalSpeechCategories = [
               "SPEECH_NEUTRAL",
@@ -156,22 +156,22 @@ class _HearAiScreenState extends State<HearAiScreen> {
             ];
             final String eventType = state.latestResult.eventType;
             if (normalSpeechCategories.contains(eventType)) {
-              command = [0x0201]; //? normal speech
+              command = [0x02, 0x01]; //? normal speech
             } else if (urgentSpeechCategories.contains(eventType)) {
-              command = [0x0204]; //? urgent speech
+              command = [0x02, 0x04]; //? urgent speech
             } else if (normalSoundCategories.contains(eventType)) {
-              command = [0x0202]; //? normal sound
+              command = [0x02, 0x02]; //? normal sound
             } else if (emergencySoundCategories.contains(eventType)) {
-              command = [0x0204]; //? emergency Sound
+              command = [0x02, 0x04]; //? emergency Sound
             } else {
               print(
                 "Unknown eventType: $eventType, sending default/neutral command.",
               );
               command = [
-                0x0201,
+                0x02,
+                0x01,
               ]; //? neutral or default command different from others (should be at least lol)
             }
-
             responseFromBluetooth = await bleService.sendCommandBytes(command);
           } else {
             print("ImHEAR Band not connected, can't send vibration.");
