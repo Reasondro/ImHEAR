@@ -252,35 +252,35 @@ class RoutingService {
                 path: Routes.officialDashboard,
                 builder: (context, state) => const OfficialDashboardScreen(),
                 // builder: (context, state) => const DeafUserDashboardScreen(), // ? for testing
-                routes: <RouteBase>[
-                  GoRoute(
-                    parentNavigatorKey: _rootNavigatorKey,
-                    name: Routes.deafUserChatScreen,
-                    path: "${Routes.chatScreen}/:roomId/:subSpaceName",
-                    // path: "${Routes.chatScreen}/:subSpaceName/:roomId",
-                    builder: (context, state) {
-                      final int? roomId = int.tryParse(
-                        state.pathParameters["roomId"] ?? "",
-                      );
-                      final String? officialName = state.extra as String?;
-                      final String subSpaceName =
-                          state.pathParameters["subSpaceName"] ?? "Chat";
-                      if (roomId == null) {
-                        return const Scaffold(
-                          body: Center(
-                            child: Text("Error: Room ID missing or invalid."),
-                          ),
-                        );
-                      } else {
-                        return ChatScreen(
-                          roomId: roomId,
-                          subSpaceName: subSpaceName,
-                          officialName: officialName,
-                        );
-                      }
-                    },
-                  ),
-                ],
+                // routes: <RouteBase>[
+                //   GoRoute(
+                //     parentNavigatorKey: _rootNavigatorKey,
+                //     name: Routes.deafUserChatScreen,
+                //     path: "${Routes.chatScreen}/:roomId/:subSpaceName",
+                //     // path: "${Routes.chatScreen}/:subSpaceName/:roomId",
+                //     builder: (context, state) {
+                //       final int? roomId = int.tryParse(
+                //         state.pathParameters["roomId"] ?? "",
+                //       );
+                //       final String? officialName = state.extra as String?;
+                //       final String subSpaceName =
+                //           state.pathParameters["subSpaceName"] ?? "Chat";
+                //       if (roomId == null) {
+                //         return const Scaffold(
+                //           body: Center(
+                //             child: Text("Error: Room ID missing or invalid."),
+                //           ),
+                //         );
+                //       } else {
+                //         return ChatScreen(
+                //           roomId: roomId,
+                //           subSpaceName: subSpaceName,
+                //           officialName: officialName,
+                //         );
+                //       }
+                //     },
+                //   ),
+                // ],
               ),
             ],
           ),

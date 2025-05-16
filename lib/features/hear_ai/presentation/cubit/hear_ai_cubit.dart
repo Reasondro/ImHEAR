@@ -192,10 +192,7 @@ class HearAiCubit extends Cubit<HearAiState> {
         //? sounds
         "SOUND_ALARM",
         // "SOUND_SIREN", //? this shit always take the spot
-        // "SOUND_CAR_HORN",
         "SOUND_VEHICLE_HORN",
-        // "SOUND_ALARM_FIRE",
-        // "SOUND_ALARM_SMOKE",
         "SOUND_DOORBELL_KNOCK",
         "SOUND_PHONE_RINGING",
         "SOUND_CROWD_NOISE",

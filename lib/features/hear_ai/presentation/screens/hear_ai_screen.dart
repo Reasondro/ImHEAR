@@ -86,10 +86,12 @@ class _HearAiScreenState extends State<HearAiScreen> {
     };
   }
 
+  String responseFromBluetooth = "";
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HearAiCubit, HearAiState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is HearAiError) {
           if (state is! HearAiPermissionNeeded) {
             context.customShowErrorSnackBar(state.message);
@@ -102,8 +104,8 @@ class _HearAiScreenState extends State<HearAiScreen> {
           final CustomBluetoothService bleService =
               context.read<CustomBluetoothService>();
           if (bleService.isConnected.value) {
-            // ?customize command based on eventType
-            String command = "VIB"; // Default command
+            // ? customize command based on eventType
+            // String command = "VIB"; // Default command
             // if (state.latestResult.eventType == "SOUND_ALARM") {
             //   command = "VIB_ALARM";
             // } else if (state.latestResult.eventType ==
@@ -112,10 +114,68 @@ class _HearAiScreenState extends State<HearAiScreen> {
             // } else if (state.latestResult.eventType == "SOUND_VEHICLE_HORN") {
             //   command = "VIB_CAR_HORN";
             // }
+
             // ? add more mappings here
-            bleService.sendCommand(command);
+            // bleService.sendCommand(command);
+
+            List<int> command = [0x0201]; // ? default command data
+
+            final List<String> normalSpeechCategories = [
+              "SPEECH_NEUTRAL",
+              "SPEECH_QUESTION",
+              "SPEECH_HAPPY_EXCITED",
+              "SPEECH_ROMANTIC",
+              "SPEECH_SAD",
+              "SPEECH_UNCLEAR",
+            ];
+
+            final List<String> urgentSpeechCategories = [
+              "SPEECH_ANGRY_STRESSED",
+              "SPEECH_URGENT_IMPORTANT",
+              "SPEECH_INSTRUCTION",
+            ];
+
+            final List<String> normalSoundCategories = [
+              "SOUND_DOORBELL_KNOCK",
+              "SOUND_PHONE_RINGING",
+              "SOUND_PERSON_COUGH_SNEEZE",
+              "SOUND_ANIMAL_SOUND",
+              "SOUND_MUSIC",
+              "SOUND_CROWD_NOISE",
+              "AMBIENT_NOISE",
+            ];
+
+            final List<String> emergencySoundCategories = [
+              "SOUND_ALARM",
+              "SOUND_VEHICLE_HORN",
+              "SOUND_LOUD_IMPACT",
+              "SOUND_EXPLOSION",
+              "SOUND_PERSON_SCREAMING",
+              "SOUND_BABY_CRYING",
+              "SOUND_GENERAL_LOUD",
+            ];
+            final String eventType = state.latestResult.eventType;
+            if (normalSpeechCategories.contains(eventType)) {
+              command = [0x0201]; //? normal speech
+            } else if (urgentSpeechCategories.contains(eventType)) {
+              command = [0x0204]; //? urgent speech
+            } else if (normalSoundCategories.contains(eventType)) {
+              command = [0x0202]; //? normal sound
+            } else if (emergencySoundCategories.contains(eventType)) {
+              command = [0x0204]; //? emergency Sound
+            } else {
+              print(
+                "Unknown eventType: $eventType, sending default/neutral command.",
+              );
+              command = [
+                0x0201,
+              ]; //? neutral or default command different from others (should be at least lol)
+            }
+
+            responseFromBluetooth = await bleService.sendCommandBytes(command);
           } else {
             print("ImHEAR Band not connected, can't send vibration.");
+            responseFromBluetooth = "Can't connect to device";
           }
         }
       },
@@ -244,20 +304,27 @@ class _HearAiScreenState extends State<HearAiScreen> {
                   side: BorderSide.none,
                 ),
                 margin: const EdgeInsets.only(bottom: 6),
-                child: const ListTile(
-                  leading: Icon(
+                child: ListTile(
+                  leading: const Icon(
                     Icons.track_changes_outlined,
                     color: AppColors.haiti,
                   ),
 
-                  title: Text(
+                  title: const Text(
                     'Listening Results',
                     style: TextStyle(
                       color: AppColors.haiti,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
+                  subtitle: Text(
+                    'Device response: $responseFromBluetooth',
+                    style: const TextStyle(
+                      color: AppColors.bittersweet,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 4,
                   ),

@@ -361,6 +361,37 @@ class CustomBluetoothService {
     }
   }
 
+  Future<String> sendCommandBytes(List<int> bytesToSend) async {
+    String result; //? for debugging
+
+    if (_targetCharacteristic == null || !isConnected.value) {
+      print("sendCommandBytes: Not connected or characteristic not found.");
+      result = "Not connected or characteristic not found.";
+      return result;
+    }
+
+    if (!_targetCharacteristic!.properties.write) {
+      print("sendCommandBytes: Characteristic does not support writing.");
+      result = "Characteristic does not support writing.";
+      return result;
+    }
+
+    try {
+      print("sendCommandBytes: Sending raw bytes: $bytesToSend");
+      result = "Sending raw bytes: $bytesToSend";
+
+      await _targetCharacteristic!.write(bytesToSend, withoutResponse: false);
+      print("sendCommandBytes: Bytes sent sucesfully");
+      result = "Bytes sent sucesfully";
+      return result;
+    } catch (e) {
+      print("Error writing command: $e");
+
+      result = "Error writing command: $e";
+      return result;
+    }
+  }
+
   Future<void> _sendDateTimeSyncCommand() async {
     if (_targetCharacteristic == null || !isConnected.value) {
       print("Date Sync: Not connected or characteristic not found.");
